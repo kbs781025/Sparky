@@ -12,12 +12,14 @@
 #include "src/graphics/batchrenderer2d.h"
 #include "src/graphics/layer/tilelayer.h"
 #include "src/graphics//layer/group.h"
+#include "src/graphics/texture.h"
+#include "src/graphics/TextureManager.h"
 
 #include <time.h>
 
 #include <FreeImage.h>
 
-#if 0
+#if 1
 int main()
 {
 	using namespace sparky;
@@ -25,33 +27,34 @@ int main()
 	using namespace maths;
 
 	Window window("Sparky", 800, 600);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	Shader* shader = new Shader("src/shaders/basic.vert", "src/shaders/basic.frag");
-	Shader* shader2 = new Shader("src/shaders/basic.vert", "src/shaders/basic.frag");
-
 	shader->enable();
 	shader->setUniform2f("light_pos", vec2(4.0f, 1.5f));
 
-	shader2->enable();
-	shader2->setUniform2f("light_pos", vec2(0.0f, 0.0f));
-
 	TileLayer layer(shader);
-	for (float y = -7.0f; y < 7.0f; y += 0.3f)
+
+	shader->enable();
+	shader->setUniform1i("tex", 0);
+
+	Texture texture("sword.png");
+	glActiveTexture(GL_TEXTURE0);
+	texture.bind();
+
+	for (float y = -7.0f; y < 7.0f; y ++)
 	{
-		for (float x = -14.f; x < 14.f; x += 0.3f)
+		for (float x = -14.f; x < 14.f; x ++)
 		{
-			layer.add(new Sprite(x, y, 0.2f, 0.2f, vec4(0.5f, 0.2f, 0.7f, 1.0f)));
+			layer.add(new Sprite(x, y, 0.9f, 0.9f, &texture));
 		}
 	}
 
-	TileLayer layer2(shader2);
-	layer2.add(new Sprite(0.0f, 0.0f, 5.f, 5.f, vec4(0.3f, 0.4f, 0.6f, 1.0f)));
-
-	Group* button = new Group(mat4::translate(vec3(1,1,0)) * mat4::rotation(45.0f, vec3(0, 0, 1)));
-	button->add(new Sprite(0.0f, 0.0f, 6.0f, 6.0f, vec4(0.5f, 0.2f, 0.1f, 1.0f)));
-	button->add(new Sprite(2.0f, 2.f, 2.f, 2.f, vec4(0.4f, 0.6f, 0.1f, 1.0)));
-	layer.add(button);
+	int texIDs[] =
+	{
+		0, 1, 2, 3,4, 5, 6, 7, 8, 9, 10
+	};
+	shader->setUniform1iv("textures", texIDs, 10);
 
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -69,8 +72,6 @@ int main()
 
 		layer.render();
 
-		//layer2.render();
-
 		window.update();
 
 		frame++;
@@ -86,6 +87,7 @@ int main()
 }
 #endif
 
+#if 0
 int main()
 {
 	const char* filename = "tile.png";
@@ -127,8 +129,9 @@ int main()
 
 	for (int i = 0; i < width * height; i++)
 	{
-		std::cout << 
+		//std::cout << 
 	}
 
 	return 0;
 }
+#endif

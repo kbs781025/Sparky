@@ -25,11 +25,11 @@ namespace sparky { namespace graphics {
 		{
 			if (override == false)
 			{
-				m_TransformationStack.push_back(matrix);
+				m_TransformationStack.emplace_back(matrix);
 			}
 			else
 			{
-				m_TransformationStack.push_back(m_TransformationStack.back() * matrix);
+				m_TransformationStack.emplace_back(m_TransformationStack.back() * matrix);
 			}
 
 			m_TransformationBack = &m_TransformationStack.back();
