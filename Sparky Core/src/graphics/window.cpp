@@ -2,7 +2,6 @@
 
 namespace sparky { namespace graphics {
 
-	void window_resize(GLFWwindow* window, int width, int height);
 
 	Window::Window(const char * title, int width, int height)
 	{
@@ -94,7 +93,7 @@ namespace sparky { namespace graphics {
 
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, this); // pass this window class pointer to GL
-		glfwSetWindowSizeCallback(m_Window, window_resize);
+		glfwSetFramebufferSizeCallback(m_Window, window_resize);
 		glfwSetKeyCallback(m_Window, key_callback);
 		glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
 		glfwSetCursorPosCallback(m_Window, mouse_cursor_callback);
@@ -114,6 +113,9 @@ namespace sparky { namespace graphics {
 	void window_resize(GLFWwindow* window, int width, int height) // not part of window class
 	{
 		glViewport(0, 0, width, height);
+		Window* win = (Window*)glfwGetWindowUserPointer(window);
+		win->m_Width = width;
+		win->m_Height = height;
 	}
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
