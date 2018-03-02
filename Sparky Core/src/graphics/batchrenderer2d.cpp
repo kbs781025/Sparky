@@ -75,6 +75,11 @@ namespace sparky { namespace graphics {
 		m_IndexCount = 0;
 	}
 
+	void BatchRenderer2D::drawString(const std::string & text, float x, float y, const maths::vec4 & color)
+	{
+		
+	}
+
 	void BatchRenderer2D::init()
 	{
 		glGenVertexArrays(1, &m_VAO);

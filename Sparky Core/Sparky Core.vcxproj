@@ -142,6 +142,7 @@
     <ClCompile Include="src\graphics\buffers\buffer.cpp" />
     <ClCompile Include="src\graphics\buffers\indexbuffer.cpp" />
     <ClCompile Include="src\graphics\buffers\vertexarray.cpp" />
+    <ClCompile Include="src\graphics\label.cpp" />
     <ClCompile Include="src\graphics\layer\group.cpp" />
     <ClCompile Include="src\graphics\layer\layer.cpp" />
     <ClCompile Include="src\graphics\layer\tilelayer.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="src\graphics\buffers\buffer.h" />
     <ClInclude Include="src\graphics\buffers\indexbuffer.h" />
     <ClInclude Include="src\graphics\buffers\vertexarray.h" />
+    <ClInclude Include="src\graphics\label.h" />
     <ClInclude Include="src\graphics\layer\group.h" />
     <ClInclude Include="src\graphics\layer\layer.h" />
     <ClInclude Include="src\graphics\layer\tilelayer.h" />

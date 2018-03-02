@@ -33,6 +33,7 @@ namespace sparky { namespace graphics {
 		void submit(const Renderable2D* renderable) override;
 		void end() override;
 		void flush() override;
+		void drawString(const std::string& text, float x, float y, const maths::vec4& color) override;
 	private:
 		void init();
 	};
