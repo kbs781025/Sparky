@@ -3,7 +3,7 @@
 
 namespace sparky { namespace maths {
 
-	mat4::mat4()
+	/*mat4::mat4()
 	{
 		for (int i = 0; i < 4 * 4; i++)
 		{
@@ -174,6 +174,14 @@ namespace sparky { namespace maths {
 			colums[0].z * other.x + colums[1].z * other.y + colums[2].z * other.z + colums[3].z * other.w,
 			colums[0].w * other.x + colums[1].w * other.y + colums[2].w * other.z + colums[3].w * other.w
 		);
+	}*/
+
+	vec3 getAngle() const
+	{
+		float x, y, z;
+
+		y = asin(m[8]); // yaw angle
+
 	}
 }
 }
