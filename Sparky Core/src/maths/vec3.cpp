@@ -55,6 +55,32 @@ namespace sparky {
 			return *this;
 		}
 
+		vec3 & vec3::operator=(const vec3 & other)
+		{
+			x = other.x;
+			y = other.y;
+			z = other.z;
+
+			return *this;
+		}
+
+		vec3 & vec3::normalize()
+		{
+			float sqrDist = x * x + y * y + z * z;
+			float invDist = 1.0 / sqrt(sqrDist);
+			
+			x *= invDist;
+			y *= invDist;
+			z *= invDist;
+
+			return *this;
+		}
+
+		vec3 vec3::cross(const vec3 & other) const
+		{
+			return vec3(y*other.z - z * other.y, z*other.x - x * other.z, x*other.y - y * other.x);
+		}
+
 		std::ostream & operator<<(std::ostream & os, const vec3 & vec)
 		{
 			os << "vec3 : <" << vec.x << ", " << vec.y << ", " << vec.z << ">";

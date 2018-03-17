@@ -33,7 +33,7 @@ int main()
 	shader->setUniform2f("light_pos", vec2(4.0f, 1.5f));
 	shader->setUniform1i("myTexture", 0);
 
-	Texture* texture = new Texture("Texture/128/armor.png");
+	/*Texture* texture = new Texture("Texture/128/armor.png");
 
 	TileLayer layer(shader);
 	for (float y = -7.0f; y < 7.0f; y += 5)
@@ -42,8 +42,11 @@ int main()
 		{
 			layer.add(new Sprite(x, y, 4.9f, 4.9f, vec4(0.3f, 0.6f, 1.0f, 1.0f), texture));
 		}
-	}
+	}*/
 	
+	VertexData cubeVertex[8];
+	
+
 	glActiveTexture(GL_TEXTURE0);
 	texture->bindTexture();
 
@@ -61,7 +64,7 @@ int main()
 		shader->enable();
 		shader->setUniform2f("light_pos", vec2((float)(x * 32.0f / window.getWidth()- 16.0f), (float)(9.0f - y * 18.0f / window.getHeight())));
 
-		layer.render();
+		//layer.render();
 
 		window.update();
 

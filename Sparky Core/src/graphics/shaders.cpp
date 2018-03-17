@@ -46,7 +46,7 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniformMat4(const GLchar * name, const maths::mat4 & matrix)
 	{
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, matrix.elements);
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, matrix.m);
 	}
 
 	void Shader::enable() const

@@ -17,6 +17,10 @@ namespace sparky {
 			vec3& operator-=(const vec3& other);
 			vec3& operator*=(const vec3& other);
 			vec3& operator/=(const vec3& other);
+			vec3& operator=(const vec3& other);
+
+			vec3& normalize();
+			vec3 cross(const vec3& other) const;
 
 			friend std::ostream& operator<<(std::ostream& os, const vec3& vec);
 		};
