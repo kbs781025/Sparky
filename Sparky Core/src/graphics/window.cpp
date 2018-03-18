@@ -48,9 +48,11 @@ namespace sparky { namespace graphics {
 			std::cout << "OpenGL Error : " << error << std::endl;
 		}
 
+		processInput(m_Window);
+
 		glfwPollEvents();
-		glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
-		glViewport(0, 0, m_Width, m_Height);
+		/*glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
+		glViewport(0, 0, m_Width, m_Height);*/
 		glfwSwapBuffers(m_Window);
 	}
 
@@ -108,6 +110,14 @@ namespace sparky { namespace graphics {
 		std::cout << glGetString(GL_VERSION) << std::endl;
 
 		return true;
+	}
+
+	void Window::processInput(GLFWwindow * window)
+	{
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(window, true);
+		}
 	}
 
 	void window_resize(GLFWwindow* window, int width, int height) // not part of window class

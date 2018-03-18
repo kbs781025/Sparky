@@ -31,11 +31,14 @@ namespace sparky {  namespace graphics {
 		inline int getWidth() const { return m_Width; }
 		inline int getHeight() const { return m_Height; }
 
+
 		bool isKeyPressed(unsigned int keycode) const;
 		bool isMouseButtonPressed(unsigned int button) const;
 		void getMouseCursorPosition(double& x, double& y) const;
 	private:
 		bool init();
+		void processInput(GLFWwindow* window);
+
 		friend static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		friend static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 		friend static void mouse_cursor_callback(GLFWwindow* window, double xpos, double ypos);

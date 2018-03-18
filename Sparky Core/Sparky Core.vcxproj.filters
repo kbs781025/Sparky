@@ -156,5 +156,6 @@
   <ItemGroup>
     <None Include="src\shaders\basic.frag" />
     <None Include="src\shaders\basic.vert" />
+    <None Include="src\shaders\basic2.frag" />
   </ItemGroup>
 </Project>
