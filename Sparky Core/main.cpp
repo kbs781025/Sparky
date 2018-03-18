@@ -130,24 +130,24 @@ int main()
 
 	float vertices[] =
 	{
-		0.5f,  0.5f, 0.0f,  // top right
-		0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f
+		0.5f,  0.5f, 0.0f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f, // top right
+		0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,// bottom right
+		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,		1.0f, 1.0f, 0.0f,		0.0f, 1.0f // top left
 	};
-
+	
 	float triangle1[] =
 	{
-		-0.5f, 0.5f, 0.0f,
-		-1.0f, -0.5f, 0.0f,
-		0.0f, -0.5f, 0.0f
+		-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-1.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	float triangle2[] =
 	{
-		0.0f, 0.5f, 0.0f,
-		1.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f
+		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	float* arrays[2] = { triangle1, triangle2 };
@@ -168,41 +168,47 @@ int main()
 		glBindVertexArray(VAO[i]);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
-		glBufferData(GL_ARRAY_BUFFER, 36, arrays[i], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 6 * 3 * sizeof(GL_FLOAT), arrays[i], GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)0);
 		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
 	}
 
-	glBindVertexArray(0);
+	// VAO & VBO & EBO for rectangle
+	unsigned int VAORect, VBORect, EBORect;
+	glGenVertexArrays(1, &VAORect);
+	glGenBuffers(1, &VBORect);
+	glGenBuffers(1, &EBORect);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(VAORect);
 
-	/*unsigned int VAO, VBO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBORect);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBORect);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	Shader *pShader1 = new Shader("src/shaders/basic.vert", "src/shaders/basic.frag");
 	Shader *pShader2 = new Shader("src/shaders/basic.vert", "src/shaders/basic2.frag");
 
 	Shader* pShaders[2] = { pShader1, pShader2 };
+
+	// Generating a texture
+	Texture *pTexture1 = new Texture("Texture/container.jpg");
+	Texture *pTexture2 = new Texture("Texture/awesomeface.png");
+
+	pShader1->enable();
+	pShader1->setUniform1f("texture1", 0);
+	pShader1->setUniform1f("texture2", 1);
 
 	while (!window.closed())
 	{
@@ -211,13 +217,26 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		window.clear();
 
-		for (int i = 0; i < 2; i++)
-		{
-			pShaders[i]->enable();
-			glBindVertexArray(VAO[i]);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		}
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+
+		//for (int i = 0; i < 2; i++)
+		//{
+		//	pShaders[i]->enable();
+		//	pShaders[i]->setUniform4f("ourColor", vec4(0.0f, greenValue, 0.0f, 1.0f));
+		//	glBindVertexArray(VAO[i]);
+		//	glDrawArrays(GL_TRIANGLES, 0, 3);
+		//	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//}
+
+		glActiveTexture(GL_TEXTURE0);
+		pTexture1->bindTexture();
+		glActiveTexture(GL_TEXTURE1);
+		pTexture2->bindTexture();
+
+		pShader1->enable();
+		glBindVertexArray(VBORect);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		
 		window.update();
 
