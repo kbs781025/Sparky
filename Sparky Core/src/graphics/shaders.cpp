@@ -29,24 +29,24 @@ namespace sparky { namespace graphics {
 		glUniform1i(getUniformLocation(name), value);
 	}
 
-	void Shader::setUniform2f(const GLchar * name, const maths::vec2 & value)
+	void Shader::setUniform2f(const GLchar * name, const glm::vec2 & value)
 	{
 		glUniform2f(getUniformLocation(name), value.x, value.y);
 	}
 
-	void Shader::setUniform3f(const GLchar * name, const maths::vec3 & value)
+	void Shader::setUniform3f(const GLchar * name, const glm::vec3 & value)
 	{
 		glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
 	}
 
-	void Shader::setUniform4f(const GLchar * name, const maths::vec4 & value)
+	void Shader::setUniform4f(const GLchar * name, const glm::vec4 & value)
 	{
 		glUniform4f(getUniformLocation(name), value.x, value.y, value.z, value.w);
 	}
 
-	void Shader::setUniformMat4(const GLchar * name, const maths::mat4 & matrix)
+	void Shader::setUniformMat4(const GLchar * name, const glm::mat4 & matrix)
 	{
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, matrix.m);
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
 	void Shader::enable() const

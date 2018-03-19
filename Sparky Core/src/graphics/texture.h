@@ -11,10 +11,11 @@ namespace sparky { namespace graphics {
 		std::string m_Path;
 		GLuint m_textureID;
 		GLuint m_Width, m_Height;
+		GLuint m_WrapAndFilter[2];
 	private:
-		void loadTexture(const std::string& filename);
+		void loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod);
 	public:
-		Texture(const std::string& filename);
+		Texture(const std::string& filename, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_NEAREST);
 
 		GLuint getTextureID() { return m_textureID; }
 		void bindTexture() const;

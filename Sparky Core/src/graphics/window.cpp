@@ -8,6 +8,7 @@ namespace sparky { namespace graphics {
 		m_Title = title;
 		m_Width = width;
 		m_Height = height;
+		m_MixingRatio = 0.0f;
 
 		if (!init())
 		{
@@ -117,6 +118,24 @@ namespace sparky { namespace graphics {
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
 			glfwSetWindowShouldClose(window, true);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		{
+			m_MixingRatio += 0.005f;
+			if (m_MixingRatio >= 1.0f)
+			{
+				m_MixingRatio = 1.0f;
+			}
+		}
+		
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		{
+			m_MixingRatio -= 0.005f;
+			if (m_MixingRatio <= 0.0f)
+			{
+				m_MixingRatio = 0.0f;
+			}
 		}
 	}
 

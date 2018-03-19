@@ -20,10 +20,10 @@ namespace sparky { namespace graphics {
 	}
 	void BatchRenderer2D::submit(const Renderable2D * renderable)
 	{
-		const maths::vec3& position = renderable->getPosition();
-		const maths::vec2& size= renderable->getSize();
-		const maths::vec4& color = renderable->getColor();
-		const std::vector<maths::vec2>& uv = renderable->getUV();
+		const glm::vec3& position = renderable->getPosition();
+		const glm::vec2& size= renderable->getSize();
+		const glm::vec4& color = renderable->getColor();
+		const std::vector<glm::vec2>& uv = renderable->getUV();
 
 		int r = (int) (color.x * 255.0f);
 		int g = (int) (color.y * 255.0f);
@@ -38,17 +38,17 @@ namespace sparky { namespace graphics {
 		m_Buffer->color = c;
 		m_Buffer++;
 
-		m_Buffer->vertex = *m_TransformationBack * maths::vec3(position.x, position.y + size.y, position.z);
+		m_Buffer->vertex = *m_TransformationBack * glm::vec3(position.x, position.y + size.y, position.z);
 		m_Buffer->uv = uv[1];
 		m_Buffer->color = c;
 		m_Buffer++;
 
-		m_Buffer->vertex = *m_TransformationBack * maths::vec3(position.x + size.x, position.y + size.y, position.z);
+		m_Buffer->vertex = *m_TransformationBack * glm::vec3(position.x + size.x, position.y + size.y, position.z);
 		m_Buffer->uv = uv[2];
 		m_Buffer->color = c;
 		m_Buffer++;
 
-		m_Buffer->vertex = *m_TransformationBack * maths::vec3(position.x + size.x, position.y, position.z);
+		m_Buffer->vertex = *m_TransformationBack * glm::vec3(position.x + size.x, position.y, position.z);
 		m_Buffer->uv = uv[3];
 		m_Buffer->color = c;
 		m_Buffer++;
@@ -75,7 +75,7 @@ namespace sparky { namespace graphics {
 		m_IndexCount = 0;
 	}
 
-	void BatchRenderer2D::drawString(const std::string & text, float x, float y, const maths::vec4 & color)
+	void BatchRenderer2D::drawString(const std::string & text, float x, float y, const glm::vec4 & color)
 	{
 		
 	}

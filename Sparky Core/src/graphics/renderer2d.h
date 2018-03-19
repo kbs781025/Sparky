@@ -12,16 +12,16 @@ namespace sparky { namespace graphics {
 	class Renderer2D
 	{
 	protected:
-		std::vector<maths::mat4> m_TransformationStack;
-		const maths::mat4* m_TransformationBack;
+		std::vector<glm::mat4> m_TransformationStack;
+		const glm::mat4* m_TransformationBack;
 	protected:
 		Renderer2D()
 		{
-			m_TransformationStack.push_back(maths::mat4::identity());
+			m_TransformationStack.push_back(glm::mat4 mat);
 			m_TransformationBack = &m_TransformationStack.back();
 		}
 	public:
-		void push(const maths::mat4& matrix, bool override = false)
+		void push(const glm::mat4& matrix, bool override = false)
 		{
 			if (override == false)
 			{
@@ -47,7 +47,7 @@ namespace sparky { namespace graphics {
 
 		virtual void begin() {}
 		virtual void submit(const Renderable2D* renderable) = 0;
-		virtual void drawString(const std::string& text, float x, float y, const maths::vec4& color) = 0;
+		virtual void drawString(const std::string& text, float x, float y, const glm::vec4& color) = 0;
 		virtual void end() {}
 		virtual void flush() = 0;
 	};

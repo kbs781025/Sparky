@@ -1,6 +1,6 @@
 #include "layer.h"
 namespace sparky { namespace graphics {
-	Layer::Layer(Renderer2D * renderer, Shader * shader, maths::mat4 projectionMatrix)
+	Layer::Layer(Renderer2D * renderer, Shader * shader, glm::mat4 projectionMatrix)
 		:
 		m_Renderer(renderer),
 		m_Shader(shader),

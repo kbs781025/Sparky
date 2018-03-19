@@ -2,21 +2,9 @@
 #include "src/graphics/window.h"
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
-#include "src/graphics/buffers/vertexarray.h"
-#include "src/graphics/buffers/indexbuffer.h"
-
-#include "src/graphics/renderable2d.h"
-#include "src/graphics/simple2drenderer.h"
-#include "src/graphics/staticsprite.h"
-#include "src/graphics/sprite.h"
-#include "src/graphics/batchrenderer2d.h"
-#include "src/graphics/layer/tilelayer.h"
-#include "src/graphics//layer/group.h"
 #include "src/graphics/texture.h"
 
 #include <time.h>
-
-#include <FreeImage.h>
 
 static const float cubeVertex[] =
 {
@@ -121,7 +109,6 @@ int main()
 {
 	using namespace sparky;
 	using namespace graphics;
-	using namespace maths;
 
 	Window window("Sparky", 800, 600);
 
@@ -130,10 +117,10 @@ int main()
 
 	float vertices[] =
 	{
-		0.5f,  0.5f, 0.0f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f, // top right
-		0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,// bottom right
+		0.5f,  0.5f, 0.0f,		1.0f, 0.0f, 0.0f,		2.0f, 2.0f, // top right
+		0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,		2.0f, 0.0f,// bottom right
 		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,		1.0f, 1.0f, 0.0f,		0.0f, 1.0f // top left
+		-0.5f,  0.5f, 0.0f,		1.0f, 1.0f, 0.0f,		0.0f, 2.0f // top left
 	};
 	
 	float triangle1[] =
@@ -204,11 +191,11 @@ int main()
 
 	// Generating a texture
 	Texture *pTexture1 = new Texture("Texture/container.jpg");
-	Texture *pTexture2 = new Texture("Texture/awesomeface.png");
+	Texture *pTexture2 = new Texture("Texture/happyface.jpg");
 
 	pShader1->enable();
-	pShader1->setUniform1f("texture1", 0);
-	pShader1->setUniform1f("texture2", 1);
+	pShader1->setUniform1i("texture1", 0);
+	pShader1->setUniform1i("texture2", 1);
 
 	while (!window.closed())
 	{
@@ -217,9 +204,9 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		window.clear();
 
-		float timeValue = glfwGetTime();
+		/*float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-
+*/
 		//for (int i = 0; i < 2; i++)
 		//{
 		//	pShaders[i]->enable();
@@ -234,7 +221,7 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		pTexture2->bindTexture();
 
-		pShader1->enable();
+		pShader1->setUniform1f("ratio", window.m_MixingRatio);
 		glBindVertexArray(VBORect);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		

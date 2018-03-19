@@ -15,7 +15,7 @@ namespace sparky { namespace graphics {
 			renderable->getVAO()->bind();
 			renderable->getIBO()->bind();
 
-			renderable->getShader().setUniformMat4("ml_matrix", maths::mat4::translate(maths::vec3(renderable->getPosition())));
+			renderable->getShader().setUniformMat4("ml_matrix", glm::mat4::translate(glm::vec3(renderable->getPosition())));
 			glDrawElements(GL_TRIANGLES, renderable->getIBO()->getCount(), GL_UNSIGNED_SHORT, 0); // One Draw call per vertex buffer
 
 			renderable->getIBO()->unbind();

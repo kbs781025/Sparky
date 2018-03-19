@@ -138,49 +138,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\graphics\batchrenderer2d.cpp" />
-    <ClCompile Include="src\graphics\buffers\buffer.cpp" />
-    <ClCompile Include="src\graphics\buffers\indexbuffer.cpp" />
-    <ClCompile Include="src\graphics\buffers\vertexarray.cpp" />
-    <ClCompile Include="src\graphics\label.cpp" />
-    <ClCompile Include="src\graphics\layer\group.cpp" />
-    <ClCompile Include="src\graphics\layer\layer.cpp" />
-    <ClCompile Include="src\graphics\layer\tilelayer.cpp" />
     <ClCompile Include="src\graphics\shaders.cpp" />
-    <ClCompile Include="src\graphics\simple2drenderer.cpp" />
-    <ClCompile Include="src\graphics\sprite.cpp" />
-    <ClCompile Include="src\graphics\staticsprite.cpp" />
     <ClCompile Include="src\graphics\texture.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
-    <ClCompile Include="src\maths\mat4.cpp" />
-    <ClCompile Include="src\maths\vec2.cpp" />
-    <ClCompile Include="src\maths\vec3.cpp" />
-    <ClCompile Include="src\maths\vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\graphics\batchrenderer2d.h" />
-    <ClInclude Include="src\graphics\buffers\buffer.h" />
-    <ClInclude Include="src\graphics\buffers\indexbuffer.h" />
-    <ClInclude Include="src\graphics\buffers\vertexarray.h" />
-    <ClInclude Include="src\graphics\label.h" />
-    <ClInclude Include="src\graphics\layer\group.h" />
-    <ClInclude Include="src\graphics\layer\layer.h" />
-    <ClInclude Include="src\graphics\layer\tilelayer.h" />
-    <ClInclude Include="src\graphics\renderable2d.h" />
-    <ClInclude Include="src\graphics\renderer2d.h" />
     <ClInclude Include="src\graphics\shaders.h" />
-    <ClInclude Include="src\graphics\simple2drenderer.h" />
-    <ClInclude Include="src\graphics\sprite.h" />
-    <ClInclude Include="src\graphics\staticsprite.h" />
     <ClInclude Include="src\graphics\texture.h" />
     <ClInclude Include="src\graphics\window.h" />
-    <ClInclude Include="src\maths\mat4.h" />
-    <ClInclude Include="src\maths\mathfun.h" />
     <ClInclude Include="src\maths\maths.h" />
-    <ClInclude Include="src\maths\vec2.h" />
-    <ClInclude Include="src\maths\vec3.h" />
-    <ClInclude Include="src\maths\vec4.h" />
-    <ClInclude Include="src\maths\vector.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
     <ClInclude Include="src\utils\timer.h" />

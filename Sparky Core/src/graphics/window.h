@@ -12,7 +12,6 @@ namespace sparky {  namespace graphics {
 	class Window
 	{
 	private:
-		
 		const char* m_Title;
 		int m_Width, m_Height;
 		GLFWwindow* m_Window;
@@ -22,6 +21,8 @@ namespace sparky {  namespace graphics {
 		bool m_MouseButtons[MAX_BUTTONS];
 		double mx, my; // position of mouse
 	public:
+		float m_MixingRatio;
+
 		Window(const char* title, int width, int height);
 		~Window();
 		int closed() const;

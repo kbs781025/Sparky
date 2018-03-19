@@ -2,9 +2,9 @@
 
 namespace sparky { namespace graphics {
 
-	Label::Label(const std::string& text, float x, float y, maths::vec4& color)
+	Label::Label(const std::string& text, float x, float y, glm::vec4& color)
 		:
-		Renderable2D(maths::vec3(x, y, 0.0f), maths::vec2(5.0f, 5.0f), color),
+		Renderable2D(glm::vec3(x, y, 0.0f), glm::vec2(5.0f, 5.0f), color),
 		m_Text(text)
 	{
 	}

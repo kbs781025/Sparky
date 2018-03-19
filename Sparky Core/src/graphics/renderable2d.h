@@ -15,18 +15,18 @@ namespace sparky { namespace graphics {
 
 	struct VertexData
 	{
-		maths::vec3 vertex;
-		maths::vec2 uv;
+		glm::vec3 vertex;
+		glm::vec2 uv;
 		GLuint color;
 	};
 
 	class Renderable2D
 	{
 	protected:
-		maths::vec3 m_Position;
-		maths::vec2 m_Size;
-		maths::vec4 m_Color;
-		std::vector<maths::vec2> m_UV;
+		glm::vec3 m_Position;
+		glm::vec2 m_Size;
+		glm::vec4 m_Color;
+		std::vector<glm::vec2> m_UV;
 		Texture* m_Texture;
 	private:
 		void setDefaultUV()
@@ -48,7 +48,7 @@ namespace sparky { namespace graphics {
 	protected:
 		Renderable2D() {}
 	public:
-		Renderable2D(maths::vec3 position, maths::vec2 size, maths::vec4 color, Texture* texture = nullptr)
+		Renderable2D(glm::vec3 position, glm::vec2 size, glm::vec4 color, Texture* texture = nullptr)
 			:
 			m_Position(position), m_Size(size), m_Color(color), m_Texture(texture)
 		{
@@ -63,10 +63,10 @@ namespace sparky { namespace graphics {
 			renderer->submit(this);
 		}
 
-		inline const maths::vec3& getPosition() const { return m_Position; }
-		inline const maths::vec2& getSize() const { return m_Size; }
-		inline const maths::vec4& getColor() const { return m_Color; }
-		inline const std::vector<maths::vec2>& getUV() const { return m_UV; }
+		inline const glm::vec3& getPosition() const { return m_Position; }
+		inline const glm::vec2& getSize() const { return m_Size; }
+		inline const glm::vec4& getColor() const { return m_Color; }
+		inline const std::vector<glm::vec2>& getUV() const { return m_UV; }
 	};
 
 	}

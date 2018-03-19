@@ -10,7 +10,7 @@ namespace sparky { namespace graphics {
 	private:
 		std::string m_Text;
 	public:
-		Label(const std::string& text, float x, float y, maths::vec4& color);
+		Label(const std::string& text, float x, float y, glm::vec4& color);
 		
 		void submit(Renderer2D* renderer) const override;
 	};

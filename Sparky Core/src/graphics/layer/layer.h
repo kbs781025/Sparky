@@ -11,9 +11,9 @@ namespace sparky { namespace graphics {
 		Renderer2D* m_Renderer;
 		std::vector<Renderable2D*> m_Renderables;
 		Shader* m_Shader;
-		maths::mat4 m_ProjectionMatrix;
+		glm::mat4 m_ProjectionMatrix;
 	protected:
-		Layer(Renderer2D* renderer, Shader* shader, maths::mat4 projectionMatrix);
+		Layer(Renderer2D* renderer, Shader* shader, glm::mat4 projectionMatrix);
 	public:
 		Layer();
 		virtual ~Layer();
