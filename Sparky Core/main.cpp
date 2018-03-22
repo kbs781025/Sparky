@@ -271,6 +271,7 @@ int main()
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
 		float delta = timer.elapsed();
 		window.update(delta);
 

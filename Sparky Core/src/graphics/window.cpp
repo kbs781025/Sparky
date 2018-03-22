@@ -114,7 +114,7 @@ namespace sparky { namespace graphics {
 
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, this); // pass this window class pointer to GL
-		//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetFramebufferSizeCallback(m_Window, window_resize);
 		glfwSetKeyCallback(m_Window, key_callback);
 		glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
@@ -209,6 +209,8 @@ namespace sparky { namespace graphics {
 		deltaX = xpos - win->mx;
 		deltaY = win->my - ypos;
 		win->m_Camera.rotateCamera(deltaX, deltaY);
+		win->mx = xpos;
+		win->my = ypos;
 	}
 
 

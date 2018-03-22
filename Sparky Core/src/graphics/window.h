@@ -40,6 +40,7 @@ namespace sparky {  namespace graphics {
 		inline GLFWwindow* getWindow() const { return m_Window; }
 		void zoomCamera(float xoffset, float yoffset);
 		glm::mat4 getViewMatrix() const { return m_Camera.getViewMatrix(); }
+		glm::vec3 getTarget() const { return m_Camera.getTarget(); }
 
 		bool isKeyPressed(unsigned int keycode) const;
 		bool isMouseButtonPressed(unsigned int button) const;

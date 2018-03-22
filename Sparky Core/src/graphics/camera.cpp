@@ -1,5 +1,6 @@
 #include "camera.h"
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 namespace sparky { namespace graphics
 {
@@ -41,6 +42,7 @@ namespace sparky { namespace graphics
 	{
 		m_Angle = angle;
 		m_Forward = rotateForward();
+		//std::cout << m_Forward.x << " " << m_Forward.y << " " << m_Forward.z << std::endl;
 		m_Target = m_Position + m_Forward * m_Distance;
 	}
 
@@ -100,21 +102,29 @@ namespace sparky { namespace graphics
 
 	void Camera::rotateCamera(float deltaX, float deltaY)
 	{
-		float sensitivity = 0.05f;
+		float sensitivity = 0.1f;
 
-		m_Angle.x = m_Angle.x + deltaX * sensitivity;
-		m_Angle.y = m_Angle.y + deltaY * sensitivity;
+		float newPitch, newYaw;
+		newPitch = m_Angle.x + deltaY * sensitivity;
+		newYaw = m_Angle.y - deltaX * sensitivity;
 		
-		if (m_Angle.x >= 89.9f)
+		std::cout << newPitch << " " << newYaw << std::endl;
+
+		if (newPitch >= 89.9f)
 		{
-			m_Angle.x = 89.9f;
+			newPitch = 89.9f;
 		}
-		else if (m_Angle.x <= -89.9f)
+		else if (newPitch <= -89.9f)
 		{
-			m_Angle.y = -89.9f;
+			newPitch = -89.9f;
 		}
 
-		rotateForward();
+		if (newYaw > 90.0f)
+		{
+			newYaw -= 90.0f;
+		}
+
+		setRotation(glm::vec3(newPitch, newYaw, 0.0f));
 	}
 
 	// Rotate camera to target vector
@@ -131,15 +141,15 @@ namespace sparky { namespace graphics
 		glm::vec3 newForward;
 		float cx, sx, cy, sy;
 
-		cx = cos(m_Angle.x);
-		sx = sin(m_Angle.x);
-		cy = cos(m_Angle.y);
-		sy = sin(m_Angle.y);
+		cx = cos(glm::radians(m_Angle.x));
+		sx = sin(glm::radians(m_Angle.x));
+		cy = cos(glm::radians(m_Angle.y));
+		sy = sin(glm::radians(m_Angle.y));
 
-		newForward.x = cy;
-		newForward.y = sx * sy;
-		newForward.z = -cx * sy;
-		
+		newForward.x = -sy;
+		newForward.y = sx * cy;
+		newForward.z = -cx * cy;
+
 		return newForward;
 	}
 }

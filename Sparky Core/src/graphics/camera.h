@@ -9,15 +9,6 @@ namespace sparky { namespace graphics
 		Camera();
 		Camera(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up);
 
-		// Setter
-		// Translating
-		void setPosition(const glm::vec3& pos);
-		void setPosition(float x, float y, float z);
-
-		// Rotating
-		void setRotation(const glm::vec3& angle);
-		void setRotation(float pitch, float yaw, float roll);
-
 		// Getter
 		glm::vec3 getCameraPosition() const { return m_Position; }
 		glm::vec3 getTarget() const { return m_Target; }
@@ -32,9 +23,19 @@ namespace sparky { namespace graphics
 		void rotateCamera(float deltaX, float deltaY);
 
 	private:
+		// Setter
+		// Translating
+		void setPosition(const glm::vec3& pos);
+		void setPosition(float x, float y, float z);
+
+		// Rotating
+		void setRotation(const glm::vec3& angle);
+		void setRotation(float pitch, float yaw, float roll);
+		glm::vec3 rotateForward();
+
+		// LookAt
 		void lookAt(const glm::vec3& position, const glm::vec3& target, const glm::vec3& upDir);
 		void lookAt(const glm::vec3& position, const glm::vec3& target);
-		glm::vec3 rotateForward();
 
 	private:
 		float m_Distance;
