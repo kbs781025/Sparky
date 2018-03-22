@@ -2,6 +2,21 @@
 
 namespace sparky { namespace graphics {
 
+	void Window::zoomCamera(float xoffset, float yoffset)
+	{
+		if (fov >= 1.0f && fov <= 45.0f)
+		{
+			fov -= yoffset;
+		}
+		else if (fov > 45.0f)
+		{
+			fov = 45.0f;
+		}
+		else if (fov < 1.0f)
+		{
+			fov = 1.0f;
+		}
+	}
 
 	Window::Window(const char * title, int width, int height)
 	{
@@ -24,6 +39,10 @@ namespace sparky { namespace graphics {
 		{
 			m_MouseButtons[i] = false;
 		}
+
+		mx = m_Width / 2.0f;
+		my = m_Height / 2.0f;
+		fov = 45.0f;
 	}
 
 	Window::~Window()
@@ -41,7 +60,7 @@ namespace sparky { namespace graphics {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void Window::update()
+	void Window::update(float delta)
 	{
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR)
@@ -49,11 +68,10 @@ namespace sparky { namespace graphics {
 			std::cout << "OpenGL Error : " << error << std::endl;
 		}
 
-		processInput(m_Window);
+		processInput(delta);
+		m_Camera.lookAt();
 
 		glfwPollEvents();
-		/*glfwGetFramebufferSize(m_Window, &m_Width, &m_Height);
-		glViewport(0, 0, m_Width, m_Height);*/
 		glfwSwapBuffers(m_Window);
 	}
 
@@ -96,10 +114,12 @@ namespace sparky { namespace graphics {
 
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, this); // pass this window class pointer to GL
+		//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetFramebufferSizeCallback(m_Window, window_resize);
 		glfwSetKeyCallback(m_Window, key_callback);
 		glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
 		glfwSetCursorPosCallback(m_Window, mouse_cursor_callback);
+		glfwSetScrollCallback(m_Window, scroll_callback);
 		glfwSwapInterval(0); // 1 vsync on
 
 		if (glewInit() != GLEW_OK)
@@ -113,14 +133,14 @@ namespace sparky { namespace graphics {
 		return true;
 	}
 
-	void Window::processInput(GLFWwindow * window)
+	void Window::processInput(float delta)
 	{
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
-			glfwSetWindowShouldClose(window, true);
+			glfwSetWindowShouldClose(m_Window, true);
 		}
 
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		if (glfwGetKey(m_Window, GLFW_KEY_UP) == GLFW_PRESS)
 		{
 			m_MixingRatio += 0.005f;
 			if (m_MixingRatio >= 1.0f)
@@ -129,13 +149,30 @@ namespace sparky { namespace graphics {
 			}
 		}
 		
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		if (glfwGetKey(m_Window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
 			m_MixingRatio -= 0.005f;
 			if (m_MixingRatio <= 0.0f)
 			{
 				m_MixingRatio = 0.0f;
 			}
+		}
+
+		if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(delta, GLFW_KEY_W);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(delta, GLFW_KEY_A);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(delta, GLFW_KEY_S);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(delta, GLFW_KEY_D);
 		}
 	}
 
@@ -145,6 +182,12 @@ namespace sparky { namespace graphics {
 		Window* win = (Window*)glfwGetWindowUserPointer(window);
 		win->m_Width = width;
 		win->m_Height = height;
+	}
+
+	void scroll_callback(GLFWwindow * window, double xoffset, double yoffset)
+	{
+		Window* win = (Window*)glfwGetWindowUserPointer(window);
+		win->zoomCamera((float)xoffset, (float)yoffset);
 	}
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -162,8 +205,10 @@ namespace sparky { namespace graphics {
 	void mouse_cursor_callback(GLFWwindow * window, double xpos, double ypos)
 	{
 		Window* win = (Window*)glfwGetWindowUserPointer(window);
-		win->mx = xpos;
-		win->my = ypos;
+		float deltaX, deltaY;
+		deltaX = xpos - win->mx;
+		deltaY = win->my - ypos;
+		win->m_Camera.rotateCamera(deltaX, deltaY);
 	}
 
 

@@ -22,7 +22,7 @@ namespace sparky {
 			LARGE_INTEGER current;
 			QueryPerformanceCounter(&current);
 			unsigned __int64 cycles = current.QuadPart - m_Last.QuadPart;
-			float elapsedTime = cycles * m_Frequency;
+			float elapsedTime = cycles * (float)m_Frequency;
 			m_Last = current;
 
 			return (float)(cycles * m_Frequency);
@@ -33,7 +33,7 @@ namespace sparky {
 			LARGE_INTEGER current;
 			QueryPerformanceCounter(&current);
 			unsigned __int64 cycles = current.QuadPart - m_Last.QuadPart;
-			float elapsedTime = cycles * m_Frequency;
+			float elapsedTime = cycles * (float)m_Frequency;
 			if (elapsedTime > threshold)
 			{
 				m_Last = current;
