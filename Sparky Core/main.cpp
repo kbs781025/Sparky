@@ -6,65 +6,7 @@
 
 #include <time.h>
 
-#if 0
-int main()
-{
-	using namespace sparky;
-	using namespace graphics;
-	using namespace maths;
 
-	Window window("Sparky", 800, 600);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-	Shader* shader = new Shader("src/shaders/basic.vert", "src/shaders/basic.frag");
-	shader->enable();
-	shader->setUniform2f("light_pos", vec2(4.0f, 1.5f));
-	shader->setUniform1i("myTexture", 0);
-
-	Texture* texture = new Texture("Texture/128/armor.png");
-
-	TileLayer layer(shader);
-	for (float y = -7.0f; y < 7.0f; y += 5)
-	{
-		for (float x = -14.f; x < 14.f; x += 5)
-		{
-			layer.add(new Sprite(x, y, 4.9f, 4.9f, vec4(0.3f, 0.6f, 1.0f, 1.0f), texture));
-		}
-	}
-	
-	glActiveTexture(GL_TEXTURE0);
-	texture->bindTexture();
-
-	Timer timer, t;
-	unsigned int frame = 0;
-	while (!window.closed())
-	{
-		timer.reset();
-
-		window.clear();
-
-		double x, y;
-		window.getMouseCursorPosition(x, y);
-
-		shader->enable();
-		shader->setUniform2f("light_pos", vec2((float)(x * 32.0f / window.getWidth()- 16.0f), (float)(9.0f - y * 18.0f / window.getHeight())));
-
-		//layer.render();
-
-		window.update();
-
-		frame++;
-		if (t.elapsed() > 1.0f)
-		{
-			printf("%d frame\n", frame);
-			frame = 0;
-			t.reset();
-		}
-	}
-
-	return 0;
-}
-#else
 int main()
 {
 	using namespace sparky;
@@ -201,13 +143,15 @@ int main()
 	glEnableVertexAttribArray(1);
 
 	Shader *pShader1 = new Shader("src/shaders/basic.vert", "src/shaders/basic.frag");
-	Shader *pShader2 = new Shader("src/shaders/basic.vert", "src/shaders/basic2.frag");
-
-	Shader* pShaders[2] = { pShader1, pShader2 };
 
 	// Generating a texture
 	Texture *pTexture1 = new Texture("Texture/container.jpg");
 	Texture *pTexture2 = new Texture("Texture/happyface.jpg");
+
+	glActiveTexture(GL_TEXTURE0);
+	pTexture1->bindTexture();
+	glActiveTexture(GL_TEXTURE1);
+	pTexture2->bindTexture();
 
 	pShader1->enable();
 	pShader1->setUniform1i("texture1", 0);
@@ -220,34 +164,9 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		window.clear();
 
-		/*float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-*/
-		//for (int i = 0; i < 2; i++)
-		//{
-		//	pShaders[i]->enable();
-		//	pShaders[i]->setUniform4f("ourColor", vec4(0.0f, greenValue, 0.0f, 1.0f));
-		//	glBindVertexArray(VAO[i]);
-		//	glDrawArrays(GL_TRIANGLES, 0, 3);
-		//	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//}
-
-		glActiveTexture(GL_TEXTURE0);
-		pTexture1->bindTexture();
-		glActiveTexture(GL_TEXTURE1);
-		pTexture2->bindTexture();
-
 		pShader1->setUniform1f("ratio", window.m_MixingRatio);
 
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-		//projection = glm::ortho(-3.0f, 3.0f, -3.0f, 3.0f, -15.0f, 15.0f);
-
-//		pShader1->setUniformMat4("view", view);
-		pShader1->setUniformMat4("projection", projection);
-
 		glBindVertexArray(VBORect);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		for (int i = 0; i < 10; i++)
 		{
 			glm::mat4 model;
@@ -269,7 +188,7 @@ int main()
 			pShader1->setUniformMat4("view", view);
 			pShader1->setUniformMat4("projection", projection);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36); // draw 36 vertices without index buffer
 		}
 
 		float delta = timer.elapsed();
@@ -285,5 +204,5 @@ int main()
 
 	return 0;
 }
-#endif
+
 
