@@ -151,6 +151,7 @@
     <ClInclude Include="src\maths\maths.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
+    <ClInclude Include="src\utils\stb_image.h" />
     <ClInclude Include="src\utils\timer.h" />
   </ItemGroup>
   <ItemGroup>

@@ -56,6 +56,9 @@
     <ClInclude Include="src\graphics\camera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\stb_image.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\lampShader.frag" />

@@ -1,57 +1,48 @@
 #pragma once
 
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <string>
 #include <FreeImage.h>
 #include <iostream>
+#include "stb_image.h"
 
 namespace sparky {
 
 	class ImageLoader
 	{
 	public:
-		static BYTE* load_Image(const char* filename, GLuint* width, GLuint* height)
+		static unsigned char* load_Image(const char* filename, GLuint* width, GLuint* height, GLenum* format, bool tweak = false)
 		{
-			//image format
-			FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-			//pointer to the image, once loaded
-			FIBITMAP *dib = nullptr;
-			//pointer to the image data
-
-			//check the file signature and deduce its format
-			fif = FreeImage_GetFileType(filename, 0);
-			//if still unknown, try to guess the file format from the file extension
-			if (fif == FIF_UNKNOWN)
-				fif = FreeImage_GetFIFFromFilename(filename);
-			//if still unkown, return failure
-			if (fif == FIF_UNKNOWN)
+			int nrComponents;
+			unsigned char *data = stbi_load(filename, (int*)width, (int*)height, &nrComponents, 0);
+			if (data)
 			{
-				std::cout << "Failed to load image" << "\n";
-				return nullptr;
+				switch (nrComponents)
+				{
+				case 1:
+					*format = GL_RED;
+					break;
+				case 3:
+					*format = GL_RGB;
+					break;
+				case 4:
+					*format = GL_RGBA;
+					break;
+				}
 			}
-
-			//check that the plugin has reading capabilities and load the file
-			if (FreeImage_FIFSupportsReading(fif))
-				dib = FreeImage_Load(fif, filename);
-			//if the image failed to load, return failure
-			if (!dib)
+			else
 			{
-				std::cout << "Failed to load image" << "\n";
-				return nullptr;
+				std::cout << "Texture failed to load at path : " << filename << std::endl;
+				stbi_image_free(data);
 			}
+			
+			return data;
+		}
 
-			//retrieve the image data
-			BYTE* bits = FreeImage_GetBits(dib);
-			//get the image width and height
-			*width = FreeImage_GetWidth(dib);
-			*height = FreeImage_GetHeight(dib);
-			//if this somehow one of these failed (they shouldn't), return failure
-			if ((bits == 0) || (width == 0) || (height == 0))
-			{
-				std::cout << "Failed to load image" << "\n";
-				return nullptr;
-			}
-
-			return bits;
+		static void free_image(unsigned char* data)
+		{
+			stbi_image_free(data);
 		}
 	};
 
