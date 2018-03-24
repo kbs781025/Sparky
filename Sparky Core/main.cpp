@@ -128,8 +128,6 @@ int main()
 	Shader *pLightingShader = new Shader("src/shaders/lightingShader.vert", "src/shaders/lightingShader.frag");
 	Shader *pLampShader = new Shader("src/shaders/lampShader.vert", "src/shaders/lampShader.frag");
 
-	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-
 	glEnable(GL_DEPTH_TEST);
 
 	while (!window.closed())
@@ -141,18 +139,33 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 		glm::mat4 model;
 		glm::vec3 lightPosition;
-		lightPosition.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-        lightPosition.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+		lightPosition.x = 2.0f;
+		lightPosition.y = 1.0f;
+		lightPosition.z = 2.0f;
 
 		pLightingShader->enable();
 		pLightingShader->setUniformMat4("model", model);
 		pLightingShader->setUniformMat4("view", view);
 		pLightingShader->setUniformMat4("projection", projection);
 		//pLightingShader->setUniform3f("viewPosition", window.getCamPosition());
-		pLightingShader->setUniform3f("lightColor", lightColor);
 		glm::vec3 newLightPosition = glm::vec3(view * glm::vec4(lightPosition, 1.0f));
-		pLightingShader->setUniform3f("lightPosition", newLightPosition);
-		pLightingShader->setUniform3f("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+		pLightingShader->setUniform3f("light.ambient", ambientColor);
+		pLightingShader->setUniform3f("light.diffuse", diffuseColor);
+		pLightingShader->setUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		pLightingShader->setUniform3f("light.position", glm::vec3(newLightPosition));
+		pLightingShader->setUniform3f("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		pLightingShader->setUniform3f("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		pLightingShader->setUniform3f("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		pLightingShader->setUniform1f("material.shininess", 32.0f);
 		
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
