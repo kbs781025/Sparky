@@ -129,7 +129,6 @@ int main()
 	Shader *pLampShader = new Shader("src/shaders/lampShader.vert", "src/shaders/lampShader.frag");
 
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPosition = glm::vec3(1.2f, 2.0f, 1.5f);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -141,16 +140,18 @@ int main()
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 		glm::mat4 model;
+		glm::vec3 lightPosition;
+		lightPosition.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+        lightPosition.y = sin(glfwGetTime() / 2.0f) * 1.0f;
 
 		pLightingShader->enable();
 		pLightingShader->setUniformMat4("model", model);
 		pLightingShader->setUniformMat4("view", view);
 		pLightingShader->setUniformMat4("projection", projection);
-		pLightingShader->setUniform3f("viewPosition", window.getCamPosition());
+		//pLightingShader->setUniform3f("viewPosition", window.getCamPosition());
 		pLightingShader->setUniform3f("lightColor", lightColor);
-		//glm::vec3 newLightPosition = glm::vec3(view * glm::vec4(lightPosition, 1.0f));
-		//pLightingShader->setUniform3f("lightPosition", newLightPosition);
-		pLightingShader->setUniform3f("lightPosition", lightPosition);
+		glm::vec3 newLightPosition = glm::vec3(view * glm::vec4(lightPosition, 1.0f));
+		pLightingShader->setUniform3f("lightPosition", newLightPosition);
 		pLightingShader->setUniform3f("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		
 		glBindVertexArray(cubeVAO);
