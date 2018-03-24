@@ -41,6 +41,7 @@ namespace sparky {  namespace graphics {
 		void zoomCamera(float xoffset, float yoffset);
 		glm::mat4 getViewMatrix() const { return m_Camera.getViewMatrix(); }
 		glm::vec3 getTarget() const { return m_Camera.getTarget(); }
+		glm::vec3 getCamPosition() const { return m_Camera.getCameraPosition(); }
 
 		bool isKeyPressed(unsigned int keycode) const;
 		bool isMouseButtonPressed(unsigned int button) const;

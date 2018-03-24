@@ -76,7 +76,6 @@ namespace sparky { namespace graphics
 	void Camera::lookAt()
 	{
 		lookAt(m_Position, m_Target);
-		//m_ViewMatrix = glm::lookAt(m_Position, m_Target, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	void Camera::moveCamera(float frameTime, int key)
@@ -108,7 +107,7 @@ namespace sparky { namespace graphics
 		newPitch = m_Angle.x + deltaY * sensitivity;
 		newYaw = m_Angle.y - deltaX * sensitivity;
 		
-		std::cout << newPitch << " " << newYaw << std::endl;
+		//std::cout << newPitch << " " << newYaw << std::endl;
 
 		if (newPitch >= 89.9f)
 		{

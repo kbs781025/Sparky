@@ -58,8 +58,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\basic.frag" />
-    <None Include="src\shaders\basic.vert" />
-    <None Include="src\shaders\basic2.frag" />
+    <None Include="src\shaders\lampShader.frag" />
+    <None Include="src\shaders\lightingShader.frag" />
+    <None Include="src\shaders\lightingShader.vert" />
+    <None Include="src\shaders\lampShader.vert" />
   </ItemGroup>
 </Project>
