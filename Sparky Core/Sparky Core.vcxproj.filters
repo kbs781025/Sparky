@@ -65,5 +65,7 @@
     <None Include="src\shaders\lightingShader.frag" />
     <None Include="src\shaders\lightingShader.vert" />
     <None Include="src\shaders\lampShader.vert" />
+    <None Include="src\shaders\lineShader.vert" />
+    <None Include="src\shaders\lineShader.frag" />
   </ItemGroup>
 </Project>

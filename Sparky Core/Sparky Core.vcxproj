@@ -159,6 +159,8 @@
     <None Include="src\shaders\lightingShader.frag" />
     <None Include="src\shaders\lightingShader.vert" />
     <None Include="src\shaders\lampShader.frag" />
+    <None Include="src\shaders\lineShader.frag" />
+    <None Include="src\shaders\lineShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

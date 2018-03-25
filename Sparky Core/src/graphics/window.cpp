@@ -19,6 +19,8 @@ namespace sparky { namespace graphics {
 	}
 
 	Window::Window(const char * title, int width, int height)
+		:
+		m_Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 	{
 		m_Title = title;
 		m_Width = width;
@@ -69,7 +71,6 @@ namespace sparky { namespace graphics {
 		}
 
 		processInput(delta);
-		m_Camera.lookAt();
 
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
