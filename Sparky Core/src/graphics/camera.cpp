@@ -67,7 +67,7 @@ namespace sparky { namespace graphics
 		matPitch = glm::rotate(matPitch, glm::radians(m_Pitch), glm::vec3(1.0f, 0.0f, 0.0f));
 		//matRoll = glm::rotate(matRoll, glm::radians(m_Roll), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		//glm::mat4 matRotate = glm::transpose(matRoll * matPitch * matYaw); // Rotation order : roll -> pitch -> yaw
+		//glm::mat4 matRotate = glm::transpose(matYaw * matPitch * matRoll); // Rotation order : roll -> pitch -> yaw
 		glm::mat4 matRotate = glm::transpose(matYaw * matPitch); // Rotation order : roll -> pitch -> yaw
 
 		glm::mat4 matTranslate;
