@@ -8,47 +8,31 @@ namespace sparky { namespace graphics
 
 	Camera::Camera()
 		:
-		m_Distance(5.0f),
 		m_Position(glm::vec3(0.0f, 0.0f, 5.0f)),
-		m_Target(glm::vec3(0.0f, 0.0f, 0.0f)),
-		m_Angle(glm::vec3(0.0f, 0.0f, 0.0f)),
+		m_Roll(0.0f), m_Pitch(0.0f), m_Yaw(0.0f),
 		m_ViewMatrix(glm::mat4()),
 		m_Forward(glm::vec3(0.0f, 0.0f, -1.0f))
 	{
 	}
 
-	Camera::Camera(const glm::vec3 & position, const glm::vec3 & target, const glm::vec3 & up)
+	Camera::Camera(const glm::vec3 & position, const glm::vec3 & up)
 		:
-		m_Distance(5.0f),
 		m_Position(position),
-		m_Target(target),
+		m_Roll(0.0f), m_Pitch(0.0f), m_Yaw(0.0f),
 		m_Forward(glm::vec3(0.0f, 0.0f, -1.0f))
 	{
-		lookAt(m_Position, m_Target, up);
+		lookAt(m_Position, glm::vec3(0.0f, 0.0f, 0.0f), up);
 	}
 
 	void Camera::setPosition(const glm::vec3 & pos)
 	{
 		m_Position = pos;
-		m_Target = m_Position + m_Forward * m_Distance;
+		updateView();
 	}
 
 	void Camera::setPosition(float x, float y, float z)
 	{
 		setPosition(glm::vec3(x, y, z));
-	}
-
-	void Camera::setRotation(const glm::vec3 & angle)
-	{
-		m_Angle = angle;
-		m_Forward = rotateForward();
-		//std::cout << m_Forward.x << " " << m_Forward.y << " " << m_Forward.z << std::endl;
-		m_Target = m_Position + m_Forward * m_Distance;
-	}
-
-	void Camera::setRotation(float pitch, float yaw, float roll)
-	{
-		setRotation(glm::vec3(pitch, yaw, roll));
 	}
 
 	void Camera::lookAt(const glm::vec3 & position, const glm::vec3 & target, const glm::vec3 & upDir)
@@ -73,83 +57,82 @@ namespace sparky { namespace graphics
 		lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
-	void Camera::lookAt()
+	void Camera::updateView()
 	{
-		lookAt(m_Position, m_Target);
+		glm::mat4 matYaw;
+		glm::mat4 matPitch;
+		glm::mat4 matRoll;
+
+		matYaw = glm::rotate(matYaw, glm::radians(m_Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+		matPitch = glm::rotate(matPitch, glm::radians(m_Pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+		//matRoll = glm::rotate(matRoll, glm::radians(m_Roll), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		//glm::mat4 matRotate = glm::transpose(matRoll * matPitch * matYaw); // Rotation order : roll -> pitch -> yaw
+		glm::mat4 matRotate = glm::transpose(matYaw * matPitch); // Rotation order : roll -> pitch -> yaw
+
+		glm::mat4 matTranslate;
+		matTranslate = glm::translate(matTranslate, -m_Position);
+
+		m_ViewMatrix = matRotate * matTranslate;
+
+		m_Forward = -glm::vec3(matRotate[0][2], matRotate[1][2], matRotate[2][2]);
+		m_Forward = glm::normalize(m_Forward);
 	}
 
 	void Camera::moveCamera(float frameTime, int key)
 	{
-		glm::vec3 rightVec = glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), -m_Forward);
-
+		glm::vec3 rightVec = glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f));
+		float moveAmout = m_CameraSpeed * frameTime;
+		float dx = 0, dz = 0;
 		switch (key)
 		{
 		case GLFW_KEY_W:
-			setPosition(m_Position + m_Forward * frameTime * m_CameraSpeed);
+			dz++;
 			break;
 		case GLFW_KEY_A:
-			setPosition(m_Position - rightVec * frameTime * m_CameraSpeed);
+			dx--;
 			break;
 		case GLFW_KEY_S:
-			setPosition(m_Position - m_Forward * frameTime * m_CameraSpeed);
+			dz--;
 			break;
 		case GLFW_KEY_D:
-			setPosition(m_Position + rightVec * frameTime * m_CameraSpeed);
+			dx++;
 			break;
 		}
+		setPosition(m_Position + (m_Forward * dz + rightVec * dx) * moveAmout);
 	}
 
 	void Camera::rotateCamera(float deltaX, float deltaY)
 	{
 		float sensitivity = 0.1f;
 
-		float newPitch, newYaw;
-		newPitch = m_Angle.x + deltaY * sensitivity;
-		newYaw = m_Angle.y - deltaX * sensitivity;
-		
-		//std::cout << newPitch << " " << newYaw << std::endl;
+		float pitchOffset = sensitivity * deltaY;
+		float yawOffset = sensitivity * deltaX;
 
-		if (newPitch >= 89.9f)
-		{
-			newPitch = 89.9f;
-		}
-		else if (newPitch <= -89.9f)
-		{
-			newPitch = -89.9f;
-		}
+		m_Pitch += pitchOffset;
+		m_Yaw-= yawOffset; 
 
-		if (newYaw > 90.0f)
+		std::cout << m_Pitch << " " << m_Yaw << std::endl;
+
+		if (m_Pitch >= 89.9f)
 		{
-			newYaw -= 90.0f;
+			m_Pitch = 89.9f;
+		}
+		else if (m_Pitch <= -89.8f)
+		{
+			m_Pitch = -89.8f;
 		}
 
-		setRotation(glm::vec3(newPitch, newYaw, 0.0f));
-	}
+		if (m_Yaw >= 180.0f)
+		{
+			m_Yaw = -180.0f;
+		}
+		else if (m_Yaw <= -180.0f)
+		{
+			m_Yaw = 180.0f;
+		}
 
-	// Rotate camera to target vector
-	// The order of rotation is Roll->Yaw->Pitch (Rx*Ry*Rz)
-	// Rx: rotation about X-axis, pitch
-	// Ry: rotation about Y-axis, yaw(heading)
-	// Rz: rotation about Z-axis, roll
-	//    Rx           Ry          Rz
-	// |1  0   0| | Cy  0 Sy| |Cz -Sz 0|   | CyCz        -CySz         Sy  |
-	// |0 Cx -Sx|*|  0  1  0|*|Sz  Cz 0| = | SxSyCz+CxSz -SxSySz+CxCz -SxCy|
-	// |0 Sx  Cx| |-Sy  0 Cy| | 0   0 1|   |-CxSyCz+SxSz  CxSySz+SxCz  CxCy|
-	glm::vec3 Camera::rotateForward()
-	{
-		glm::vec3 newForward;
-		float cx, sx, cy, sy;
-
-		cx = cos(glm::radians(m_Angle.x));
-		sx = sin(glm::radians(m_Angle.x));
-		cy = cos(glm::radians(m_Angle.y));
-		sy = sin(glm::radians(m_Angle.y));
-
-		newForward.x = -sy;
-		newForward.y = sx * cy;
-		newForward.z = -cx * cy;
-
-		return newForward;
+		updateView();
 	}
 }
 }
