@@ -21,32 +21,69 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform1f(const GLchar * name, float value)
 	{
-		glUniform1f(getUniformLocation(name), value);
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+
+		glUniform1f(uniformLocation, value);
 	}
 
 	void Shader::setUniform1i(const GLchar * name, int value)
 	{
-		glUniform1i(getUniformLocation(name), value);
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+		glUniform1i(uniformLocation, value);
 	}
 
 	void Shader::setUniform2f(const GLchar * name, const glm::vec2 & value)
 	{
-		glUniform2f(getUniformLocation(name), value.x, value.y);
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+		glUniform2f(uniformLocation, value.x, value.y);
 	}
 
 	void Shader::setUniform3f(const GLchar * name, const glm::vec3 & value)
 	{
-		glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+		glUniform3f(uniformLocation, value.x, value.y, value.z);
 	}
 
 	void Shader::setUniform4f(const GLchar * name, const glm::vec4 & value)
 	{
-		glUniform4f(getUniformLocation(name), value.x, value.y, value.z, value.w);
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+		glUniform4f(uniformLocation, value.x, value.y, value.z, value.w);
 	}
 
 	void Shader::setUniformMat4(const GLchar * name, const glm::mat4 & matrix)
 	{
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
+		GLint uniformLocation = getUniformLocation(name);
+		if (uniformLocation < 0)
+		{
+			std::cout << "Unable to find uniform : " << name << std::endl;
+			return;
+		}
+		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
 	void Shader::enable() const

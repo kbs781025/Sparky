@@ -32,6 +32,33 @@ void setPoint(const glm::vec3& point, const glm::vec3& color, std::vector<float>
 	vector[pointIndex + 5] = color.z;
 }
 
+void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, const glm::vec3& position, 
+							const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, 
+							float constant, float linear, float quadratic)
+{
+	std::string leftStr = "pointLights[";
+
+	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].position").c_str(), position);
+	leftStr = "pointLights[";
+
+	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].ambient").c_str(), ambient);
+	leftStr = "pointLights[";
+
+	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].diffuse").c_str(), diffuse);
+	leftStr = "pointLights[";
+
+	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].specular").c_str(), specular);
+	leftStr = "pointLights[";
+
+	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].constant").c_str(), constant);
+	leftStr = "pointLights[";
+
+	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].linear").c_str(), linear);
+	leftStr = "pointLights[";
+
+	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].quadratic").c_str(), quadratic);
+}
+
 #define NOSHOW
 int main()
 {
@@ -107,6 +134,21 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	glm::vec3 pointLightPositions[] =
+	{
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+	glm::vec3 pointLightColors[] = {
+		glm::vec3(0.1f, 0.1f, 0.1f),
+		glm::vec3(0.1f, 0.1f, 0.1f),
+		glm::vec3(0.1f, 0.1f, 0.1f),
+		glm::vec3(0.3f, 0.1f, 0.1f)
+	};
+
 	unsigned int cubeVAO, VBO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &VBO);
@@ -129,39 +171,6 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	std::vector<float> linePoints;
-	linePoints.resize(6 * 6);
-	setPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), linePoints, 0);
-	setPoint(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), linePoints, 1);
-	setPoint(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), linePoints, 2);
-	setPoint(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 1.0f), linePoints, 3);
-	setPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), linePoints, 4);
-	setPoint(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), linePoints, 5);
-
-	unsigned int lineIndices[] =
-	{
-		0, 1,
-		0, 2,
-		0, 3,
-		4, 5
-	};
-
-	unsigned int lineVAO, lineVBO, lineEBO;
-	glGenVertexArrays(1, &lineVAO);
-	glGenBuffers(1, &lineVBO);
-	glGenBuffers(1, &lineEBO);
-
-	glBindVertexArray(lineVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-	glBufferData(GL_ARRAY_BUFFER, linePoints.size() * sizeof(GL_FLOAT), nullptr, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(0));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lineIndices), lineIndices, GL_DYNAMIC_DRAW);
-
 	Shader *pLightingShader = new Shader("src/shaders/lightingShader.vert", "src/shaders/lightingShader.frag");
 	Shader *pLampShader = new Shader("src/shaders/lampShader.vert", "src/shaders/lampShader.frag");
 	Shader *pLineShader = new Shader("src/shaders/lineShader.vert", "src/shaders/lineShader.frag");
@@ -170,17 +179,35 @@ int main()
 	Texture *pSpecularMap= new Texture("Texture/container2_specular.png");
 	Texture *pEmissiomMap = new Texture("Texture/matrix.jpg");
 
+	// material uniform setting
 	pLightingShader->enable();
 	pLightingShader->setUniform1i("material.diffuse", 0);
 	pLightingShader->setUniform1i("material.specular", 1); // if you use Uniform1f, you will get an error 1282.
-	//pLightingShader->setUniform1i("material.emission", 2);
-	
+	pLightingShader->setUniform1f("material.shininess", 32.0f);
+
+	// pointlight uniform setting
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 diffuseColor = lightColor * glm::vec3(0.05f);
+	glm::vec3 ambientColor = lightColor * glm::vec3(0.0f);
+	glm::vec3 specularColor = glm::vec3(0.2f);
+
+	for (int i = 0; i < 4; i++)
+	{
+		setPointLightUniforms(pLightingShader, i, pointLightPositions[i], pointLightColors[i] * 0.1f, pointLightColors[i], pointLightColors[i], 1.0f, 0.14f, 0.07f);
+	}
+
+	// Directional light from camera position uniform setting
+	pLightingShader->setUniform3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f)); 
+	pLightingShader->setUniform3f("dirLight.ambient", ambientColor);
+	pLightingShader->setUniform3f("dirLight.diffuse", diffuseColor);
+	pLightingShader->setUniform3f("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+
 	glEnable(GL_DEPTH_TEST);
 	float time = 0.0f;
 
 	while (!window.closed())
 	{
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		window.clear();
 
 		glm::mat4 view = window.getViewMatrix();
@@ -188,16 +215,7 @@ int main()
 		pLightingShader->enable();
 		pLightingShader->setUniformMat4("view", view);
 		pLightingShader->setUniformMat4("projection", projection);
-
-		glm::vec3 lightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
-		//glm::vec3 lightPosition = window.getCamPosition();
-		//glm::vec3 lightPositioninView = glm::vec3(view * glm::vec4(lightPosition, 1.0f)); // light position in view coordinates
-		glm::vec3 lightPositioninView = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-		
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
-		glm::vec3 specularColor = glm::vec3(1.0f);
+		pLightingShader->setUniform3f("viewPos", window.getCamPosition());
 
 		#ifdef SHOW
 		//moveLightPosition(lightPosition);
@@ -207,19 +225,6 @@ int main()
 			time = 0.0f;
 		pLightingShader->setUniform1f("time", time);
 		#endif
-
-		pLightingShader->setUniform3f("light.position", lightPositioninView);
-		pLightingShader->setUniform3f("light.direction", window.getForward());
-		pLightingShader->setUniform1f("light.cutOff", glm::cos(glm::radians(12.5f)));
-		pLightingShader->setUniform1f("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-		pLightingShader->setUniform3f("light.ambient", ambientColor);
-		pLightingShader->setUniform3f("light.diffuse", diffuseColor);
-		pLightingShader->setUniform3f("light.specular", specularColor);
-		pLightingShader->setUniform1f("light.constant", 1.0f);
-		pLightingShader->setUniform1f("light.linear", 0.09f);
-		pLightingShader->setUniform1f("light.quadratic", 0.032f);
-
-		pLightingShader->setUniform1f("material.shininess", 32.0f);
 
 		glActiveTexture(GL_TEXTURE0);
 		pDiffuseMap->bindTexture();
@@ -238,30 +243,21 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		glm::mat4 lightModel;
-		lightModel = glm::translate(lightModel, lightPosition);
-		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-
 		pLampShader->enable();
-		pLampShader->setUniformMat4("model", lightModel);
 		pLampShader->setUniformMat4("view", view);
 		pLampShader->setUniformMat4("projection", projection);
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 lightModel;
+			lightModel = glm::translate(lightModel, pointLightPositions[i]);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			pLampShader->setUniformMat4("model", lightModel);
+			pLampShader->setUniform3f("lightColor", pointLightColors[i]);
 
-		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		pLineShader->enable();
-		pLineShader->setUniformMat4("view", view);
-		pLineShader->setUniformMat4("projection", projection);
-		setPoint(window.getCamPosition() - glm::vec3(0.0f, 0.0f, 0.001f), glm::vec3(1.0f, 0.0f, 0.0f), linePoints, 4);
-		setPoint(window.getForward() + window.getCamPosition(), glm::vec3(0.0f, 1.0f, 0.0f), linePoints, 5);
+			glBindVertexArray(lightVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		
-		glBindVertexArray(lineVAO);
-		//glBufferSubData(GL_ARRAY_BUFFER, 4 * 6 * sizeof(GL_FLOAT), 2 * 6 * sizeof(GL_FLOAT), &linePoints[24]);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, linePoints.size() * sizeof(GL_FLOAT), linePoints.data());
-		glLineWidth(5.0f);
-		glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
-
 		float delta = timer.elapsed();
 		window.update(delta);
 

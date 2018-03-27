@@ -112,8 +112,6 @@ namespace sparky { namespace graphics
 		m_Pitch += pitchOffset;
 		m_Yaw-= yawOffset; 
 
-		std::cout << m_Pitch << " " << m_Yaw << std::endl;
-
 		if (m_Pitch >= 89.9f)
 		{
 			m_Pitch = 89.9f;
