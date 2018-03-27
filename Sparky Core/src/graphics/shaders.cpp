@@ -9,7 +9,8 @@ namespace sparky { namespace graphics {
 	Shader::Shader(const char * vertexPath, const char * fragPath)
 		:
 		m_VertPath(vertexPath),
-		m_FragPath(fragPath)
+		m_FragPath(fragPath),
+		m_Enabled(false)
 	{
 		m_ShaderID = load();
 	}
@@ -21,6 +22,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform1f(const GLchar * name, float value)
 	{
+		if(!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -33,6 +40,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform1i(const GLchar * name, int value)
 	{
+		if (!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -44,6 +57,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform2f(const GLchar * name, const glm::vec2 & value)
 	{
+		if (!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -55,6 +74,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform3f(const GLchar * name, const glm::vec3 & value)
 	{
+		if (!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -66,6 +91,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform4f(const GLchar * name, const glm::vec4 & value)
 	{
+		if (!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -77,6 +108,12 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniformMat4(const GLchar * name, const glm::mat4 & matrix)
 	{
+		if (!m_Enabled)
+		{
+			std::cout << "Shader is not enabled." << std::endl;
+			return;
+		}
+
 		GLint uniformLocation = getUniformLocation(name);
 		if (uniformLocation < 0)
 		{
@@ -86,14 +123,16 @@ namespace sparky { namespace graphics {
 		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	void Shader::enable() const
+	void Shader::enable()
 	{
 		glUseProgram(m_ShaderID);
+		m_Enabled = true;
 	}
 
-	void Shader::disable() const
+	void Shader::disable()
 	{
 		glUseProgram(0);
+		m_Enabled = false;
 	}
 
 	GLuint Shader::load()

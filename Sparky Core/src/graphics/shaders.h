@@ -11,6 +11,7 @@ namespace sparky { namespace graphics {
 		GLuint m_ShaderID;
 		const char* m_VertPath;
 		const char* m_FragPath;
+		bool m_Enabled;
 	public:
 		Shader(const char* vertexPath, const char* fragPath);
 		~Shader();
@@ -23,8 +24,8 @@ namespace sparky { namespace graphics {
 		void setUniform4f(const GLchar* name, const glm::vec4& value);
 		void setUniformMat4(const GLchar* name, const glm::mat4& matrix);
 
-		void enable() const;
-		void disable() const;
+		void enable();
+		void disable();
 	private:
 		GLuint load();
 		GLint getUniformLocation(const GLchar* name);
