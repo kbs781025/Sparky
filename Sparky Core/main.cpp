@@ -203,6 +203,7 @@ int main()
 	pLightingShader->setUniform3f("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
 	glEnable(GL_DEPTH_TEST);
+	
 	float time = 0.0f;
 
 	while (!window.closed())
