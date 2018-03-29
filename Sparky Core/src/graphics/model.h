@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "shaders.h"
 #include "mesh.h"
 #include "texture.h"

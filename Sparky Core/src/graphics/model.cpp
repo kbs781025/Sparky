@@ -1,6 +1,4 @@
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+
 #include <iostream>
 #include "model.h"
 #include "../maths/maths.h"
@@ -121,7 +119,7 @@ namespace sparky { namespace graphics {
 
 			if (!skip)
 			{
-				std::string filePath = m_Directory + std::string(str.C_Str());
+				std::string filePath = m_Directory + '/' + std::string(str.C_Str());
 				Texture texture(filePath, typeName);
 				textures.push_back(texture);
 				m_LoadedTextures.push_back(texture);
