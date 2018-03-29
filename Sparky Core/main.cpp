@@ -3,10 +3,10 @@
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
 #include "src/graphics/texture.h"
+#include "src/graphics/model.h"
 
 #include <time.h>
 #include <vector>
-
 
 void moveLightPosition(glm::vec3& lightPos)
 {
@@ -60,6 +60,8 @@ void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, c
 }
 
 #define NOSHOW
+#define MODEL_IMPORT
+#ifndef MODEL_IMPORT
 int main()
 {
 	using namespace sparky;
@@ -272,5 +274,71 @@ int main()
 
 	return 0;
 }
+#else
+int main()
+{
+	using namespace sparky;
+	using namespace graphics;
+
+	Window window("Sparky", 800, 600);
+	Model nanosuit("Texture/nanosuit/nanosuit.obj");
+	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
+
+	glm::vec3 pointLightPositions[] =
+	{
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+	glm::vec3 pointLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	modelShader.enable();
+	for (int i = 0; i < 4; i++)
+	{
+		setPointLightUniforms(&modelShader, i, pointLightPositions[i],
+							  pointLightColor * 0.1f, pointLightColor, pointLightColor,
+							  1.0f, 0.14f, 0.07f);
+	}
+
+	Timer timer, t;
+	unsigned int frame = 0;
+
+	float time = 0.0f;
+
+	while (!window.closed())
+	{
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		window.clear();
+
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, -10.0f, 0.0f));
+		glm::mat4 view = window.getViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+		modelShader.setUniformMat4("model", model);
+		modelShader.setUniformMat4("view", view);
+		modelShader.setUniformMat4("projection", projection);
+		modelShader.setUniform3f("viewPos", window.getCamPosition());
+
+		nanosuit.Draw(modelShader);
+	
+		float delta = timer.elapsed();
+		window.update(delta);
+
+		// FPS Timer block
+		{
+			frame++;
+			if (t.cyclicTimer(1.0f))
+			{
+				printf("%d frame\n", frame);
+				frame = 0;
+			}
+		}
+	}
+
+	return 0;
+}
+#endif
 
 
