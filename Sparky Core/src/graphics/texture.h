@@ -26,6 +26,7 @@ namespace sparky { namespace graphics {
 		inline const unsigned int getWidth() { return m_Width; }
 		inline const unsigned int getHeight() { return m_Height; }
 		inline const std::string getType() { return m_Type; }
+		inline const std::string getPath() { return m_Path; }
 	};
 
 }}

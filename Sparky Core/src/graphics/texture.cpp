@@ -26,6 +26,14 @@ namespace sparky { namespace graphics {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	Texture::Texture(const std::string & filename, const std::string & textureType, GLuint wrapMethod, GLuint filterMethod)
+		:
+		m_Path(filename),
+		m_Type(textureType)
+	{
+		loadTexture(filename, wrapMethod, filterMethod);
+	}
+
 	Texture::Texture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod)
 		:
 		m_Path(filename)
