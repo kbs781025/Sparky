@@ -283,10 +283,11 @@ int main()
 	Window window("Sparky", 800, 600);
 	Model nanosuit("Texture/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
+	//Shader lightingShader = Shader("src/shaders/lightingShader.vert", "src/shaders/lightingShader.frag");
 
 	glm::vec3 pointLightPositions[] =
 	{
-		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(5.0f,  5.0f,  5.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
@@ -298,9 +299,11 @@ int main()
 	for (int i = 0; i < 4; i++)
 	{
 		setPointLightUniforms(&modelShader, i, pointLightPositions[i],
-							  pointLightColor * 0.1f, pointLightColor, pointLightColor,
-							  1.0f, 0.14f, 0.07f);
+							  pointLightColor * 0.2f , pointLightColor * 0.7f, pointLightColor * 1.0f,
+							  1.0f, 0.007f, 0.0002f);
 	}
+
+	glEnable(GL_DEPTH_TEST);
 
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -309,11 +312,11 @@ int main()
 
 	while (!window.closed())
 	{
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		window.clear();
 
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -10.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 		modelShader.setUniformMat4("model", model);

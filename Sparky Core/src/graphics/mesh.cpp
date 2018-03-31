@@ -38,6 +38,8 @@ namespace sparky { namespace graphics {
 		glBindVertexArray(m_VAO);
 		glDrawElements(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE0);
 	}
 
 	void Mesh::setupMesh()
@@ -57,7 +59,7 @@ namespace sparky { namespace graphics {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Position)));
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Position)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Normal)));
 
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_TexCoord)));
