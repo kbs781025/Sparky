@@ -23,7 +23,7 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoord;
 
-#define NR_POINT_LIGHTS 2
+#define NR_POINT_LIGHTS 4
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform Material material;
 uniform vec3 viewPos;
@@ -54,8 +54,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 	vec3 diffuse = diffuseIntensity * light.diffuse * vec3(texture(material.texture_diffuse1, TexCoord));
 
 	vec3 reflectDir = reflect(-lightDir, normal);
-	//vec3 viewDir = viewPos - FragPos;
-	float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
+	float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), 32);
 	vec3 specular = light.specular * specularIntensity * vec3(texture(material.texture_specular1, TexCoord));
 
 	float dist = length(light.position - FragPos);

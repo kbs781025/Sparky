@@ -283,7 +283,6 @@ int main()
 	Window window("Sparky", 800, 600);
 	Model nanosuit("Texture/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
-	//Shader lightingShader = Shader("src/shaders/lightingShader.vert", "src/shaders/lightingShader.frag");
 
 	glm::vec3 pointLightPositions[] =
 	{
