@@ -60,7 +60,7 @@ void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, c
 }
 
 #define NOSHOW
-#define MODEL_IMPORT
+//#define MODEL_IMPORT
 #ifndef MODEL_IMPORT
 int main()
 {
@@ -73,47 +73,58 @@ int main()
 	unsigned int frame = 0;
 
 	float cubeVertex[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	};
+
+	float planeVertices[] = {
+		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+		5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+		5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 	};
 
 	unsigned int indicies[] =
@@ -124,87 +135,43 @@ int main()
 
 	glm::vec3 cubePositions[] =
 	{
-		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(0.0f,  0.001f,  0.0f),
 		glm::vec3(2.0f,  5.0f, -15.0f),
 		glm::vec3(-1.5f, -2.2f, -2.5f),
 		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	glm::vec3 pointLightPositions[] =
-	{
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
-	};
-
-	glm::vec3 pointLightColors[] = {
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.3f, 0.1f, 0.1f)
-	};
-
-	unsigned int cubeVAO, VBO;
+	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &cubeVBO);
 
 	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertex), cubeVertex, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(2);
 
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
+	unsigned int planeVAO, planeVBO;
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1, &planeVBO);
 
-	glBindVertexArray(lightVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	Shader *pLightingShader = new Shader("src/shaders/lightingShader.vert", "src/shaders/lightingShader.frag");
-	Shader *pLampShader = new Shader("src/shaders/lampShader.vert", "src/shaders/lampShader.frag");
-	Shader *pLineShader = new Shader("src/shaders/lineShader.vert", "src/shaders/lineShader.frag");
-
-	Texture *pDiffuseMap = new Texture("Texture/container2.png");
-	Texture *pSpecularMap= new Texture("Texture/container2_specular.png");
-	Texture *pEmissiomMap = new Texture("Texture/matrix.jpg");
-
-	// material uniform setting
-	pLightingShader->enable();
-	pLightingShader->setUniform1i("material.diffuse", 0);
-	pLightingShader->setUniform1i("material.specular", 1); // if you use Uniform1f, you will get an error 1282.
-	pLightingShader->setUniform1f("material.shininess", 32.0f);
-
-	// pointlight uniform setting
-	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec3 diffuseColor = lightColor * glm::vec3(0.05f);
-	glm::vec3 ambientColor = lightColor * glm::vec3(0.0f);
-	glm::vec3 specularColor = glm::vec3(0.2f);
-
-	for (int i = 0; i < 4; i++)
-	{
-		setPointLightUniforms(pLightingShader, i, pointLightPositions[i], pointLightColors[i] * 0.1f, pointLightColors[i], pointLightColors[i], 1.0f, 0.14f, 0.07f);
-	}
-
-	// Directional light from camera position uniform setting
-	pLightingShader->setUniform3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f)); 
-	pLightingShader->setUniform3f("dirLight.ambient", ambientColor);
-	pLightingShader->setUniform3f("dirLight.diffuse", diffuseColor);
-	pLightingShader->setUniform3f("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(1);
+	
+	glBindVertexArray(0);
 
 	glEnable(GL_DEPTH_TEST);
+
+	Shader depthTest = Shader("src/shaders/depthTest.vert", "src/shaders/depthTest.frag");
+	Texture cubeTexture = Texture("Texture/container2.png");
+	Texture planeTexture = Texture("Texture/floor.jpg");
 	
 	float time = 0.0f;
 
@@ -215,10 +182,28 @@ int main()
 
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-		pLightingShader->enable();
-		pLightingShader->setUniformMat4("view", view);
-		pLightingShader->setUniformMat4("projection", projection);
-		pLightingShader->setUniform3f("viewPos", window.getCamPosition());
+		
+		depthTest.enable();
+		depthTest.setUniform1i("texture1", 0);
+
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			glm::mat4 MVP = projection * view * model;
+			depthTest.setUniformMat4("MVP", MVP);
+			glActiveTexture(GL_TEXTURE0);
+			cubeTexture.bindTexture();
+			glBindVertexArray(cubeVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+		}
+
+		glm::mat4 model;
+		glm::mat4 MVP = projection * view * model;
+		depthTest.setUniformMat4("MVP", MVP);
+		planeTexture.bindTexture();
+		glBindVertexArray(planeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 
 		#ifdef SHOW
 		//moveLightPosition(lightPosition);
@@ -228,38 +213,6 @@ int main()
 			time = 0.0f;
 		pLightingShader->setUniform1f("time", time);
 		#endif
-
-		glActiveTexture(GL_TEXTURE0);
-		pDiffuseMap->bindTexture();
-		glActiveTexture(GL_TEXTURE1);
-		pSpecularMap->bindTexture();
-
-		for (int i = 0; i < 10; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			float angle = i * 20;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			pLightingShader->enable();
-			pLightingShader->setUniformMat4("model", model);
-			glBindVertexArray(cubeVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		pLampShader->enable();
-		pLampShader->setUniformMat4("view", view);
-		pLampShader->setUniformMat4("projection", projection);
-		for (int i = 0; i < 4; i++)
-		{
-			glm::mat4 lightModel;
-			lightModel = glm::translate(lightModel, pointLightPositions[i]);
-			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-			pLampShader->setUniformMat4("model", lightModel);
-			pLampShader->setUniform3f("lightColor", pointLightColors[i]);
-
-			glBindVertexArray(lightVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
 		
 		float delta = timer.elapsed();
 		window.update(delta);

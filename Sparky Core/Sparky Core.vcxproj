@@ -159,6 +159,8 @@
     <ClInclude Include="src\utils\timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shaders\depthTest.frag" />
+    <None Include="src\shaders\depthTest.vert" />
     <None Include="src\shaders\lampShader.vert" />
     <None Include="src\shaders\lightingShader.frag" />
     <None Include="src\shaders\lightingShader.vert" />
