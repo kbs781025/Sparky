@@ -168,8 +168,10 @@ int main()
 	glBindVertexArray(0);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
 
 	Shader depthTest = Shader("src/shaders/depthTest.vert", "src/shaders/depthTest.frag");
+	Shader border = Shader("src/shaders/depthTest.vert", "src/shaders/lineShader.frag");
 	Texture cubeTexture = Texture("Texture/container2.png");
 	Texture planeTexture = Texture("Texture/floor.jpg");
 	
@@ -186,6 +188,19 @@ int main()
 		depthTest.enable();
 		depthTest.setUniform1i("texture1", 0);
 
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilMask(0x00);
+
+		glm::mat4 model;
+		glm::mat4 MVP = projection * view * model;
+		depthTest.setUniformMat4("MVP", MVP);
+		planeTexture.bindTexture();
+		glBindVertexArray(planeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
+
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilMask(0xFF);
+
 		for (int i = 0; i < 4; i++)
 		{
 			glm::mat4 model;
@@ -198,12 +213,26 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 		}
 
-		glm::mat4 model;
-		glm::mat4 MVP = projection * view * model;
-		depthTest.setUniformMat4("MVP", MVP);
-		planeTexture.bindTexture();
-		glBindVertexArray(planeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
+		glDisable(GL_DEPTH_TEST);
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		border.enable();
+
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			model = glm::scale(model, glm::vec3(1.2f));
+			glm::mat4 MVP = projection * view * model;
+			depthTest.setUniformMat4("MVP", MVP);
+			glActiveTexture(GL_TEXTURE0);
+			cubeTexture.bindTexture();
+			glBindVertexArray(cubeVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+		}
+
+		glStencilMask(0xFF);
+		glEnable(GL_DEPTH_TEST);
 
 		#ifdef SHOW
 		//moveLightPosition(lightPosition);

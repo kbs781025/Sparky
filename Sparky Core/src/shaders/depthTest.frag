@@ -17,6 +17,5 @@ float calcDepth(float depthNDC)
 
 void main()
 {
-	//FragColor = texture(texture1, TexCoord);
-	FragColor = vec4(vec3(calcDepth(gl_FragCoord.z)), 1.0);
+	FragColor = texture(texture1, TexCoord);
 }
