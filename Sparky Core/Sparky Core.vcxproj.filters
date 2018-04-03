@@ -83,5 +83,7 @@
     <None Include="src\shaders\modelShader.frag" />
     <None Include="src\shaders\depthTest.vert" />
     <None Include="src\shaders\depthTest.frag" />
+    <None Include="src\shaders\blendShader.vert" />
+    <None Include="src\shaders\blendShader.frag" />
   </ItemGroup>
 </Project>

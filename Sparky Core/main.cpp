@@ -7,6 +7,7 @@
 
 #include <time.h>
 #include <vector>
+#include <map>
 
 void moveLightPosition(glm::vec3& lightPos)
 {
@@ -127,6 +128,23 @@ int main()
 		5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 	};
 
+	float quadVertex[] =
+	{
+		/*-0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5, 0.5, 0.0, 0.0f, 1.0f,
+		0.5, -0.5, 0.0, 1.0f, 1.0f*/
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+	};
+
 	unsigned int indicies[] =
 	{
 		0, 1, 3,
@@ -140,6 +158,12 @@ int main()
 		glm::vec3(-1.5f, -2.2f, -2.5f),
 		glm::vec3(-3.8f, -2.0f, -12.3f),
 	};
+
+	std::vector<glm::vec3> grassPositions;
+	grassPositions.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+	grassPositions.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+	grassPositions.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+	grassPositions.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
 
 	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
@@ -164,16 +188,30 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
+
+	unsigned int grassVAO, grassVBO;
+	glGenVertexArrays(1, &grassVAO);
+	glGenBuffers(1, &grassVBO);
+
+	glBindVertexArray(grassVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertex), quadVertex, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(1);
 	
 	glBindVertexArray(0);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader depthTest = Shader("src/shaders/depthTest.vert", "src/shaders/depthTest.frag");
-	Shader border = Shader("src/shaders/depthTest.vert", "src/shaders/lineShader.frag");
-	Texture cubeTexture = Texture("Texture/container2.png");
+	Shader blend = Shader("src/shaders/blendShader.vert", "src/shaders/blendShader.frag");
 	Texture planeTexture = Texture("Texture/floor.jpg");
+	Texture cubeTexture = Texture("Texture/container2.png");
+	Texture grassTexture = Texture("Texture/grass.png");
+	Texture windowTexture = Texture("Texture/blending_transparent_window.png");
 	
 	float time = 0.0f;
 
@@ -185,64 +223,48 @@ int main()
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 		
-		depthTest.enable();
-		depthTest.setUniform1i("texture1", 0);
-
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		glStencilMask(0x00);
+		blend.enable();
+		blend.setUniform1i("texture1", 0);
 
 		glm::mat4 model;
 		glm::mat4 MVP = projection * view * model;
-		depthTest.setUniformMat4("MVP", MVP);
+		blend.setUniformMat4("MVP", MVP);
+		glActiveTexture(GL_TEXTURE0);
 		planeTexture.bindTexture();
 		glBindVertexArray(planeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilMask(0xFF);
-
 		for (int i = 0; i < 4; i++)
 		{
 			glm::mat4 model;
 			model = glm::translate(model, cubePositions[i]);
 			glm::mat4 MVP = projection * view * model;
-			depthTest.setUniformMat4("MVP", MVP);
+			blend.setUniformMat4("MVP", MVP);
 			glActiveTexture(GL_TEXTURE0);
 			cubeTexture.bindTexture();
 			glBindVertexArray(cubeVAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 		}
 
-		glDisable(GL_DEPTH_TEST);
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		border.enable();
-
-		for (int i = 0; i < 4; i++)
+		std::map<float, glm::vec3> windowSortedInDist;
+		for (unsigned int i = 0; i < grassPositions.size(); i++)
 		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			model = glm::scale(model, glm::vec3(1.2f));
-			glm::mat4 MVP = projection * view * model;
-			depthTest.setUniformMat4("MVP", MVP);
-			glActiveTexture(GL_TEXTURE0);
-			cubeTexture.bindTexture();
-			glBindVertexArray(cubeVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+			float dist = glm::distance(grassPositions[i], window.getCamPosition());
+			windowSortedInDist[dist] = grassPositions[i];
 		}
-
-		glStencilMask(0xFF);
-		glEnable(GL_DEPTH_TEST);
-
-		#ifdef SHOW
-		//moveLightPosition(lightPosition);
-		//turnLightColor(lightColor);
-		time += 0.01f;
-		if (time > 1.0f)
-			time = 0.0f;
-		pLightingShader->setUniform1f("time", time);
-		#endif
 		
+		for (std::map<float, glm::vec3>::reverse_iterator rit = windowSortedInDist.rbegin(); rit != windowSortedInDist.rend(); ++rit)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, rit->second);
+			glm::mat4 MVP = projection * view * model;
+			blend.setUniformMat4("MVP", MVP);
+			glActiveTexture(GL_TEXTURE0);
+			windowTexture.bindTexture();
+			glBindVertexArray(grassVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 1 * 6);
+		}
+
 		float delta = timer.elapsed();
 		window.update(delta);
 
