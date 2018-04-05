@@ -13,11 +13,18 @@ namespace sparky { namespace graphics {
 			return;
 		}
 
+		setTexture(pixels, format, wrapMethod, filterMethod);
+
+		ImageLoader::free_image(pixels);
+	}
+
+	void Texture::setTexture(unsigned char* pixels, GLenum format, GLuint wrapMethod, GLuint filterMethod)
+	{
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
-		
+
 		if (format == GL_RGBA)
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -31,7 +38,6 @@ namespace sparky { namespace graphics {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMethod);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMethod);
 
-		ImageLoader::free_image(pixels);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -48,6 +54,16 @@ namespace sparky { namespace graphics {
 		m_Path(filename)
 	{
 		loadTexture(filename, wrapMethod, filterMethod);
+	}
+
+	Texture::Texture(int windowWidth, int windowHeight)
+	{
+		glGenTextures(1, &m_textureID);
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, windowWidth, windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void Texture::bindTexture() const

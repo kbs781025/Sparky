@@ -163,10 +163,10 @@
     <None Include="src\shaders\blendShader.vert" />
     <None Include="src\shaders\depthTest.frag" />
     <None Include="src\shaders\depthTest.vert" />
-    <None Include="src\shaders\lampShader.vert" />
+    <None Include="src\shaders\basicShader.vert" />
     <None Include="src\shaders\lightingShader.frag" />
     <None Include="src\shaders\lightingShader.vert" />
-    <None Include="src\shaders\lampShader.frag" />
+    <None Include="src\shaders\basicShader.frag" />
     <None Include="src\shaders\lineShader.frag" />
     <None Include="src\shaders\lineShader.vert" />
     <None Include="src\shaders\modelShader.frag" />

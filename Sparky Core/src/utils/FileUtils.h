@@ -9,7 +9,7 @@ namespace sparky {
 		FILE* file = fopen(filepath, "rt"); // read as text file(need new line)
 		if (file == nullptr)
 		{
-			printf("Cannot find file path.");
+			printf("Failed to load file : Cannot find file path.");
 			return std::string();
 		}
 

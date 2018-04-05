@@ -74,47 +74,47 @@ int main()
 	unsigned int frame = 0;
 
 	float cubeVertex[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right         
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+		// Front face
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+	    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left					  
+		// Left face
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+		// Right face
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right         
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left     
+		// Bottom face
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
+	    0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+		// Top face
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left      
 	};
 
 	float planeVertices[] = {
@@ -143,6 +143,25 @@ int main()
 		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
 		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
 		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+	};
+
+	float screenWidth = window.getWidth();
+	float screenHeight = window.getHeight();
+	float screenVertex1[] =
+	{
+		/*0.0f, screenHeight / 2.0f, 5.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 0.5f, 0.0f, 0.0f,
+		screenWidth / 2.0f, screenHeight / 2.0f, 5.0f, 1.0f, 1.0f,
+		screenWidth / 2.0f, screenHeight / 2.0f, 5.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 5.0f, 0.0f, 0.0f,
+		screenWidth / 2.0f, 0.0f, 5.0f, 1.0f, 0.0f*/
+		-1.0f,  1.0f,  5.0f, 0.0f, 1.0f,
+		-1.0f, -1.0f,  5.0f, 0.0f, 0.0f,
+		1.0f, -1.0f,  5.0f, 1.0f, 0.0f,
+
+		-1.0f,  1.0f,  5.0f, 0.0f, 1.0f,
+		1.0f, -1.0f,  5.0f, 1.0f, 0.0f,
+		1.0f,  1.0f,  5.0f, 1.0f, 1.0f
 	};
 
 	unsigned int indicies[] =
@@ -200,14 +219,46 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
+
+	unsigned int screenVAO, screenVBO;
+	glGenVertexArrays(1, &screenVAO);
+	glGenBuffers(1, &screenVBO);
+
+	glBindVertexArray(screenVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertex1), screenVertex1, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(1);
 	
 	glBindVertexArray(0);
+
+	unsigned int framebuffer;
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	Texture framebufferTexture = Texture(window.getWidth(), window.getHeight());
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture.getTextureID(), 0);
+
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, window.getWidth(), window.getHeight());
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Error::FRAMEBUFFER:: Framebuffer is not complete" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Shader blend = Shader("src/shaders/blendShader.vert", "src/shaders/blendShader.frag");
+	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
 	Texture planeTexture = Texture("Texture/floor.jpg");
 	Texture cubeTexture = Texture("Texture/container2.png");
 	Texture grassTexture = Texture("Texture/grass.png");
@@ -222,6 +273,8 @@ int main()
 
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+		glm::mat4 ortho = glm::ortho(window.getWidth() / -2.0f, window.getWidth() / 2.0f, window.getHeight() / -2.0f, window.getHeight() / 2.0f
+									, 0.0f, 100.0f);
 		
 		blend.enable();
 		blend.setUniform1i("texture1", 0);
@@ -232,6 +285,11 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		planeTexture.bindTexture();
 		glBindVertexArray(planeVAO);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 
 		for (int i = 0; i < 4; i++)
@@ -264,6 +322,18 @@ int main()
 			glBindVertexArray(grassVAO);
 			glDrawArrays(GL_TRIANGLES, 0, 1 * 6);
 		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glBindVertexArray(screenVAO);
+		glDisable(GL_DEPTH_TEST);
+		glActiveTexture(GL_TEXTURE0);
+		framebufferTexture.bindTexture();
+		basicShader.enable();
+		basicShader.setUniformMat4("projection", projection); // z needs to be negative
+		basicShader.setUniform1i("texture1", 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		float delta = timer.elapsed();
 		window.update(delta);
