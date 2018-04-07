@@ -4,7 +4,7 @@
 
 namespace sparky { namespace graphics {
 
-	void Texture::loadTexture(const std::string& filename, GLuint textureType, GLuint wrapMethod, GLuint filterMethod)
+	void Texture::loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod)
 	{
 		GLenum format;
 		unsigned char* pixels = ImageLoader::load_Image(filename.c_str(), &m_Width, &m_Height, &format);
@@ -14,20 +14,39 @@ namespace sparky { namespace graphics {
 		}
 
 		glGenTextures(1, &m_textureID);
-		glBindTexture(textureType, m_textureID);
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
 
-		glTexImage2D(textureType, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMethod);
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMethod);
-		if (textureType == GL_TEXTURE_CUBE_MAP)
-		{
-			glTexParameteri(textureType, GL_TEXTURE_WRAP_R, wrapMethod);
-		}
-		glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, filterMethod);
-		glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, filterMethod);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMethod);
 
 		ImageLoader::free_image(pixels);
-		glBindTexture(textureType, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void Texture::setTexture(unsigned char* pixels, GLenum format, GLuint wrapMethod, GLuint filterMethod)
+	{
+		glGenTextures(1, &m_textureID);
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
+
+		if (format == GL_RGBA)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
+		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMethod);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	Texture::Texture(const std::string & filename, const std::string & textureType, GLuint wrapMethod, GLuint filterMethod)
@@ -35,21 +54,24 @@ namespace sparky { namespace graphics {
 		m_Path(filename),
 		m_Type(textureType)
 	{
-		loadTexture(filename, GL_TEXTURE_2D, wrapMethod, filterMethod);
+		loadTexture(filename, wrapMethod, filterMethod);
 	}
 
 	Texture::Texture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod)
 		:
 		m_Path(filename)
 	{
-		loadTexture(filename, GL_TEXTURE_2D, wrapMethod, filterMethod);
+		loadTexture(filename, wrapMethod, filterMethod);
 	}
 
-	Texture::Texture(const std::string & filename, GLuint textureType, GLuint wrapMethod, GLuint filterMethod)
-		:
-		m_Path(filename)
+	Texture::Texture(int windowWidth, int windowHeight)
 	{
-		loadTexture(filename, textureType, wrapMethod, filterMethod);
+		glGenTextures(1, &m_textureID);
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, windowWidth, windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void Texture::bindTexture() const
