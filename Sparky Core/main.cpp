@@ -61,7 +61,7 @@ void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, c
 }
 
 #define NOSHOW
-//#define MODEL_IMPORT
+#define MODEL_IMPORT
 #ifndef MODEL_IMPORT
 int main()
 {
