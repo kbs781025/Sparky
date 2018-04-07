@@ -11,6 +11,6 @@ out vec2 texCoord;
 void main()
 {
 	texCoord = atexCoord;
-	//gl_Position = projection * vec4(avertexPos, 1.0);
 	gl_Position = MVP * vec4(avertexPos, 1.0);
+	//gl_Position = MVP * vec4(avertexPos, 1.0);
 }

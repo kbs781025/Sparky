@@ -149,20 +149,36 @@ int main()
 	float screenHeight = window.getHeight();
 	float screenVertex1[] =
 	{
-		/*0.0f, screenHeight / 2.0f, 5.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.5f, 0.0f, 0.0f,
-		screenWidth / 2.0f, screenHeight / 2.0f, 5.0f, 1.0f, 1.0f,
-		screenWidth / 2.0f, screenHeight / 2.0f, 5.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 5.0f, 0.0f, 0.0f,
-		screenWidth / 2.0f, 0.0f, 5.0f, 1.0f, 0.0f*/
-		-1.0f,  1.0f,  5.0f, 0.0f, 1.0f,
-		-1.0f, -1.0f,  5.0f, 0.0f, 0.0f,
-		1.0f, -1.0f,  5.0f, 1.0f, 0.0f,
+		/*0.0f, screenHeight / 2.0f, -5.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -5.0f, 0.0f, 0.0f,
+		screenWidth / 2.0f, 0.0f, -5.0f, 1.0f, 0.0f,
 
-		-1.0f,  1.0f,  5.0f, 0.0f, 1.0f,
-		1.0f, -1.0f,  5.0f, 1.0f, 0.0f,
-		1.0f,  1.0f,  5.0f, 1.0f, 1.0f
+		0.0f, screenHeight / 2.0f, -5.0f, 0.0f, 1.0f,
+		screenWidth / 2.0f, 0.0f, -5.0f, 1.0f, 0.0f,
+		screenWidth / 2.0f, screenHeight / 2.0f, -5.0f, 1.0f, 1.0f*/
+
+		/*0.0f, 1.0f, -5.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -5.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, -5.0f, 1.0f, 0.0f,
+
+		0.0f, 1.0f, -5.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, -5.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, -5.0f, 1.0f, 1.0f*/
+
+		0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+
+		0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		1.0f,  1.0f,  0.0f, 1.0f, 1.0f
 	};
+
+	std::vector<glm::vec3> screenPos;
+	screenPos.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+	screenPos.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	screenPos.push_back(glm::vec3(-1.0f, -1.0f, 0.0f));
+	screenPos.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
 
 	unsigned int indicies[] =
 	{
@@ -234,11 +250,17 @@ int main()
 	
 	glBindVertexArray(0);
 
-	unsigned int framebuffer;
+	unsigned int framebuffer, framebufferTexture;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	Texture framebufferTexture = Texture(window.getWidth(), window.getHeight());
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture.getTextureID(), 0);
+	//Texture framebufferTexture = Texture(window.getWidth(), window.getHeight());
+	glGenTextures(1, &framebufferTexture);
+	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window.getWidth() / 2.0f, window.getHeight() / 2.0f, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0);
 
 	unsigned int rbo;
 	glGenRenderbuffers(1, &rbo);
@@ -258,7 +280,11 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Shader blend = Shader("src/shaders/blendShader.vert", "src/shaders/blendShader.frag");
-	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
+	std::vector<Shader*> basicShaders;
+	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderInverse.frag"));
+	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderGrayScale.frag"));
+	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderKernel.frag"));
+	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderBlur.frag"));
 	Texture planeTexture = Texture("Texture/floor.jpg");
 	Texture cubeTexture = Texture("Texture/container2.png");
 	Texture grassTexture = Texture("Texture/grass.png");
@@ -273,8 +299,7 @@ int main()
 
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-		glm::mat4 ortho = glm::ortho(window.getWidth() / -2.0f, window.getWidth() / 2.0f, window.getHeight() / -2.0f, window.getHeight() / 2.0f
-									, 0.0f, 100.0f);
+		glm::mat4 ortho = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 10.0f);
 		
 		blend.enable();
 		blend.setUniform1i("texture1", 0);
@@ -287,6 +312,7 @@ int main()
 		glBindVertexArray(planeVAO);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glViewport(0, 0, window.getWidth() / 2.0f, window.getHeight() / 2.0f);
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -326,14 +352,22 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glBindVertexArray(screenVAO);
-		glDisable(GL_DEPTH_TEST);
-		glActiveTexture(GL_TEXTURE0);
-		framebufferTexture.bindTexture();
-		basicShader.enable();
-		basicShader.setUniformMat4("projection", projection); // z needs to be negative
-		basicShader.setUniform1i("texture1", 0);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glViewport(0, 0, window.getWidth(), window.getHeight());
+		for (unsigned int i = 0; i < screenPos.size(); i++)
+		{
+			glBindVertexArray(screenVAO);
+			glDisable(GL_DEPTH_TEST);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+			//framebufferTexture.bindTexture();
+			glm::mat4 model;
+			model = glm::translate(model, screenPos[i]);
+			basicShaders[i]->enable();
+			basicShaders[i]->setUniformMat4("MVP", ortho * model); // z needs to be negative
+			basicShaders[i]->setUniform1i("texture1", 0);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
+		
 
 		float delta = timer.elapsed();
 		window.update(delta);

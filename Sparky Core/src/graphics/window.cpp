@@ -179,7 +179,7 @@ namespace sparky { namespace graphics {
 
 	void window_resize(GLFWwindow* window, int width, int height) // not part of window class
 	{
-		glViewport(0, 0, width, height);
+		//glViewport(0, 0, width, height);
 		Window* win = (Window*)glfwGetWindowUserPointer(window);
 		win->m_Width = width;
 		win->m_Height = height;
