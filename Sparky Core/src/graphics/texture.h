@@ -12,14 +12,12 @@ namespace sparky { namespace graphics {
 		std::string m_Type;
 		GLuint m_textureID;
 		GLuint m_Width, m_Height;
-		GLuint m_WrapAndFilter[2];
 	private:
-		void loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod);
-		void setTexture(unsigned char* pixels, GLenum format, GLuint wrapMethod, GLuint filterMethod);
+		void loadTexture(const std::string& filename, GLuint textureType, GLuint wrapMethod, GLuint filterMethod);
 	public:
-		Texture(const std::string& filename, const std::string& textureType, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_NEAREST);
-		Texture(const std::string& filename, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_NEAREST);
-		Texture(int windowWidth, int windowHeight);
+		Texture(const std::string& filename, const std::string& textureType, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_LINEAR); // For Model
+		Texture(const std::string& filename, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_LINEAR); // For Texture2D
+		Texture(const std::string& filename, GLuint textureType, GLuint wrapMethod = GL_CLAMP_TO_EDGE, GLuint filterMethod = GL_LINEAR); // For CubeMap
 
 		GLuint getTextureID() { return m_textureID; }
 		void bindTexture() const;
