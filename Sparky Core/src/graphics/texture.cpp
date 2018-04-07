@@ -13,9 +13,17 @@ namespace sparky { namespace graphics {
 			return;
 		}
 
-		setTexture(pixels, format, wrapMethod, filterMethod);
+		glGenTextures(1, &m_textureID);
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMethod);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMethod);
 
 		ImageLoader::free_image(pixels);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void Texture::setTexture(unsigned char* pixels, GLenum format, GLuint wrapMethod, GLuint filterMethod)
