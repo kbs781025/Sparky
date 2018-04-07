@@ -3,7 +3,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <string>
-#include <FreeImage.h>
 #include <iostream>
 #include "stb_image.h"
 
