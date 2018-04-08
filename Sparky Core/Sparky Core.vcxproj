@@ -159,11 +159,15 @@
     <ClInclude Include="src\utils\timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\graphics\basicShader.frag" />
+    <None Include="src\shaders\basicShader.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
     <None Include="src\shaders\basicShaderGrayScale.frag" />
     <None Include="src\shaders\basicShaderKernel.frag" />
     <None Include="src\shaders\blendShader.frag" />
     <None Include="src\shaders\blendShader.vert" />
+    <None Include="src\shaders\cubemapShader.frag" />
+    <None Include="src\shaders\cubemapShader.vert" />
     <None Include="src\shaders\depthTest.frag" />
     <None Include="src\shaders\depthTest.vert" />
     <None Include="src\shaders\basicShader.vert" />

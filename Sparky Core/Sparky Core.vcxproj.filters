@@ -88,5 +88,11 @@
     <None Include="src\shaders\basicShaderGrayScale.frag" />
     <None Include="src\shaders\basicShaderKernel.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
+    <None Include="src\shaders\cubemapShader.vert" />
+    <None Include="src\shaders\cubemapShader.frag" />
+    <None Include="src\graphics\basicShader.frag">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include="src\shaders\basicShader.frag" />
   </ItemGroup>
 </Project>

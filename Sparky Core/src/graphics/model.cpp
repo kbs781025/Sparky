@@ -94,6 +94,9 @@ namespace sparky { namespace graphics {
 			
 			std::vector<Texture> specularMaps = loadMaterialTextuers(material, aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+			std::vector<Texture> reflectMaps = loadMaterialTextuers(material, aiTextureType_AMBIENT, "texture_reflect");
+			textures.insert(textures.end(), reflectMaps.begin(), reflectMaps.end());
 		}
 
 		return Mesh(vertices, indices, textures);

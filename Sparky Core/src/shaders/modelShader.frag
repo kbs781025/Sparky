@@ -16,6 +16,7 @@ struct Material
 {
 	sampler2D texture_diffuse1;
 	sampler2D texture_specular1;
+	sampler2D texture_reflect1;
 	float shininess;
 };
 
@@ -27,6 +28,7 @@ in vec2 TexCoord;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform Material material;
 uniform vec3 viewPos;
+uniform samplerCube skybox;
 
 out vec4 FragColor;
 
@@ -57,8 +59,14 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 	float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), 32);
 	vec3 specular = light.specular * specularIntensity * vec3(texture(material.texture_specular1, TexCoord));
 
+	reflectDir = reflect(-viewDir, normal);
+	vec3 reflColor = vec3(texture(skybox, reflectDir)); 
+	vec3 reflOnModel = vec3(texture(material.texture_reflect1, TexCoord));
+	vec3 sumReflect = light.diffuse * reflColor * reflOnModel;
+
 	float dist = length(light.position - FragPos);
 	float attenuation = 1.0 / (light.constant + dist * light.linear + dist * dist * light.quadratic);
 	
-	return (ambient + diffuse + specular) * attenuation;
+	return (ambient + diffuse + specular + sumReflect) * attenuation;
+	//return specular;
 }

@@ -15,6 +15,7 @@ namespace sparky { namespace graphics {
 	{
 		unsigned int diffuseNum = 0;
 		unsigned int specularNum = 0;
+		unsigned int reflectNum = 0;
 		shader.enable();
 		for (int i = 0; i < m_Textures.size(); i++)
 		{
@@ -28,6 +29,10 @@ namespace sparky { namespace graphics {
 			else if (type == "texture_specular")
 			{
 				number = std::to_string(++specularNum);
+			}
+			else if (type == "texture_reflect")
+			{
+				number = std::to_string(++reflectNum);
 			}
 
 			glActiveTexture(GL_TEXTURE0 + i);

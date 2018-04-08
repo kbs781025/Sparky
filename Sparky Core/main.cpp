@@ -4,6 +4,7 @@
 #include "src/graphics/shaders.h"
 #include "src/graphics/texture.h"
 #include "src/graphics/model.h"
+#include <GLFW/glfw3.h>
 
 #include <time.h>
 #include <vector>
@@ -388,9 +389,124 @@ int main()
 	using namespace sparky;
 	using namespace graphics;
 
+	float skyboxVertices[] = {
+		// positions          
+		-10.0f,  10.0f, -10.0f,
+		-10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+
+		-10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+
+		-10.0f, -10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		-10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f, -10.0f,
+
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f
+	};
+	float cubeVertex[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	};
+
 	Window window("Sparky", 800, 600);
+
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	unsigned int cubeVAO, cubeVBO;
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertex), cubeVertex, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(1);
+
 	Model nanosuit("Texture/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
+	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
+	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
+	Texture container = Texture("Texture/container2.png");
 
 	glm::vec3 pointLightPositions[] =
 	{
@@ -410,6 +526,19 @@ int main()
 							  1.0f, 0.007f, 0.0002f);
 	}
 
+	std::vector<std::string> cubeMapFaces = 
+	{
+		"Texture/skybox/right.jpg",
+		"Texture/skybox/left.jpg",
+		"Texture/skybox/top.jpg",
+		"Texture/skybox/bottom.jpg",
+		"Texture/skybox/front.jpg",
+		"Texture/skybox/back.jpg"
+	};
+
+	unsigned int cubeMapID = Texture::loadCubeMap(cubeMapFaces);
+	skyboxShader.enable();
+	skyboxShader.setUniform1i("cubemap", 0);
 	glEnable(GL_DEPTH_TEST);
 
 	Timer timer, t;
@@ -423,15 +552,39 @@ int main()
 		window.clear();
 
 		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::scale(model, glm::vec3(0.2f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+
+		modelShader.enable();
+		modelShader.setUniformMat4("projection", projection);
+		modelShader.setUniformMat4("view", view);
+		modelShader.setUniformMat4("model", model);
+		modelShader.setUniform3f("viewPos", window.getCamPosition());
+		modelShader.setUniform1i("skybox", 3);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
+		nanosuit.Draw(modelShader);
+
+		glDepthFunc(GL_LEQUAL);
+		skyboxShader.enable();
+		skyboxShader.setUniformMat4("projection", projection);
+		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
+		skyboxShader.setUniformMat4("view", cubeMapView);
+		glBindVertexArray(skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDepthFunc(GL_LESS);
+
+		/*modelShader.enable();
 		modelShader.setUniformMat4("model", model);
 		modelShader.setUniformMat4("view", view);
 		modelShader.setUniformMat4("projection", projection);
-		modelShader.setUniform3f("viewPos", window.getCamPosition());
-
-		nanosuit.Draw(modelShader);
+		modelShader.setUniform3f("viewPos", window.getCamPosition());*/
+		//nanosuit.Draw(modelShader);
+		
 	
 		float delta = timer.elapsed();
 		window.update(delta);
