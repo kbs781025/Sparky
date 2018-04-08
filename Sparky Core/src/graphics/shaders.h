@@ -5,15 +5,18 @@
 
 namespace sparky { namespace graphics {
 
+
 	class Shader
 	{
 	private:
 		GLuint m_ShaderID;
 		const char* m_VertPath;
 		const char* m_FragPath;
+		const char* m_GeoPath;
 		bool m_Enabled;
+		const char* SHADER_DIR = "src/shaders/";
 	public:
-		Shader(const char* vertexPath, const char* fragPath);
+		Shader(const char* vertexPath, const char* fragPath, const char* geoPath = nullptr);
 		~Shader();
 		GLuint getShaderID() const { return m_ShaderID; }
 
@@ -28,7 +31,9 @@ namespace sparky { namespace graphics {
 		void enable();
 		void disable();
 	private:
-		GLuint load();
+		void loadShaders();
+		GLuint compileShader(GLuint shaderType, const char* filePath);
+		void linkShader(GLuint vertShader, GLuint fragShader, GLuint geoShader = 0);
 		GLint getUniformLocation(const GLchar* name);
 	};
 

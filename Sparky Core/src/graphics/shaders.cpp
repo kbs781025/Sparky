@@ -6,13 +6,14 @@
 
 namespace sparky { namespace graphics {
 
-	Shader::Shader(const char * vertexPath, const char * fragPath)
+	Shader::Shader(const char * vertexPath, const char * fragPath, const char * geoPath)
 		:
 		m_VertPath(vertexPath),
 		m_FragPath(fragPath),
+		m_GeoPath(geoPath),
 		m_Enabled(false)
 	{
-		m_ShaderID = load();
+		loadShaders();
 	}
 
 	Shader::~Shader()
@@ -146,84 +147,84 @@ namespace sparky { namespace graphics {
 		m_Enabled = false;
 	}
 
-	GLuint Shader::load()
+	void Shader::loadShaders()
 	{
-		GLuint program = glCreateProgram();
-		GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
-		GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
+		m_ShaderID = glCreateProgram();
+		GLuint vertex = compileShader(GL_VERTEX_SHADER, m_VertPath);
+		GLuint fragment = compileShader(GL_FRAGMENT_SHADER, m_FragPath);
+		GLuint geoMetry = 0;
+		if (m_GeoPath)
+		{
+			geoMetry = compileShader(GL_GEOMETRY_SHADER, m_GeoPath);
+		}
 
-		std::string vertSourceString = read_file(m_VertPath);
-		std::string fragSourceString = read_file(m_FragPath);
+		linkShader(vertex, fragment, geoMetry);
+	}
 
-		const char* vertSource = vertSourceString.c_str();
-		const char* fragSource = fragSourceString.c_str();
+	GLuint Shader::compileShader(GLuint shaderType, const char* filePath)
+	{
+		GLuint shaderID = glCreateShader(shaderType);
 
-		glShaderSource(vertex, 1, &vertSource, nullptr);
-		glCompileShader(vertex);
+		std::string sourceString = read_file(filePath);
+		const char* shaderSource = sourceString.c_str();
+		glShaderSource(shaderID, 1, &shaderSource, nullptr);
+		glCompileShader(shaderID);
 
 		GLint result;
-		glGetShaderiv(vertex, GL_COMPILE_STATUS, &result);
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
 
 		if (result == GL_FALSE)
 		{
-			GLint length;
-			glGetShaderiv(vertex, GL_INFO_LOG_LENGTH, &length);
-			std::vector<char> error(length);
-			glGetShaderInfoLog(vertex, length, &length, error.data());
-			std::cout << "Failed to compile vertex shader. " << error.data() << std::endl;
-			glDeleteShader(vertex);
+			GLint maxLength = 0;
+			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+			std::vector<GLchar> error(maxLength);
+			glGetShaderInfoLog(shaderID, maxLength, &maxLength, error.data());
+			std::cout << "Failed to compile shader. " << error.data() << std::endl;
+			glDeleteShader(shaderID);
 
 			return 0;
 		}
 
-		glShaderSource(fragment, 1, &fragSource, nullptr);
-		glCompileShader(fragment);
+		return shaderID;
+	}
 
-		glGetShaderiv(fragment, GL_COMPILE_STATUS, &result);
-
-		if (result == GL_FALSE)
+	void Shader::linkShader(GLuint vertShader, GLuint fragShader, GLuint geoShader)
+	{
+		glAttachShader(m_ShaderID, vertShader);
+		glAttachShader(m_ShaderID, fragShader);
+		if (geoShader > 0)
 		{
-			GLint length;
-			glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &length);
-			std::vector<char> error(length);
-			glGetShaderInfoLog(fragment, length, &length, error.data());
-			std::cout << "Failed to compile fragment shader. " << error.data() << std::endl;
-			glDeleteShader(fragment);
-
-			return 0;
+			glAttachShader(m_ShaderID, geoShader);
 		}
 
-		glAttachShader(program, vertex);
-		glAttachShader(program, fragment);
-
-		glLinkProgram(program);
+		glLinkProgram(m_ShaderID);
 
 		GLint isLinked = 0;
-		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+		glGetProgramiv(m_ShaderID, GL_LINK_STATUS, &isLinked);
 		if (isLinked == GL_FALSE)
 		{
 			GLint maxLength = 0;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+			glGetProgramiv(m_ShaderID, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+			glGetProgramInfoLog(m_ShaderID, maxLength, &maxLength, &infoLog[0]);
 			std::cout << "Failed to compiled shader : " << infoLog.data() << std::endl;
 
 			// The program is useless now. So delete it.
-			glDeleteProgram(program);
+			glDeleteProgram(m_ShaderID);
 
 			// Provide the infolog in whatever manner you deem best.
 			// Exit with failure.
-			return 0;
+			m_ShaderID = 0;
+			return;
 		}
 
-		glValidateProgram(program);
-		
-		glDeleteShader(vertex);
-		glDeleteShader(fragment);
+		glValidateProgram(m_ShaderID);
 
-		return program;
+		glDeleteShader(vertShader);
+		glDeleteShader(fragShader);
+		glDeleteShader(geoShader);
 	}
 
 	GLint Shader::getUniformLocation(const GLchar * name)
