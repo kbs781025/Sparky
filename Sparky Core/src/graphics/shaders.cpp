@@ -123,6 +123,17 @@ namespace sparky { namespace graphics {
 		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
+	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint)
+	{
+		unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_ShaderID, name);
+		if (uniformBlockIndex < 0)
+		{
+			std::cout << "Unable to find uniform block : " << name << std::endl;
+			return;
+		}
+		glUniformBlockBinding(m_ShaderID, uniformBlockIndex, bindingPoint);
+	}
+
 	void Shader::enable()
 	{
 		glUseProgram(m_ShaderID);
@@ -197,6 +208,7 @@ namespace sparky { namespace graphics {
 			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+			std::cout << "Failed to compiled shader : " << infoLog.data() << std::endl;
 
 			// The program is useless now. So delete it.
 			glDeleteProgram(program);

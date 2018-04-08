@@ -23,6 +23,7 @@ namespace sparky { namespace graphics {
 		void setUniform3f(const GLchar* name, const glm::vec3& value);
 		void setUniform4f(const GLchar* name, const glm::vec4& value);
 		void setUniformMat4(const GLchar* name, const glm::mat4& matrix);
+		void bindUniformBlock(const GLchar* name, GLuint bindingPoint);
 
 		void enable();
 		void disable();
