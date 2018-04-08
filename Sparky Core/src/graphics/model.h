@@ -16,7 +16,7 @@ namespace sparky { namespace graphics {
 		{
 			loadModel(path);
 		}
-		void Draw(Shader& shader);
+		void Draw(Shader& shader, bool textureOn = true);
 	private:
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;

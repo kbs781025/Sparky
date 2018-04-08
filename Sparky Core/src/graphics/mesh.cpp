@@ -11,33 +11,36 @@ namespace sparky { namespace graphics {
 		setupMesh();
 	}
 
-	void Mesh::Draw(Shader& shader)
+	void Mesh::Draw(Shader& shader, bool textureOn)
 	{
 		unsigned int diffuseNum = 0;
 		unsigned int specularNum = 0;
 		unsigned int reflectNum = 0;
 		shader.enable();
-		for (int i = 0; i < m_Textures.size(); i++)
+		if (textureOn)
 		{
-			std::string number;
-			std::string type = m_Textures[i].getType();
+			for (int i = 0; i < m_Textures.size(); i++)
+			{
+				std::string number;
+				std::string type = m_Textures[i].getType();
 
-			if (type == "texture_diffuse")
-			{
-				number = std::to_string(++diffuseNum);
-			}
-			else if (type == "texture_specular")
-			{
-				number = std::to_string(++specularNum);
-			}
-			else if (type == "texture_reflect")
-			{
-				number = std::to_string(++reflectNum);
-			}
+				if (type == "texture_diffuse")
+				{
+					number = std::to_string(++diffuseNum);
+				}
+				else if (type == "texture_specular")
+				{
+					number = std::to_string(++specularNum);
+				}
+				else if (type == "texture_reflect")
+				{
+					number = std::to_string(++reflectNum);
+				}
 
-			glActiveTexture(GL_TEXTURE0 + i);
-			m_Textures[i].bindTexture();
-			shader.setUniform1i(("material." + type + number).c_str(), i);
+				glActiveTexture(GL_TEXTURE0 + i);
+				m_Textures[i].bindTexture();
+				shader.setUniform1i(("material." + type + number).c_str(), i);
+			}
 		}
 
 		glBindVertexArray(m_VAO);

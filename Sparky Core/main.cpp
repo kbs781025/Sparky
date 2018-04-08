@@ -8,7 +8,7 @@
 
 #include <time.h>
 #include <vector>
-#include <map>
+#include <sstream>
 
 void moveLightPosition(glm::vec3& lightPos)
 {
@@ -62,7 +62,7 @@ void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, c
 }
 
 #define NOSHOW
-#define MODEL_IMPORT
+#define MODEL_IMPORTS
 #ifndef MODEL_IMPORT
 int main()
 {
@@ -131,19 +131,13 @@ int main()
 
 	float quadVertex[] =
 	{
-		/*-0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5, 0.5, 0.0, 0.0f, 1.0f,
-		0.5, -0.5, 0.0, 1.0f, 1.0f*/
-		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-		0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
-		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+		0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+		-0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
 
-		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
-		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+		0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+		0.05f,  0.05f,  0.0f, 1.0f, 1.0f
 	};
 
 	float screenWidth = window.getWidth();
@@ -185,25 +179,80 @@ int main()
 		glm::vec3(-3.8f, -2.0f, -12.3f),
 	};
 
-	unsigned int pointsVAO, pointsVBO;
-	glGenVertexArrays(1, &pointsVAO);
-	glGenBuffers(1, &pointsVBO);
+	/*unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
 
-	glBindVertexArray(pointsVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertex), quadVertex, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(2 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
+
+	glm::vec2 translations[100];
+	int index = 0;
+	float offset = 0.1f;
+	for (int x = -10; x < 10; x += 2)
+	{
+		for (int y = -10; y < 10; y += 2)
+		{
+			glm::vec2 translation;
+			translation.x = (float)x / 10.0f + offset;
+			translation.y = (float)y / 10.0f + offset;
+			translations[index++] = translation;
+		}
+	}
+
+	unsigned int instanceVBO;
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, translations, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(2, 1);*/
 	
 	glBindVertexArray(0);
+
+	unsigned int amount = 500;
+	glm::mat4* pModelMatrices = new glm::mat4[amount];
+	srand(glfwGetTime());
+	float radius = 50.0f;
+	float offset = 2.5f;
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glm::mat4 model;
+		// 1. translation: displace along circle with 'radius' in range [-offset, offset]
+		float angle = (float)i / (float)amount * 360.0f;
+		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float x = sin(angle) * radius + displacement;
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float y = displacement * 0.4f; // keep height of field smaller compared to width of x and z
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float z = cos(angle) * radius + displacement;
+		model = glm::translate(model, glm::vec3(x, y, z));
+
+		// 2. scale: Scale between 0.05 and 0.25f
+		float scale = (rand() % 20) / 100.0f + 0.05;
+		model = glm::scale(model, glm::vec3(scale));
+
+		// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
+		float rotAngle = (rand() % 360);
+		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+		// 4. now add to list of matrices
+		pModelMatrices[i] = model;
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag", "src/shaders/basicShader.geom");
+	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
+	Model planet = Model("Texture/planet/planet.obj");
+	Model rock = Model("Texture/rock/rock.obj");
 	
 	float time = 0.0f;
 
@@ -216,8 +265,18 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 		
 		basicShader.enable();
-		glBindVertexArray(pointsVAO);
-		glDrawArrays(GL_POINTS, 0, 4);
+		basicShader.setUniformMat4("projection", projection);
+		basicShader.setUniformMat4("view", view);
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -4.0f));
+		model = glm::scale(model, glm::vec3(4.0f));
+		basicShader.setUniformMat4("model", model);
+		planet.Draw(basicShader);
+		for (unsigned int i = 0; i < amount; i++)
+		{
+			basicShader.setUniformMat4("model", pModelMatrices[i]);
+			rock.Draw(basicShader);
+		}
 
 		float delta = timer.elapsed();
 		window.update(delta);
@@ -432,7 +491,7 @@ int main()
 		nanosuit.Draw(modelShader);
 		normalDisplayShader.enable();
 		normalDisplayShader.setUniformMat4("model", model);
-		nanosuit.Draw(normalDisplayShader);
+		nanosuit.Draw(normalDisplayShader, false);
 
 		glDepthFunc(GL_LEQUAL);
 		skyboxShader.enable();
