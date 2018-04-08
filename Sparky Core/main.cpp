@@ -508,6 +508,12 @@ int main()
 	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
 	Texture container = Texture("Texture/container2.png");
 
+	unsigned int uboBlock;
+	glGenBuffers(1, &uboBlock);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 	glm::vec3 pointLightPositions[] =
 	{
 		glm::vec3(5.0f,  5.0f,  5.0f),
@@ -540,6 +546,14 @@ int main()
 	skyboxShader.enable();
 	skyboxShader.setUniform1i("cubemap", 0);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
+	modelShader.bindUniformBlock("Matrices", 1);
+	basicShader.bindUniformBlock("Matrices", 1);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
+	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -555,11 +569,11 @@ int main()
 		model = glm::scale(model, glm::vec3(0.2f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
 		glm::mat4 view = window.getViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		modelShader.enable();
-		modelShader.setUniformMat4("projection", projection);
-		modelShader.setUniformMat4("view", view);
 		modelShader.setUniformMat4("model", model);
 		modelShader.setUniform3f("viewPos", window.getCamPosition());
 		modelShader.setUniform1i("skybox", 3);

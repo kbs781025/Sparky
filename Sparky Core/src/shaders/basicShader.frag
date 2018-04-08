@@ -11,7 +11,7 @@ void main()
 {
 	float ratio = 1.00 / 1.33;
 	vec3 viewDir = normalize(Position - camPosition);
-	//vec3 reflectDir = reflect(viewDir, normalize(Normal));
-	vec3 reflectDir = refract(viewDir, normalize(Normal), ratio);
+	vec3 reflectDir = reflect(viewDir, normalize(Normal));
+	//vec3 reflectDir = refract(viewDir, normalize(Normal), ratio);
 	FragColor = texture(texture1, reflectDir);
 }
