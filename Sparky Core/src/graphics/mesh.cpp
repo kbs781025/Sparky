@@ -11,7 +11,7 @@ namespace sparky { namespace graphics {
 		setupMesh();
 	}
 
-	void Mesh::Draw(Shader shader)
+	void Mesh::Draw(Shader& shader)
 	{
 		unsigned int diffuseNum = 0;
 		unsigned int specularNum = 0;

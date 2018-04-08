@@ -5,7 +5,7 @@
 
 namespace sparky { namespace graphics {
 
-	void Model::Draw(Shader shader)
+	void Model::Draw(Shader& shader)
 	{
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
 		{
