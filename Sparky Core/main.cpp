@@ -150,22 +150,6 @@ int main()
 	float screenHeight = window.getHeight();
 	float screenVertex1[] =
 	{
-		/*0.0f, screenHeight / 2.0f, -5.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, -5.0f, 0.0f, 0.0f,
-		screenWidth / 2.0f, 0.0f, -5.0f, 1.0f, 0.0f,
-
-		0.0f, screenHeight / 2.0f, -5.0f, 0.0f, 1.0f,
-		screenWidth / 2.0f, 0.0f, -5.0f, 1.0f, 0.0f,
-		screenWidth / 2.0f, screenHeight / 2.0f, -5.0f, 1.0f, 1.0f*/
-
-		/*0.0f, 1.0f, -5.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, -5.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, -5.0f, 1.0f, 0.0f,
-
-		0.0f, 1.0f, -5.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -5.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, -5.0f, 1.0f, 1.0f*/
-
 		0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
 		0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
 		1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
@@ -173,6 +157,12 @@ int main()
 		0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		1.0f,  1.0f,  0.0f, 1.0f, 1.0f
+	};
+	float points[] = {
+		-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+		-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
 	};
 
 	std::vector<glm::vec3> screenPos;
@@ -195,101 +185,25 @@ int main()
 		glm::vec3(-3.8f, -2.0f, -12.3f),
 	};
 
-	std::vector<glm::vec3> grassPositions;
-	grassPositions.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
-	grassPositions.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
-	grassPositions.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
-	grassPositions.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+	unsigned int pointsVAO, pointsVBO;
+	glGenVertexArrays(1, &pointsVAO);
+	glGenBuffers(1, &pointsVBO);
 
-	unsigned int cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-
-	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertex), cubeVertex, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
+	glBindVertexArray(pointsVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	unsigned int planeVAO, planeVBO;
-	glGenVertexArrays(1, &planeVAO);
-	glGenBuffers(1, &planeVBO);
-
-	glBindVertexArray(planeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	unsigned int grassVAO, grassVBO;
-	glGenVertexArrays(1, &grassVAO);
-	glGenBuffers(1, &grassVBO);
-
-	glBindVertexArray(grassVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertex), quadVertex, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	unsigned int screenVAO, screenVBO;
-	glGenVertexArrays(1, &screenVAO);
-	glGenBuffers(1, &screenVBO);
-
-	glBindVertexArray(screenVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertex1), screenVertex1, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(2 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
 	
 	glBindVertexArray(0);
-
-	unsigned int framebuffer, framebufferTexture;
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	//Texture framebufferTexture = Texture(window.getWidth(), window.getHeight());
-	glGenTextures(1, &framebufferTexture);
-	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window.getWidth() / 2.0f, window.getHeight() / 2.0f, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0);
-
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, window.getWidth(), window.getHeight());
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "Error::FRAMEBUFFER:: Framebuffer is not complete" << std::endl;
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader blend = Shader("src/shaders/blendShader.vert", "src/shaders/blendShader.frag");
-	std::vector<Shader*> basicShaders;
-	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderInverse.frag"));
-	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderGrayScale.frag"));
-	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderKernel.frag"));
-	basicShaders.push_back(new Shader("src/shaders/basicShader.vert", "src/shaders/basicShaderBlur.frag"));
-	Texture planeTexture = Texture("Texture/floor.jpg");
-	Texture cubeTexture = Texture("Texture/container2.png");
-	Texture grassTexture = Texture("Texture/grass.png");
-	Texture windowTexture = Texture("Texture/blending_transparent_window.png");
+	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag", "src/shaders/basicShader.geom");
 	
 	float time = 0.0f;
 
@@ -300,75 +214,10 @@ int main()
 
 		glm::mat4 view = window.getViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-		glm::mat4 ortho = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 10.0f);
 		
-		blend.enable();
-		blend.setUniform1i("texture1", 0);
-
-		glm::mat4 model;
-		glm::mat4 MVP = projection * view * model;
-		blend.setUniformMat4("MVP", MVP);
-		glActiveTexture(GL_TEXTURE0);
-		planeTexture.bindTexture();
-		glBindVertexArray(planeVAO);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glViewport(0, 0, window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
-
-		for (int i = 0; i < 4; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			glm::mat4 MVP = projection * view * model;
-			blend.setUniformMat4("MVP", MVP);
-			glActiveTexture(GL_TEXTURE0);
-			cubeTexture.bindTexture();
-			glBindVertexArray(cubeVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
-		}
-
-		std::map<float, glm::vec3> windowSortedInDist;
-		for (unsigned int i = 0; i < grassPositions.size(); i++)
-		{
-			float dist = glm::distance(grassPositions[i], window.getCamPosition());
-			windowSortedInDist[dist] = grassPositions[i];
-		}
-		
-		for (std::map<float, glm::vec3>::reverse_iterator rit = windowSortedInDist.rbegin(); rit != windowSortedInDist.rend(); ++rit)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, rit->second);
-			glm::mat4 MVP = projection * view * model;
-			blend.setUniformMat4("MVP", MVP);
-			glActiveTexture(GL_TEXTURE0);
-			windowTexture.bindTexture();
-			glBindVertexArray(grassVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 1 * 6);
-		}
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glViewport(0, 0, window.getWidth(), window.getHeight());
-		for (unsigned int i = 0; i < screenPos.size(); i++)
-		{
-			glBindVertexArray(screenVAO);
-			glDisable(GL_DEPTH_TEST);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-			//framebufferTexture.bindTexture();
-			glm::mat4 model;
-			model = glm::translate(model, screenPos[i]);
-			basicShaders[i]->enable();
-			basicShaders[i]->setUniformMat4("MVP", ortho * model); // z needs to be negative
-			basicShaders[i]->setUniform1i("texture1", 0);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
-		
+		basicShader.enable();
+		glBindVertexArray(pointsVAO);
+		glDrawArrays(GL_POINTS, 0, 4);
 
 		float delta = timer.elapsed();
 		window.update(delta);
@@ -476,7 +325,7 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
-
+	
 	Window window("Sparky", 800, 600);
 
 	unsigned int skyboxVAO, skyboxVBO;
@@ -505,7 +354,7 @@ int main()
 	Model nanosuit("Texture/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
 	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
-	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
+	Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
 	Texture container = Texture("Texture/container2.png");
 
 	unsigned int uboBlock;
@@ -549,11 +398,12 @@ int main()
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	modelShader.bindUniformBlock("Matrices", 1);
-	basicShader.bindUniformBlock("Matrices", 1);
+	normalDisplayShader.bindUniformBlock("Matrices", 1);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -580,6 +430,9 @@ int main()
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
 		nanosuit.Draw(modelShader);
+		normalDisplayShader.enable();
+		normalDisplayShader.setUniformMat4("model", model);
+		nanosuit.Draw(normalDisplayShader);
 
 		glDepthFunc(GL_LEQUAL);
 		skyboxShader.enable();
@@ -592,14 +445,6 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glDepthFunc(GL_LESS);
 
-		/*modelShader.enable();
-		modelShader.setUniformMat4("model", model);
-		modelShader.setUniformMat4("view", view);
-		modelShader.setUniformMat4("projection", projection);
-		modelShader.setUniform3f("viewPos", window.getCamPosition());*/
-		//nanosuit.Draw(modelShader);
-		
-	
 		float delta = timer.elapsed();
 		window.update(delta);
 

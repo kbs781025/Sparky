@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\graphics\basicShader.frag" />
+    <None Include="src\shaders\basicShader.geom" />
     <None Include="src\shaders\basicShader.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
     <None Include="src\shaders\basicShaderGrayScale.frag" />
@@ -178,6 +179,9 @@
     <None Include="src\shaders\lineShader.vert" />
     <None Include="src\shaders\modelShader.frag" />
     <None Include="src\shaders\modelShader.vert" />
+    <None Include="src\shaders\normalVecShader.frag" />
+    <None Include="src\shaders\normalVecShader.geom" />
+    <None Include="src\shaders\normalVecShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

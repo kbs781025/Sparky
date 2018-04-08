@@ -1,21 +1,14 @@
 #version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec3 aColor;
 
-layout (location = 0) in vec3 avertexPos;
-layout (location = 1) in vec3 aNormal;
-layout (std140) uniform Matrices
+out VS_OUT
 {
-	mat4 projection;
-	mat4 view;
-};
-
-uniform mat4 model;
-
-out vec3 Normal;
-out vec3 Position;
+	vec3 Color;
+} vs_out;
 
 void main()
 {
-	Position = vec3(model * vec4(avertexPos, 1.0));
-	Normal = mat3(transpose(inverse(model))) * aNormal;
-	gl_Position = projection * view * model * vec4(avertexPos, 1.0);
+    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+	vs_out.Color = aColor;
 }

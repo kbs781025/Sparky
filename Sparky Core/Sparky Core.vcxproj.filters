@@ -94,5 +94,9 @@
       <Filter>헤더 파일</Filter>
     </None>
     <None Include="src\shaders\basicShader.frag" />
+    <None Include="src\shaders\basicShader.geom" />
+    <None Include="src\shaders\normalVecShader.vert" />
+    <None Include="src\shaders\normalVecShader.geom" />
+    <None Include="src\shaders\normalVecShader.frag" />
   </ItemGroup>
 </Project>
