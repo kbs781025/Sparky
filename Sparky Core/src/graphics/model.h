@@ -17,6 +17,10 @@ namespace sparky { namespace graphics {
 			loadModel(path);
 		}
 		void Draw(Shader& shader, bool textureOn = true);
+		void DrawInstances(Shader& shader, unsigned int instanceCount);
+
+		unsigned int getMeshNum() { return m_Meshes.size(); }
+		std::vector<Mesh> getMeshes() { return m_Meshes; }
 	private:
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;

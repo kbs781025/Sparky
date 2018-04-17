@@ -98,5 +98,7 @@
     <None Include="src\shaders\normalVecShader.vert" />
     <None Include="src\shaders\normalVecShader.geom" />
     <None Include="src\shaders\normalVecShader.frag" />
+    <None Include="src\shaders\instanceShader.vert" />
+    <None Include="src\shaders\instanceShader.frag" />
   </ItemGroup>
 </Project>

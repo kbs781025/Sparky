@@ -20,7 +20,7 @@ namespace sparky { namespace graphics {
 
 	Window::Window(const char * title, int width, int height)
 		:
-		m_Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+		m_Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 	{
 		m_Title = title;
 		m_Width = width;
@@ -104,6 +104,8 @@ namespace sparky { namespace graphics {
 			std::cout << "Failed to initialize glfw." << std::endl;
 			return false;
 		}
+
+		glfwWindowHint(GLFW_SAMPLES, 4);
 
 		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, nullptr, nullptr);
 		if (!m_Window)

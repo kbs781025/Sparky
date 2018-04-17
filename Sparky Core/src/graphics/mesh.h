@@ -17,6 +17,9 @@ namespace sparky { namespace graphics {
 	public:
 		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures);
 		void Draw(Shader& shader, bool textureOn = true);
+		void DrawInstances(Shader& shader, unsigned int instanceCount);
+
+		unsigned int getVAO() { return m_VAO; }
 	private:
 		unsigned int m_VAO, m_VBO, m_EBO;
 		std::vector<Vertex> m_Vertices;

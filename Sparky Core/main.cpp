@@ -216,7 +216,7 @@ int main()
 	
 	glBindVertexArray(0);
 
-	unsigned int amount = 500;
+	unsigned int amount = 10000;
 	glm::mat4* pModelMatrices = new glm::mat4[amount];
 	srand(glfwGetTime());
 	float radius = 50.0f;
@@ -247,12 +247,38 @@ int main()
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_MULTISAMPLE);
 
 	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
+	Shader instanceShader = Shader("src/shaders/instanceShader.vert", "src/shaders/instanceShader.frag");
 	Model planet = Model("Texture/planet/planet.obj");
 	Model rock = Model("Texture/rock/rock.obj");
+
+	unsigned int instanceVBO;
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	GLsizei vec4Size = sizeof(glm::vec4);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amount, pModelMatrices, GL_STATIC_DRAW);
+
+	for (unsigned int i = 0; i < rock.getMeshNum(); i++)
+	{
+		unsigned int meshVAO = rock.getMeshes()[i].getVAO();
+		glBindVertexArray(meshVAO);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(vec4Size));
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * vec4Size));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
+		glEnableVertexAttribArray(6);
+
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 	
 	float time = 0.0f;
 
@@ -267,16 +293,17 @@ int main()
 		basicShader.enable();
 		basicShader.setUniformMat4("projection", projection);
 		basicShader.setUniformMat4("view", view);
+		
 		glm::mat4 model;
 		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -4.0f));
 		model = glm::scale(model, glm::vec3(4.0f));
 		basicShader.setUniformMat4("model", model);
 		planet.Draw(basicShader);
-		for (unsigned int i = 0; i < amount; i++)
-		{
-			basicShader.setUniformMat4("model", pModelMatrices[i]);
-			rock.Draw(basicShader);
-		}
+
+		instanceShader.enable();
+		instanceShader.setUniformMat4("projection", projection);
+		instanceShader.setUniformMat4("view", view);
+		rock.DrawInstances(instanceShader, amount);
 
 		float delta = timer.elapsed();
 		window.update(delta);

@@ -50,6 +50,42 @@ namespace sparky { namespace graphics {
 		glActiveTexture(GL_TEXTURE0);
 	}
 
+	void Mesh::DrawInstances(Shader & shader, unsigned int instanceCount)
+	{
+		unsigned int diffuseNum = 0;
+		unsigned int specularNum = 0;
+		unsigned int reflectNum = 0;
+		shader.enable();
+		for (int i = 0; i < m_Textures.size(); i++)
+		{
+			std::string number;
+			std::string type = m_Textures[i].getType();
+
+			if (type == "texture_diffuse")
+			{
+				number = std::to_string(++diffuseNum);
+			}
+			else if (type == "texture_specular")
+			{
+				number = std::to_string(++specularNum);
+			}
+			else if (type == "texture_reflect")
+			{
+				number = std::to_string(++reflectNum);
+			}
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			m_Textures[i].bindTexture();
+			shader.setUniform1i(("material." + type + number).c_str(), i);
+		}
+
+		glBindVertexArray(m_VAO);
+		glDrawElementsInstanced(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0, instanceCount);
+		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
 	void Mesh::setupMesh()
 	{
 		glGenVertexArrays(1, &m_VAO);

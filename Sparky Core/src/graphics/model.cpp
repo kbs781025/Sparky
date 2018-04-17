@@ -13,6 +13,14 @@ namespace sparky { namespace graphics {
 		}
 	}
 
+	void Model::DrawInstances(Shader & shader, unsigned int instanceCount)
+	{
+		for (unsigned int i = 0; i < m_Meshes.size(); i++)
+		{
+			m_Meshes[i].DrawInstances(shader, instanceCount);
+		}
+	}
+
 	void Model::loadModel(const std::string & path)
 	{
 		Assimp::Importer importer;
