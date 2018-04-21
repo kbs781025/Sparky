@@ -160,6 +160,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\graphics\basicShader.frag" />
+    <None Include="src\shaders\applyShadow.frag" />
+    <None Include="src\shaders\applyShadow.vert" />
     <None Include="src\shaders\basicShader.geom" />
     <None Include="src\shaders\basicShader.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
@@ -167,6 +169,8 @@
     <None Include="src\shaders\basicShaderKernel.frag" />
     <None Include="src\shaders\blendShader.frag" />
     <None Include="src\shaders\blendShader.vert" />
+    <None Include="src\shaders\createShadowShader.frag" />
+    <None Include="src\shaders\createShadowShader.vert" />
     <None Include="src\shaders\cubemapShader.frag" />
     <None Include="src\shaders\cubemapShader.vert" />
     <None Include="src\shaders\depthTest.frag" />

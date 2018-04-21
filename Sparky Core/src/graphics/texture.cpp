@@ -6,8 +6,8 @@ namespace sparky { namespace graphics {
 
 	void Texture::loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod)
 	{
-		GLenum format;
-		unsigned char* pixels = ImageLoader::load_Image(filename.c_str(), &m_Width, &m_Height, &format);
+		GLenum internalFormat, dataFormat;
+		unsigned char* pixels = ImageLoader::load_Image(filename.c_str(), &m_Width, &m_Height, &internalFormat, &dataFormat);
 		if (!pixels)
 		{
 			return;
@@ -16,7 +16,7 @@ namespace sparky { namespace graphics {
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, pixels);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMethod);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMethod);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMethod);
@@ -69,9 +69,9 @@ namespace sparky { namespace graphics {
 
 		for (unsigned int i = 0; i < cubeMapFiles.size(); i++)
 		{
-			unsigned int width, height, format;
-			unsigned char* data = sparky::ImageLoader::load_Image(cubeMapFiles[i].c_str(), &width, &height, &format);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			unsigned int width, height, internalFormat, dataFormat;
+			unsigned char* data = sparky::ImageLoader::load_Image(cubeMapFiles[i].c_str(), &width, &height, &internalFormat, &dataFormat);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 		}
 
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -100,5 +100,9 @@
     <None Include="src\shaders\normalVecShader.frag" />
     <None Include="src\shaders\instanceShader.vert" />
     <None Include="src\shaders\instanceShader.frag" />
+    <None Include="src\shaders\createShadowShader.vert" />
+    <None Include="src\shaders\createShadowShader.frag" />
+    <None Include="src\shaders\applyShadow.vert" />
+    <None Include="src\shaders\applyShadow.frag" />
   </ItemGroup>
 </Project>

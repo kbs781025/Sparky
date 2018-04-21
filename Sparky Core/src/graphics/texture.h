@@ -13,7 +13,6 @@ namespace sparky { namespace graphics {
 		std::string m_Type;
 		GLuint m_textureID;
 		GLuint m_Width, m_Height;
-		GLuint m_WrapAndFilter[2];
 	private:
 		void loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod);
 	public:

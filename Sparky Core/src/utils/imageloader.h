@@ -11,7 +11,7 @@ namespace sparky {
 	class ImageLoader
 	{
 	public:
-		static unsigned char* load_Image(const char* filename, GLuint* width, GLuint* height, GLenum* format, bool tweak = false)
+		static unsigned char* load_Image(const char* filename, GLuint* width, GLuint* height, GLenum* internalFormat, GLenum* dataFormat)
 		{
 			int nrComponents;
 			unsigned char *data = stbi_load(filename, (int*)width, (int*)height, &nrComponents, 0);
@@ -20,13 +20,16 @@ namespace sparky {
 				switch (nrComponents)
 				{
 				case 1:
-					*format = GL_RED;
+					*internalFormat = GL_RED;
+					*dataFormat = GL_RED;
 					break;
 				case 3:
-					*format = GL_RGB;
+					*internalFormat = GL_SRGB;
+					*dataFormat = GL_RGB;
 					break;
 				case 4:
-					*format = GL_RGBA;
+					*internalFormat = GL_SRGB_ALPHA;
+					*dataFormat = GL_RGBA;
 					break;
 				}
 			}
