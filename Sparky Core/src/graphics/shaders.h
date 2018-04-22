@@ -5,7 +5,6 @@
 
 namespace sparky { namespace graphics {
 
-
 	class Shader
 	{
 	private:
