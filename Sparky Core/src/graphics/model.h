@@ -24,12 +24,12 @@ namespace sparky { namespace graphics {
 	private:
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;
-		std::vector<Texture> m_LoadedTextures;
+		std::vector<Texture2D> m_LoadedTextures;
 
 		void loadModel(const std::string& path);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture> loadMaterialTextuers(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<Texture2D> loadMaterialTextuers(aiMaterial* mat, aiTextureType type, std::string typeName);
 	};
 
 

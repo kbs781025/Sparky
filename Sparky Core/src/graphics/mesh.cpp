@@ -2,7 +2,7 @@
 #include <cstddef>
 namespace sparky { namespace graphics {
 
-	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures)
+	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture2D> textures)
 		:
 		m_Vertices(vertices),
 		m_Indicies(indicies),
@@ -22,7 +22,8 @@ namespace sparky { namespace graphics {
 			for (int i = 0; i < m_Textures.size(); i++)
 			{
 				std::string number;
-				std::string type = m_Textures[i].getType();
+				//std::string type = m_Textures[i].getType();
+				std::string type = "";
 
 				if (type == "texture_diffuse")
 				{
@@ -37,8 +38,7 @@ namespace sparky { namespace graphics {
 					number = std::to_string(++reflectNum);
 				}
 
-				glActiveTexture(GL_TEXTURE0 + i);
-				m_Textures[i].bindTexture();
+				m_Textures[i].bind(i);
 				shader.setUniform1i(("material." + type + number).c_str(), i);
 			}
 		}
@@ -59,7 +59,8 @@ namespace sparky { namespace graphics {
 		for (int i = 0; i < m_Textures.size(); i++)
 		{
 			std::string number;
-			std::string type = m_Textures[i].getType();
+			//std::string type = m_Textures[i].getType();
+			std::string type = "";
 
 			if (type == "texture_diffuse")
 			{
@@ -74,8 +75,7 @@ namespace sparky { namespace graphics {
 				number = std::to_string(++reflectNum);
 			}
 
-			glActiveTexture(GL_TEXTURE0 + i);
-			m_Textures[i].bindTexture();
+			m_Textures[i].bind(i);
 			shader.setUniform1i(("material." + type + number).c_str(), i);
 		}
 

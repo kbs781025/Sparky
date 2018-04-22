@@ -2,9 +2,10 @@
 #include "src/graphics/window.h"
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
-#include "src/graphics/texture.h"
+#include "src/graphics/Texture2D.h"
 #include "src/graphics/model.h"
 #include "src/graphics/ShaderFactory/ShaderFactory.h"
+#include "src/graphics/TextureDepth.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -556,7 +557,7 @@ int main()
 
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-	unsigned int depthMap;
+	/*unsigned int depthMap;
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
@@ -567,10 +568,12 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);*/
+
+	TextureDepth depthMap(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap.getHandle(), 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -580,14 +583,14 @@ int main()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_CULL_FACE);
 
-	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
 	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
 	//Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
 	Shader* normalDisplayShader = ShaderFactory::NormalShader();
 	Shader createShadowShader = Shader("src/shaders/createShadowShader.vert", "src/shaders/createShadowShader.frag");
 	Shader applyShadowShader = Shader("src/shaders/applyShadow.vert", "src/shaders/applyShadow.frag");
-	Texture container = Texture("Texture/Images/container2.png");
+	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
 
 	modelShader.bindUniformBlock("Matrices", 1);
 	normalDisplayShader->bindUniformBlock("Matrices", 1);
@@ -608,9 +611,9 @@ int main()
 		"Texture/Images/skybox/back.jpg"
 	};
 
-	unsigned int cubeMapID = Texture::loadCubeMap(cubeMapFaces);
+	/*unsigned int cubeMapID = Texture::loadCubeMap(cubeMapFaces);
 	skyboxShader.enable();
-	skyboxShader.setUniform1i("cubemap", 0);
+	skyboxShader.setUniform1i("cubemap", 0);*/
 
 	glm::vec3 pointLightPositions[] =
 	{
@@ -670,13 +673,11 @@ int main()
 		applyShadowShader.setUniform3f("lightPosition", pointLightPositions[0]);
 		applyShadowShader.setUniform1i("diffuseMap", 0);
 		applyShadowShader.setUniform1i("shadowMap", 1);
-		glActiveTexture(GL_TEXTURE0);
-		container.bindTexture();
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
+		container.bind();
+		depthMap.bind(1);
 		renderScene(applyShadowShader);
 
-		modelShader.enable();
+		/*modelShader.enable();
 		modelShader.setUniformMat4("model", model);
 		modelShader.setUniform3f("viewPos", window.getCamPosition());
 		modelShader.setUniform1i("skybox", 3);
@@ -685,7 +686,7 @@ int main()
 		nanosuit.Draw(modelShader);
 		normalDisplayShader->enable();
 		normalDisplayShader->setUniformMat4("model", model);
-		nanosuit.Draw(*normalDisplayShader, false);
+		nanosuit.Draw(*normalDisplayShader, false);*/
 
 		/*glDepthFunc(GL_LEQUAL);
 		skyboxShader.enable();

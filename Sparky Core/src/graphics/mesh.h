@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "../maths/maths.h"
-#include "texture.h"
+#include "Texture2D.h"
 #include "shaders.h"
 namespace sparky { namespace graphics {
 
@@ -15,7 +15,7 @@ namespace sparky { namespace graphics {
 	class Mesh
 	{
 	public:
-		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures);
+		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture2D> textures);
 		void Draw(Shader& shader, bool textureOn = true);
 		void DrawInstances(Shader& shader, unsigned int instanceCount);
 
@@ -24,7 +24,7 @@ namespace sparky { namespace graphics {
 		unsigned int m_VAO, m_VBO, m_EBO;
 		std::vector<Vertex> m_Vertices;
 		std::vector<unsigned int> m_Indicies;
-		std::vector<Texture> m_Textures;
+		std::vector<Texture2D> m_Textures;
 
 		void setupMesh();
 	};

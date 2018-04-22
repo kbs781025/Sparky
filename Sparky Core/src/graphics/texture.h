@@ -2,34 +2,91 @@
 
 #include <GL/glew.h>
 #include <string>
-#include <vector>
 
 namespace sparky { namespace graphics {
 
+	enum class TextureWrap
+	{
+		NONE = 0,
+		REPEAT,
+		CLAMP,
+		MIRRORED_REPEAT,
+		CLAMP_TO_EDGE,
+		CLAMP_TO_BORDER
+	};
+
+	enum class TextureFilter
+	{
+		NONE = 0,
+		LINEAR,
+		NEARES
+	};
+
+	enum class TextureFormat
+	{
+		NONE = 0,
+		RGB,
+		RGBA,
+		LUMINANCE,
+		LUMINANCE_ALPHA
+	};
+
+	struct TextureParameters
+	{
+		TextureFormat format;
+		TextureFilter filter;
+		TextureWrap wrap;
+
+		TextureParameters()
+		{
+			format = TextureFormat::RGBA;
+			filter = TextureFilter::LINEAR;
+			wrap = TextureWrap::CLAMP;
+		}
+
+		TextureParameters(TextureFormat format, TextureFilter filter, TextureWrap wrap)
+			: format(format), filter(filter), wrap(wrap)
+		{
+		}
+
+		TextureParameters(TextureFilter filter)
+			: format(TextureFormat::RGBA), filter(filter), wrap(TextureWrap::CLAMP)
+		{
+		}
+
+		TextureParameters(TextureFilter filter, TextureWrap wrap)
+			: format(TextureFormat::RGBA), filter(filter), wrap(wrap)
+		{
+		}
+	};
+
+	struct TextureLoadOptions
+	{
+		bool flipX;
+		bool flipY;
+
+		TextureLoadOptions()
+			: flipX(false), flipY(false)
+		{
+		}
+
+		TextureLoadOptions(bool flipX, bool flipY)
+			: flipX(flipX), flipY(flipY)
+		{
+		}
+	};
+
 	class Texture
 	{
-	private:
-		std::string m_Path;
-		std::string m_Type;
-		GLuint m_textureID;
-		GLuint m_Width, m_Height;
-	private:
-		void loadTexture(const std::string& filename, GLuint wrapMethod, GLuint filterMethod);
 	public:
-		Texture(const std::string& filename, const std::string& textureType, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_NEAREST);
-		Texture(const std::string& filename, GLuint wrapMethod = GL_REPEAT, GLuint filterMethod = GL_NEAREST);
-		Texture(int windowWidth, int windowHeight);
+		virtual ~Texture() {}
 
-		GLuint getTextureID() { return m_textureID; }
-		void bindTexture() const;
-		void unbindTexture() const;
-	
-		inline const unsigned int getWidth() { return m_Width; }
-		inline const unsigned int getHeight() { return m_Height; }
-		inline const std::string getType() { return m_Type; }
-		inline const std::string getPath() { return m_Path; }
+		virtual void bind(GLuint slot = 0) const = 0;
+		virtual void unBind(GLuint slot = 0) const = 0;
 
-		static unsigned int loadCubeMap(const std::vector<std::string>& cubeMapFiles);
+		virtual const std::string& getName() const = 0;
+		virtual const std::string& getFilePath() const = 0;
+		virtual GLuint getHandle() const = 0;
 	};
 
 }}

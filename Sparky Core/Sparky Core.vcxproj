@@ -143,8 +143,11 @@
     <ClCompile Include="src\graphics\model.cpp" />
     <ClCompile Include="src\graphics\ShaderFactory\ShaderFactory.cpp" />
     <ClCompile Include="src\graphics\shaders.cpp" />
-    <ClCompile Include="src\graphics\texture.cpp" />
+    <ClCompile Include="src\graphics\Texture2D.cpp" />
+    <ClCompile Include="src\graphics\TextureCube.cpp" />
+    <ClCompile Include="src\graphics\TextureDepth.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
+    <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\graphics\mesh.h" />
@@ -153,6 +156,9 @@
     <ClInclude Include="src\graphics\ShaderFactory\ShaderFactory.h" />
     <ClInclude Include="src\graphics\shaders.h" />
     <ClInclude Include="src\graphics\texture.h" />
+    <ClInclude Include="src\graphics\Texture2D.h" />
+    <ClInclude Include="src\graphics\TextureCube.h" />
+    <ClInclude Include="src\graphics\TextureDepth.h" />
     <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />

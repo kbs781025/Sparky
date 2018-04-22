@@ -54,7 +54,7 @@ namespace sparky { namespace graphics {
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
-		std::vector<Texture> textures;
+		std::vector<Texture2D> textures;
 
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -97,22 +97,22 @@ namespace sparky { namespace graphics {
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			std::vector<Texture> diffuseMaps = loadMaterialTextuers(material, aiTextureType_DIFFUSE, "texture_diffuse");
+			std::vector<Texture2D> diffuseMaps = loadMaterialTextuers(material, aiTextureType_DIFFUSE, "texture_diffuse");
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 			
-			std::vector<Texture> specularMaps = loadMaterialTextuers(material, aiTextureType_SPECULAR, "texture_specular");
+			std::vector<Texture2D> specularMaps = loadMaterialTextuers(material, aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-			std::vector<Texture> reflectMaps = loadMaterialTextuers(material, aiTextureType_AMBIENT, "texture_reflect");
+			std::vector<Texture2D> reflectMaps = loadMaterialTextuers(material, aiTextureType_AMBIENT, "texture_reflect");
 			textures.insert(textures.end(), reflectMaps.begin(), reflectMaps.end());
 		}
 
 		return Mesh(vertices, indices, textures);
 	}
 
-	std::vector<Texture> Model::loadMaterialTextuers(aiMaterial * mat, aiTextureType type, std::string typeName)
+	std::vector<Texture2D> Model::loadMaterialTextuers(aiMaterial * mat, aiTextureType type, std::string typeName)
 	{
-		std::vector<Texture> textures;
+		std::vector<Texture2D> textures;
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
 			aiString str;
@@ -120,7 +120,7 @@ namespace sparky { namespace graphics {
 			mat->GetTexture(type, i, &str);
 			for (unsigned int i = 0; i < m_LoadedTextures.size(); i++)
 			{
-				if (std::strcmp(m_LoadedTextures[i].getPath().c_str(), str.C_Str()) == 0)
+				if (std::strcmp(m_LoadedTextures[i].getFilePath().c_str(), str.C_Str()) == 0)
 				{
 					textures.push_back(m_LoadedTextures[i]);
 					skip = true;
@@ -131,7 +131,7 @@ namespace sparky { namespace graphics {
 			if (!skip)
 			{
 				std::string filePath = m_Directory + '/' + std::string(str.C_Str());
-				Texture texture(filePath, typeName);
+				Texture2D texture(filePath, typeName);
 				textures.push_back(texture);
 				m_LoadedTextures.push_back(texture);
 			}
