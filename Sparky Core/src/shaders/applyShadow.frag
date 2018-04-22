@@ -55,6 +55,6 @@ float calculate_shadow_factor(vec4 light_space_pos, vec3 normal, vec3 lightDir)
 		}
 	}
 	shadow /= 9.0;
-
+//	shadow += texture(shadowMap, vec3(projCoord.xy, projCoord.z - offset));
 	return shadow;
 }

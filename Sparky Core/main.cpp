@@ -176,7 +176,9 @@ void renderScene(sparky::graphics::Shader &shader)
 	glm::mat4 model;
 	shader.setUniformMat4("model", model);
 	glBindVertexArray(planeVAO);
+	glDisable(GL_CULL_FACE);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glEnable(GL_CULL_FACE);
 	// cubes
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
@@ -575,6 +577,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_CULL_FACE);
 
 	Model nanosuit("Texture/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
@@ -645,6 +648,7 @@ int main()
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glCullFace(GL_FRONT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -655,6 +659,7 @@ int main()
 		createShadowShader.setUniformMat4("lightProjection", lightProjection);
 		renderScene(createShadowShader);
 
+		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, window.getWidth(), window.getHeight());
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
