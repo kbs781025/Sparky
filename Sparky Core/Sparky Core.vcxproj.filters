@@ -36,12 +36,12 @@
     <ClCompile Include="src\graphics\model.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\ShaderFactory\ShaderFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\graphics\window.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\maths\maths.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\FileUtils.h">
@@ -71,10 +71,11 @@
     <ClInclude Include="src\graphics\model.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\graphics\ShaderFactory\ShaderFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\lightingShader.frag" />
-    <None Include="src\shaders\lightingShader.vert" />
     <None Include="src\shaders\lineShader.vert" />
     <None Include="src\shaders\lineShader.frag" />
     <None Include="src\shaders\modelShader.vert" />
@@ -83,7 +84,6 @@
     <None Include="src\shaders\depthTest.frag" />
     <None Include="src\shaders\blendShader.vert" />
     <None Include="src\shaders\blendShader.frag" />
-    <None Include="src\shaders\basicShader.vert" />
     <None Include="src\shaders\basicShaderInverse.frag" />
     <None Include="src\shaders\basicShaderGrayScale.frag" />
     <None Include="src\shaders\basicShaderKernel.frag" />
@@ -93,16 +93,19 @@
     <None Include="src\graphics\basicShader.frag">
       <Filter>헤더 파일</Filter>
     </None>
-    <None Include="src\shaders\basicShader.frag" />
     <None Include="src\shaders\basicShader.geom" />
-    <None Include="src\shaders\normalVecShader.vert" />
-    <None Include="src\shaders\normalVecShader.geom" />
-    <None Include="src\shaders\normalVecShader.frag" />
     <None Include="src\shaders\instanceShader.vert" />
     <None Include="src\shaders\instanceShader.frag" />
     <None Include="src\shaders\createShadowShader.vert" />
     <None Include="src\shaders\createShadowShader.frag" />
     <None Include="src\shaders\applyShadow.vert" />
     <None Include="src\shaders\applyShadow.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.geom" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\basicLightShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\basicLightShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\debugShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\debugShader.frag" />
   </ItemGroup>
 </Project>

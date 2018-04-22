@@ -4,6 +4,7 @@
 #include "src/graphics/shaders.h"
 #include "src/graphics/texture.h"
 #include "src/graphics/model.h"
+#include "src/graphics/ShaderFactory/ShaderFactory.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -579,17 +580,17 @@ int main()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_CULL_FACE);
 
-	Model nanosuit("Texture/nanosuit/nanosuit.obj");
+	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
 	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
-	Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
+	//Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
+	Shader* normalDisplayShader = ShaderFactory::NormalShader();
 	Shader createShadowShader = Shader("src/shaders/createShadowShader.vert", "src/shaders/createShadowShader.frag");
 	Shader applyShadowShader = Shader("src/shaders/applyShadow.vert", "src/shaders/applyShadow.frag");
-	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
-	Texture container = Texture("Texture/container2.png");
+	Texture container = Texture("Texture/Images/container2.png");
 
 	modelShader.bindUniformBlock("Matrices", 1);
-	normalDisplayShader.bindUniformBlock("Matrices", 1);
+	normalDisplayShader->bindUniformBlock("Matrices", 1);
 	applyShadowShader.bindUniformBlock("Matrices", 1);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
@@ -599,12 +600,12 @@ int main()
 
 	std::vector<std::string> cubeMapFaces =
 	{
-		"Texture/skybox/right.jpg",
-		"Texture/skybox/left.jpg",
-		"Texture/skybox/top.jpg",
-		"Texture/skybox/bottom.jpg",
-		"Texture/skybox/front.jpg",
-		"Texture/skybox/back.jpg"
+		"Texture/Images/skybox/right.jpg",
+		"Texture/Images/skybox/left.jpg",
+		"Texture/Images/skybox/top.jpg",
+		"Texture/Images/skybox/bottom.jpg",
+		"Texture/Images/skybox/front.jpg",
+		"Texture/Images/skybox/back.jpg"
 	};
 
 	unsigned int cubeMapID = Texture::loadCubeMap(cubeMapFaces);
@@ -675,16 +676,16 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		renderScene(applyShadowShader);
 
-		/*modelShader.enable();
+		modelShader.enable();
 		modelShader.setUniformMat4("model", model);
 		modelShader.setUniform3f("viewPos", window.getCamPosition());
 		modelShader.setUniform1i("skybox", 3);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
-		nanosuit.Draw(modelShader);*/
-		/*normalDisplayShader.enable();
-		normalDisplayShader.setUniformMat4("model", model);
-		nanosuit.Draw(normalDisplayShader, false);*/
+		nanosuit.Draw(modelShader);
+		normalDisplayShader->enable();
+		normalDisplayShader->setUniformMat4("model", model);
+		nanosuit.Draw(*normalDisplayShader, false);
 
 		/*glDepthFunc(GL_LEQUAL);
 		skyboxShader.enable();
