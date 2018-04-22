@@ -4,6 +4,7 @@
 namespace sparky { namespace graphics { namespace ShaderFactory {
 
 	Shader* BasicLightShader();
+	Shader* NormalShader();
 	Shader* DebugShader();
 
 }}}
