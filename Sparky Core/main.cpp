@@ -3,6 +3,7 @@
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
 #include "src/graphics/Texture2D.h"
+#include "src/graphics/TextureCube.h"
 #include "src/graphics/model.h"
 #include "src/graphics/ShaderFactory/ShaderFactory.h"
 #include "src/graphics/TextureDepth.h"
@@ -552,26 +553,12 @@ int main()
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	unsigned int depthMapFBO;
-	glGenFramebuffers(1, &depthMapFBO);
-
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-	/*unsigned int depthMap;
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);*/
 
 	TextureDepth depthMap(SHADOW_WIDTH, SHADOW_HEIGHT);
 
+	unsigned int depthMapFBO;
+	glGenFramebuffers(1, &depthMapFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap.getHandle(), 0);
 	glDrawBuffer(GL_NONE);
@@ -587,13 +574,13 @@ int main()
 	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
 	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
 	//Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
-	Shader* normalDisplayShader = ShaderFactory::NormalShader();
+	//Shader* normalDisplayShader = ShaderFactory::NormalShader();
 	Shader createShadowShader = Shader("src/shaders/createShadowShader.vert", "src/shaders/createShadowShader.frag");
 	Shader applyShadowShader = Shader("src/shaders/applyShadow.vert", "src/shaders/applyShadow.frag");
 	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
 
 	modelShader.bindUniformBlock("Matrices", 1);
-	normalDisplayShader->bindUniformBlock("Matrices", 1);
+//	normalDisplayShader->bindUniformBlock("Matrices", 1);
 	applyShadowShader.bindUniformBlock("Matrices", 1);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
@@ -610,10 +597,10 @@ int main()
 		"Texture/Images/skybox/front.jpg",
 		"Texture/Images/skybox/back.jpg"
 	};
-
-	/*unsigned int cubeMapID = Texture::loadCubeMap(cubeMapFaces);
+	TextureCube cubeMap = TextureCube("skybox", cubeMapFaces);
+	
 	skyboxShader.enable();
-	skyboxShader.setUniform1i("cubemap", 0);*/
+	skyboxShader.setUniform1i("cubemap", 0);
 
 	glm::vec3 pointLightPositions[] =
 	{
@@ -688,16 +675,15 @@ int main()
 		normalDisplayShader->setUniformMat4("model", model);
 		nanosuit.Draw(*normalDisplayShader, false);*/
 
-		/*glDepthFunc(GL_LEQUAL);
+		glDepthFunc(GL_LEQUAL);
 		skyboxShader.enable();
 		skyboxShader.setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
 		skyboxShader.setUniformMat4("view", cubeMapView);
 		glBindVertexArray(skyboxVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
+		cubeMap.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthFunc(GL_LESS);*/
+		glDepthFunc(GL_LESS);
 
 		float delta = timer.elapsed();
 		window.update(delta);

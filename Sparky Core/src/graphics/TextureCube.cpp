@@ -45,12 +45,17 @@ GLuint sparky::graphics::TextureCube::loadFromMultipleFiles()
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
 
 	GLubyte* pixels = nullptr;
-	m_Parameters.format = TextureFormat::RGBA;
-	GLenum format = Texture2D::textureFormatToGL(m_Parameters.format);
+
 	for (unsigned int i = 0; i < m_Files.size(); i++)
 	{
 		int bytes;
 		pixels = ImageLoader::load_Image(m_Files[i].c_str(), &m_Width, &m_Height, &bytes);
+		if (bytes != 3 && bytes != 4)
+		{
+			std::cout << "[Texture] Unsupported Image format" << std::endl;
+		}
+		m_Parameters.format = bytes == 3 ? TextureFormat::RGB : TextureFormat::RGBA;
+		GLenum format = Texture2D::textureFormatToGL(m_Parameters.format);
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
 	}
 

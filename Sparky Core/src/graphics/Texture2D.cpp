@@ -40,7 +40,7 @@ GLuint sparky::graphics::Texture2D::loadTexture()
 	{
 		int bytes;
 		pixels = ImageLoader::load_Image(m_FileName.c_str(), &m_Width, &m_Height, &bytes);
-		if (bytes != 3 || bytes != 4)
+		if (bytes != 3 && bytes != 4)
 		{
 			std::cout << "[Texture] Unsupported Image format" << std::endl;
 		}
@@ -55,7 +55,8 @@ GLuint sparky::graphics::Texture2D::loadTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapToGL(m_Parameters.wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapToGL(m_Parameters.wrap));
 
-	glTexImage2D(GL_TEXTURE_2D, 0, textureFormatToGL(m_Parameters.format), m_Width, m_Height, 0, textureFormatToGL(m_Parameters.format), GL_UNSIGNED_BYTE, pixels ? pixels : nullptr);
+	GLenum format = textureFormatToGL(m_Parameters.format);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels ? pixels : nullptr);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
