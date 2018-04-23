@@ -87,6 +87,9 @@ namespace sparky { namespace graphics {
 		virtual const std::string& getName() const = 0;
 		virtual const std::string& getFilePath() const = 0;
 		virtual GLuint getHandle() const = 0;
+
+		virtual GLuint getWidth() const = 0;
+		virtual GLuint getHeight() const = 0;
 	};
 
 }}

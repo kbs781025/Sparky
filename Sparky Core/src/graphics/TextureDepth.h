@@ -15,7 +15,9 @@ namespace sparky { namespace graphics {
 		~TextureDepth();
 
 		void bind(GLuint slot = 0) const override;
-		void unBind(GLuint slot = 0) const override;
+		void unBind(GLuint slot = 0) const override; 
+		virtual GLuint getWidth() const override { return m_Width; }
+		virtual GLuint getHeight() const override { return m_Height; }
 
 		inline const std::string& getName() const override { return m_Name; }
 		inline const std::string& getFilePath() const override { return m_Name; }

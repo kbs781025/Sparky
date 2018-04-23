@@ -1,6 +1,6 @@
 #include "Texture2D.h"
 
-sparky::graphics::Texture2D::Texture2D(const std::string & name, const std::string & fileName, TextureParameters parametres)
+sparky::graphics::Texture2D::Texture2D(const std::string& name, const std::string& fileName, const TextureParameters& parametres)
 	: m_Name(name), m_FileName(fileName), m_Parameters(m_Parameters)
 {
 	m_Handle = loadTexture();

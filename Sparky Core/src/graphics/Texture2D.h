@@ -15,18 +15,18 @@ namespace sparky { namespace graphics {
 		GLuint m_Width, m_Height;
 		TextureParameters m_Parameters;
 	public:
-		Texture2D(const std::string& name, const std::string& fileName, TextureParameters parametres = TextureParameters());
+		Texture2D(const std::string& name, const std::string& fileName, const TextureParameters& parametres = TextureParameters());
 
 		~Texture2D();
 
 		void bind(GLuint slot = 0) const override;
 		void unBind(GLuint slot = 0) const override;
 
+		virtual GLuint getWidth() const override { return m_Width; }
+		virtual GLuint getHeight() const override { return m_Height; }
+
 		void setData(const void* pixels);
 		void setData(GLuint color);
-
-		inline GLuint getWidth() const { return m_Width; }
-		inline GLuint getHeight() const { return m_Height; }
 
 		inline const std::string& getName() const override { return m_Name; }
 		inline const std::string& getFilePath() const override { return m_FileName; }
