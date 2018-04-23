@@ -571,17 +571,16 @@ int main()
 	glEnable(GL_CULL_FACE);
 
 	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
-	Shader modelShader = Shader("src/shaders/modelShader.vert", "src/shaders/modelShader.frag");
-	Shader skyboxShader = Shader("src/shaders/cubemapShader.vert", "src/shaders/cubemapShader.frag");
-	//Shader normalDisplayShader = Shader("src/shaders/normalVecShader.vert", "src/shaders/normalVecShader.frag", "src/shaders/normalVecShader.geom");
-	//Shader* normalDisplayShader = ShaderFactory::NormalShader();
-	Shader createShadowShader = Shader("src/shaders/createShadowShader.vert", "src/shaders/createShadowShader.frag");
-	Shader applyShadowShader = Shader("src/shaders/applyShadow.vert", "src/shaders/applyShadow.frag");
+	Shader* modelShader = ShaderFactory::ModelShader();
+	Shader* normalDisplayShader = ShaderFactory::NormalShader();
+	Shader* createShadowShader = ShaderFactory::CreateShadowShader();
+	Shader* applyShadowShader = ShaderFactory::ApplyShadowShader();
+	Shader* debug = ShaderFactory::CreateShader("debugShader");
+	Shader* skyboxShader = ShaderFactory::CreateShader("cubeMapShader");
 	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
 
-	modelShader.bindUniformBlock("Matrices", 1);
-//	normalDisplayShader->bindUniformBlock("Matrices", 1);
-	applyShadowShader.bindUniformBlock("Matrices", 1);
+	modelShader->bindUniformBlock("Matrices", 1);
+	applyShadowShader->bindUniformBlock("Matrices", 1);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
@@ -599,8 +598,8 @@ int main()
 	};
 	TextureCube cubeMap = TextureCube("skybox", cubeMapFaces);
 	
-	skyboxShader.enable();
-	skyboxShader.setUniform1i("cubemap", 0);
+	skyboxShader->enable();
+	skyboxShader->setUniform1i("cubemap", 0);
 
 	glm::vec3 pointLightPositions[] =
 	{
@@ -612,10 +611,10 @@ int main()
 
 	glm::vec3 pointLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	modelShader.enable();
+	modelShader->enable();
 	for (int i = 0; i < 4; i++)
 	{
-		setPointLightUniforms(&modelShader, i, pointLightPositions[i],
+		setPointLightUniforms(modelShader, i, pointLightPositions[i],
 							  pointLightColor * 0.2f , pointLightColor * 0.7f, pointLightColor * 1.0f,
 							  1.0f, 0.007f, 0.0002f);
 	}
@@ -643,26 +642,26 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		createShadowShader.enable();
+		createShadowShader->enable();
 		glm::mat4 lightView = glm::lookAt(pointLightPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-		createShadowShader.setUniformMat4("lightView", lightView);
-		createShadowShader.setUniformMat4("lightProjection", lightProjection);
-		renderScene(createShadowShader);
+		createShadowShader->setUniformMat4("lightView", lightView);
+		createShadowShader->setUniformMat4("lightProjection", lightProjection);
+		renderScene(*createShadowShader);
 
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, window.getWidth(), window.getHeight());
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		applyShadowShader.enable();
-		applyShadowShader.setUniformMat4("lightSpaceMatrix", lightProjection * lightView);
-		applyShadowShader.setUniform3f("lightPosition", pointLightPositions[0]);
-		applyShadowShader.setUniform1i("diffuseMap", 0);
-		applyShadowShader.setUniform1i("shadowMap", 1);
+		applyShadowShader->enable();
+		applyShadowShader->setUniformMat4("lightSpaceMatrix", lightProjection * lightView);
+		applyShadowShader->setUniform3f("lightPosition", pointLightPositions[0]);
+		applyShadowShader->setUniform1i("diffuseMap", 0);
+		applyShadowShader->setUniform1i("shadowMap", 1);
 		container.bind();
 		depthMap.bind(1);
-		renderScene(applyShadowShader);
+		renderScene(*applyShadowShader);
 
 		/*modelShader.enable();
 		modelShader.setUniformMat4("model", model);
@@ -676,10 +675,10 @@ int main()
 		nanosuit.Draw(*normalDisplayShader, false);*/
 
 		glDepthFunc(GL_LEQUAL);
-		skyboxShader.enable();
-		skyboxShader.setUniformMat4("projection", projection);
+		skyboxShader->enable();
+		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
-		skyboxShader.setUniformMat4("view", cubeMapView);
+		skyboxShader->setUniformMat4("view", cubeMapView);
 		glBindVertexArray(skyboxVAO);
 		cubeMap.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);

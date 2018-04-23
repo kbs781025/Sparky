@@ -96,8 +96,6 @@
   <ItemGroup>
     <None Include="src\shaders\lineShader.vert" />
     <None Include="src\shaders\lineShader.frag" />
-    <None Include="src\shaders\modelShader.vert" />
-    <None Include="src\shaders\modelShader.frag" />
     <None Include="src\shaders\depthTest.vert" />
     <None Include="src\shaders\depthTest.frag" />
     <None Include="src\shaders\blendShader.vert" />
@@ -106,18 +104,12 @@
     <None Include="src\shaders\basicShaderGrayScale.frag" />
     <None Include="src\shaders\basicShaderKernel.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
-    <None Include="src\shaders\cubemapShader.vert" />
-    <None Include="src\shaders\cubemapShader.frag" />
     <None Include="src\graphics\basicShader.frag">
       <Filter>헤더 파일</Filter>
     </None>
     <None Include="src\shaders\basicShader.geom" />
     <None Include="src\shaders\instanceShader.vert" />
     <None Include="src\shaders\instanceShader.frag" />
-    <None Include="src\shaders\createShadowShader.vert" />
-    <None Include="src\shaders\createShadowShader.frag" />
-    <None Include="src\shaders\applyShadow.vert" />
-    <None Include="src\shaders\applyShadow.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.geom" />
     <None Include="src\graphics\ShaderFactory\Shaders\normalVecShader.vert" />
@@ -125,5 +117,13 @@
     <None Include="src\graphics\ShaderFactory\Shaders\basicLightShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\debugShader.vert" />
     <None Include="src\graphics\ShaderFactory\Shaders\debugShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\createShadowShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\createShadowShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\modelShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\modelShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\cubemapShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\cubemapShader.vert" />
   </ItemGroup>
 </Project>

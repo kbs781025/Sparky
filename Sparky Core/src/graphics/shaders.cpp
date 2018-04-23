@@ -166,6 +166,9 @@ namespace sparky { namespace graphics {
 		GLuint shaderID = glCreateShader(shaderType);
 
 		std::string sourceString = read_file(filePath);
+		if (sourceString == "")
+			return 0;
+
 		const char* shaderSource = sourceString.c_str();
 		glShaderSource(shaderID, 1, &shaderSource, nullptr);
 		glCompileShader(shaderID);

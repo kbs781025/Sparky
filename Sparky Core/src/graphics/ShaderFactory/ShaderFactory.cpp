@@ -2,27 +2,59 @@
 #include <string>
 namespace sparky { namespace graphics { namespace ShaderFactory {
 
-	const char* BasicLightShaderVert = "src/graphics/ShaderFactory/Shaders/basicLightShader.vert";
-	const char* BasicLightShaderFrag = "src/graphics/ShaderFactory/Shaders/basicLightShader.frag";
-	const char* DebugShaderVert = "src/graphics/ShaderFactory/Shaders/debugShader.vert";
-	const char* DebugShaderFrag = "src/graphics/ShaderFactory/Shaders/debugShader.frag";
-	const char* NormalShaderVert = "src/graphics/ShaderFactory/Shaders/normalVecShader.vert";
-	const char* NormalShaderFrag = "src/graphics/ShaderFactory/Shaders/normalVecShader.frag";
-	const char* NormalShaderGeom = "src/graphics/ShaderFactory/Shaders/normalVecShader.geom";
+	const std::string SHADER_DIR = "src/graphics/ShaderFactory/Shaders/";
+	const std::string VERTEX_SHADER = ".vert";
+	const std::string FRAGMENT_SHADER = ".frag";
+	const std::string GEOMETRY_SHADER = ".geom";
+		
+	const std::string BasicLight = "basicLightShader";
+	const std::string Debug = "debugShader";
+	const std::string Normal = "normalVecShader";
+	const std::string CreateShadow = "createShadowShader";
+	const std::string ApplyShadow = "applyShadowShader";
+	const std::string Model = "modelShader";
 
 	Shader * ShaderFactory::BasicLightShader()
 	{
-		return new Shader(BasicLightShaderVert, BasicLightShaderFrag);
+		return CreateShader(BasicLight);
 	}
 
 	Shader * ShaderFactory::NormalShader()
 	{
-		return new Shader(NormalShaderVert, NormalShaderFrag, NormalShaderGeom);
+		return CreateShader(Normal);
 	}
 
 	Shader * ShaderFactory::DebugShader()
 	{
-		return new Shader(DebugShaderVert, DebugShaderFrag);
+		return CreateShader(Debug);
+	}
+
+	Shader * ShaderFactory::CreateShadowShader()
+	{
+		return CreateShader(CreateShadow);
+	}
+
+	Shader * ShaderFactory::ApplyShadowShader()
+	{
+		return CreateShader(ApplyShadow);
+	}
+
+	Shader * ModelShader()
+	{
+		return CreateShader(Model);
+	}
+
+	Shader * ShaderFactory::CreateShader(const std::string & shaderName)
+	{
+		std::string vertPathStr = (SHADER_DIR + shaderName + VERTEX_SHADER);
+		std::string fragPathStr = (SHADER_DIR + shaderName + FRAGMENT_SHADER);
+		std::string geomPathStr = (SHADER_DIR + shaderName + GEOMETRY_SHADER);
+
+		const char* vertPath = vertPathStr.c_str();
+		const char* fragPath = fragPathStr.c_str();
+		const char* geomPath = geomPathStr.c_str();
+
+		return new Shader(vertPath, fragPath, geomPath);
 	}
 
 }}}
