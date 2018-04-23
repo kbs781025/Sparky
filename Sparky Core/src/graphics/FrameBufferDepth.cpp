@@ -18,6 +18,7 @@ void sparky::graphics::FrameBufferDepth::bind() const
 	glViewport(0, 0, m_Width, m_Height); 
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
+	clear();
 }
 
 void sparky::graphics::FrameBufferDepth::unBind() const

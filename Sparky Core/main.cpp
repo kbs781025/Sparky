@@ -8,6 +8,7 @@
 #include "src/graphics/TextureDepth.h"
 #include "src/graphics/model.h"
 #include "src/graphics/VertexArray.h"
+#include "src/graphics/FramebufferDepth.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -541,6 +542,8 @@ int main()
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_FRAMEBUFFER_SRGB);
@@ -618,11 +621,7 @@ int main()
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glCullFace(GL_FRONT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		depthFBO.bind();
 		createShadowShader->enable();
 		glm::mat4 lightView = glm::lookAt(pointLightPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
@@ -630,8 +629,7 @@ int main()
 		createShadowShader->setUniformMat4("lightProjection", lightProjection);
 		renderScene(*createShadowShader);
 
-		glCullFace(GL_BACK);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		depthFBO.unBind();
 		glViewport(0, 0, window.getWidth(), window.getHeight());
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -641,7 +639,7 @@ int main()
 		applyShadowShader->setUniform1i("diffuseMap", 0);
 		applyShadowShader->setUniform1i("shadowMap", 1);
 		container.bind();
-		depthMap.bind(1);
+		depthFBO.getTextureDepth()->bind(1);
 		renderScene(*applyShadowShader);
 
 		/*modelShader.enable();

@@ -19,6 +19,7 @@ namespace sparky { namespace graphics {
 		virtual void unBind() const override;
 		virtual GLuint getHandle() const override;
 		void clear() const;
+		inline TextureDepth* getTextureDepth() const { return m_pDepthMap; }
 	private:
 		void initFrameBuffer();
 	};
