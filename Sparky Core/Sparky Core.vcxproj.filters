@@ -48,6 +48,18 @@
     <ClCompile Include="src\utils\imageloader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\IndexBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\BufferLayout.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\VertexBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\VertexArray.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\graphics\window.h">
@@ -92,6 +104,21 @@
     <ClInclude Include="src\graphics\TextureDepth.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\graphics\IndexBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\VertexBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\BufferLayout.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\VertexArray.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\Buffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\lineShader.vert" />
@@ -104,9 +131,6 @@
     <None Include="src\shaders\basicShaderGrayScale.frag" />
     <None Include="src\shaders\basicShaderKernel.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />
-    <None Include="src\graphics\basicShader.frag">
-      <Filter>헤더 파일</Filter>
-    </None>
     <None Include="src\shaders\basicShader.geom" />
     <None Include="src\shaders\instanceShader.vert" />
     <None Include="src\shaders\instanceShader.frag" />

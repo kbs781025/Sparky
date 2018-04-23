@@ -138,7 +138,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\graphics\BufferLayout.cpp" />
     <ClCompile Include="src\graphics\camera.cpp" />
+    <ClCompile Include="src\graphics\IndexBuffer.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
     <ClCompile Include="src\graphics\ShaderFactory\ShaderFactory.cpp" />
@@ -146,10 +148,15 @@
     <ClCompile Include="src\graphics\Texture2D.cpp" />
     <ClCompile Include="src\graphics\TextureCube.cpp" />
     <ClCompile Include="src\graphics\TextureDepth.cpp" />
+    <ClCompile Include="src\graphics\VertexArray.cpp" />
+    <ClCompile Include="src\graphics\VertexBuffer.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\Buffer.h" />
+    <ClInclude Include="src\graphics\BufferLayout.h" />
+    <ClInclude Include="src\graphics\IndexBuffer.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\camera.h" />
     <ClInclude Include="src\graphics\model.h" />
@@ -159,6 +166,8 @@
     <ClInclude Include="src\graphics\Texture2D.h" />
     <ClInclude Include="src\graphics\TextureCube.h" />
     <ClInclude Include="src\graphics\TextureDepth.h" />
+    <ClInclude Include="src\graphics\VertexArray.h" />
+    <ClInclude Include="src\graphics\VertexBuffer.h" />
     <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
@@ -166,7 +175,6 @@
     <ClInclude Include="src\utils\timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\graphics\basicShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.vert" />
     <None Include="src\shaders\basicShader.geom" />
