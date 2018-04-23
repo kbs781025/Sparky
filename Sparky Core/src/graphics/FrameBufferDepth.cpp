@@ -32,7 +32,7 @@ GLuint sparky::graphics::FrameBufferDepth::getHandle() const
 	return m_Handle;
 }
 
-void sparky::graphics::FrameBufferDepth::clearDepth() const
+void sparky::graphics::FrameBufferDepth::clear() const
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);

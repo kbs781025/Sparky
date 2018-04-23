@@ -16,7 +16,7 @@ namespace sparky { namespace graphics {
 		TextureParameters m_Parameters;
 	public:
 		Texture2D(const std::string& name, const std::string& fileName, const TextureParameters& parametres = TextureParameters());
-
+		Texture2D(GLuint width, GLuint height, const TextureParameters& parameters = TextureParameters());
 		~Texture2D();
 
 		void bind(GLuint slot = 0) const override;

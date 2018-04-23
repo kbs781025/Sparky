@@ -18,7 +18,7 @@ namespace sparky { namespace graphics {
 		virtual void bind() const override;
 		virtual void unBind() const override;
 		virtual GLuint getHandle() const override;
-		void clearDepth() const;
+		void clear() const;
 	private:
 		void initFrameBuffer();
 	};

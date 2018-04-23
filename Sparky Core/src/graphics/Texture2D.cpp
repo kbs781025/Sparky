@@ -6,6 +6,12 @@ sparky::graphics::Texture2D::Texture2D(const std::string& name, const std::strin
 	m_Handle = loadTexture();
 }
 
+sparky::graphics::Texture2D::Texture2D(GLuint width, GLuint height, const TextureParameters & parameters)
+	: m_Name("FRAMEBUFFER_ATTACHMENT"), m_FileName("NULL"), m_Width(width), m_Height(height), m_Parameters(parameters)
+{
+	m_Handle = loadTexture();
+}
+
 sparky::graphics::Texture2D::~Texture2D()
 {
 	glDeleteTextures(1, &m_Handle);
