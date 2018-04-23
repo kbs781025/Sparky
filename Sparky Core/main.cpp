@@ -65,7 +65,10 @@ void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, c
 	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].quadratic").c_str(), quadratic);
 }
 
-sparky::graphics::VertexArray* pVao;
+sparky::graphics::VertexArray* pCubeVao;
+sparky::graphics::VertexArray* pQuadVao;
+sparky::graphics::VertexArray* pPlaneVao;
+sparky::graphics::VertexArray* pSkyBoxVao;
 
 void initCube()
 {
@@ -123,57 +126,62 @@ void initCube()
 		};
 
 	VertexBufferContext context(GL_STATIC_DRAW, vertices, sizeof(vertices), BufferLayout::getPosNormTexLayout());
-	pVao = new VertexArray(context);
+	pCubeVao = new VertexArray(context);
 }
-
 void renderCube()
+{
+	pCubeVao->Draw();
+}
+void initQuad()
 {
 	using namespace sparky;
 	using namespace graphics;
-	
-	pVao->Draw();
-}
 
-// renderQuad() renders a 1x1 XY quad in NDC
-// -----------------------------------------
-unsigned int quadVAO = 0;
-unsigned int quadVBO;
-unsigned int planeVAO;
+	float quadVertices[] = {
+		// positions        // texture Coords
+		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	};
+
+	VertexBufferContext context(GL_STATIC_DRAW, quadVertices, sizeof(quadVertices), BufferLayout::getPosTexLayout());
+	pQuadVao = new VertexArray(context);
+}
 void renderQuad()
 {
-	if (quadVAO == 0)
-	{
-		float quadVertices[] = {
-			// positions        // texture Coords
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		};
-		// setup plane VAO
-		glGenVertexArrays(1, &quadVAO);
-		glBindVertexArray(quadVAO);
-		glGenBuffers(1, &quadVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	}
-	glBindVertexArray(quadVAO);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindVertexArray(0);
+	pQuadVao->Draw();
 }
+void initPlane()
+{
+	using namespace sparky;
+	using namespace graphics;
 
+	float planeVertices[] = {
+		// positions            // normals         // texcoords
+		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+
+		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
+	};
+
+	VertexBufferContext context = VertexBufferContext(GL_STATIC_DRAW, planeVertices, sizeof(planeVertices), BufferLayout::getPosNormTexLayout());
+	pPlaneVao = new VertexArray(context);
+}
+void drawPlane()
+{
+	pPlaneVao->Draw();
+}
 void renderScene(sparky::graphics::Shader &shader)
 {
 	// floor
 	glm::mat4 model;
 	shader.setUniformMat4("model", model);
-	glBindVertexArray(planeVAO);
 	glDisable(GL_CULL_FACE);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	pPlaneVao->Draw();
 	glEnable(GL_CULL_FACE);
 	// cubes
 	model = glm::mat4();
@@ -193,8 +201,64 @@ void renderScene(sparky::graphics::Shader &shader)
 	shader.setUniformMat4("model", model);
 	renderCube();
 }
+void initSkyBox()
+{
+	using namespace sparky;
+	using namespace graphics;
 
-#define NOSHOW
+	float skyboxVertices[] = {
+		// positions          
+		-10.0f,  10.0f, -10.0f,
+		-10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+
+		-10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+
+		-10.0f, -10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		-10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f, -10.0f,
+
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f
+	};
+	
+	VertexBufferContext context(GL_STATIC_DRAW, skyboxVertices, sizeof(skyboxVertices), BufferLayout::getPosLayout());
+	pSkyBoxVao = new VertexArray(context);
+}
+void drawSkyBox()
+{
+	pSkyBoxVao->Draw();
+}
+
 #define MODEL_IMPORT
 #ifndef MODEL_IMPORT
 int main()
@@ -457,88 +521,7 @@ int main()
 	using namespace sparky;
 	using namespace graphics;
 
-	float skyboxVertices[] = {
-		// positions          
-		-10.0f,  10.0f, -10.0f,
-		-10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
-
-		-10.0f, -10.0f,  10.0f,
-		-10.0f, -10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f,  10.0f,
-		-10.0f, -10.0f,  10.0f,
-
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-
-		-10.0f, -10.0f,  10.0f,
-		-10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f, -10.0f,  10.0f,
-		-10.0f, -10.0f,  10.0f,
-
-		-10.0f,  10.0f, -10.0f,
-		10.0f,  10.0f, -10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		-10.0f,  10.0f,  10.0f,
-		-10.0f,  10.0f, -10.0f,
-
-		-10.0f, -10.0f, -10.0f,
-		-10.0f, -10.0f,  10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		-10.0f, -10.0f,  10.0f,
-		10.0f, -10.0f,  10.0f
-	};
-	
 	Window window("Sparky", 800, 600);
-
-	unsigned int skyboxVAO, skyboxVBO;
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-
-	glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-
-	float planeVertices[] = {
-		// positions            // normals         // texcoords
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
-	};
-	// plane VAO
-	unsigned int planeVBO;
-	glGenVertexArrays(1, &planeVAO);
-	glGenBuffers(1, &planeVBO);
-	glBindVertexArray(planeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glBindVertexArray(0);
 
 	unsigned int uboBlock;
 	glGenBuffers(1, &uboBlock);
@@ -613,6 +596,9 @@ int main()
 	}
 
 	initCube();
+	initQuad();
+	initPlane();
+	initSkyBox();
 
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -674,9 +660,8 @@ int main()
 		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
 		skyboxShader->setUniformMat4("view", cubeMapView);
-		glBindVertexArray(skyboxVAO);
 		cubeMap.bind();
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		drawSkyBox();
 		glDepthFunc(GL_LESS);
 
 		float delta = timer.elapsed();

@@ -49,6 +49,10 @@ namespace sparky { namespace graphics {
 			Push(name, 2, GL_FLOAT, false);
 		}
 
+		void PushPosition();
+		void PushNormal();
+		void PushTexCoord();
+
 		inline const std::vector<BufferElement>& getLayOut() const { return m_Elements; }
 		inline GLuint getStride() const { return m_Size; }
 	private:
@@ -56,6 +60,7 @@ namespace sparky { namespace graphics {
 	public:
 		static BufferLayout getPosNormTexLayout();
 		static BufferLayout getPosTexLayout();
+		static BufferLayout getPosLayout();
 	};
 
 }}
