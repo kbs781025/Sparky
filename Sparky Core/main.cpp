@@ -523,49 +523,25 @@ int main()
 	using namespace graphics;
 
 	Window window("Sparky", 800, 600);
-
-	unsigned int uboBlock;
-	glGenBuffers(1, &uboBlock);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-	TextureDepth depthMap(SHADOW_WIDTH, SHADOW_HEIGHT);
-
-	unsigned int depthMapFBO;
-	glGenFramebuffers(1, &depthMapFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap.getHandle(), 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
-
+	// State Setting
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_CULL_FACE);
-
-	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	
+	// Shader loading
 	Shader* modelShader = ShaderFactory::ModelShader();
 	Shader* normalDisplayShader = ShaderFactory::NormalShader();
 	Shader* createShadowShader = ShaderFactory::CreateShadowShader();
 	Shader* applyShadowShader = ShaderFactory::ApplyShadowShader();
 	Shader* debug = ShaderFactory::CreateShader("debugShader");
 	Shader* skyboxShader = ShaderFactory::CreateShader("cubeMapShader");
+	
+	// Texture and model loading
+	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
-
-	modelShader->bindUniformBlock("Matrices", 1);
-	applyShadowShader->bindUniformBlock("Matrices", 1);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
-	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 	std::vector<std::string> cubeMapFaces =
 	{
 		"Texture/Images/skybox/right.jpg",
@@ -576,10 +552,8 @@ int main()
 		"Texture/Images/skybox/back.jpg"
 	};
 	TextureCube cubeMap = TextureCube("skybox", cubeMapFaces);
-	
-	skyboxShader->enable();
-	skyboxShader->setUniform1i("cubemap", 0);
 
+	// Light Setting
 	glm::vec3 pointLightPositions[] =
 	{
 		glm::vec3(-2.0f, 4.0f, -1.0f),
@@ -594,15 +568,32 @@ int main()
 	for (int i = 0; i < 4; i++)
 	{
 		setPointLightUniforms(modelShader, i, pointLightPositions[i],
-							  pointLightColor * 0.2f , pointLightColor * 0.7f, pointLightColor * 1.0f,
-							  1.0f, 0.007f, 0.0002f);
+			pointLightColor * 0.2f, pointLightColor * 0.7f, pointLightColor * 1.0f,
+			1.0f, 0.007f, 0.0002f);
 	}
+	
+	// Buffer Object Setting
+	unsigned int uboBlock;
+	glGenBuffers(1, &uboBlock);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	modelShader->bindUniformBlock("Matrices", 1);
+	applyShadowShader->bindUniformBlock("Matrices", 1);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
+	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 	initCube();
 	initQuad();
 	initPlane();
 	initSkyBox();
-
+	
 	Timer timer, t;
 	unsigned int frame = 0;
 
