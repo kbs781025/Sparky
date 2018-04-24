@@ -25,7 +25,7 @@ namespace sparky {
 			float elapsedTime = cycles * (float)m_Frequency;
 			m_Last = current;
 
-			return (float)(cycles * m_Frequency);
+			return elapsedTime;
 		}
 
 		bool cyclicTimer(float threshold)
