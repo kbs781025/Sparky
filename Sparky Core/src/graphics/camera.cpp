@@ -4,7 +4,8 @@
 
 namespace sparky { namespace graphics
 {
-	const float Camera::m_CameraSpeed = 2.5f;
+	const float Camera::m_MoveSpeed = 0.03f;
+	const float Camera::m_RotationSpeed = 0.05f;
 
 	Camera::Camera()
 		:
@@ -82,7 +83,7 @@ namespace sparky { namespace graphics
 	void Camera::moveCamera(float frameTime, int key)
 	{
 		glm::vec3 rightVec = glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f));
-		float moveAmout = m_CameraSpeed * frameTime;
+		float moveAmout = m_MoveSpeed * frameTime;
 		float dx = 0, dz = 0;
 		switch (key)
 		{
@@ -132,5 +133,28 @@ namespace sparky { namespace graphics
 
 		updateView();
 	}
+	void Camera::moveCamera(int key)
+	{
+		glm::vec3 rightVec = glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f));
+		
+		float dx = 0, dz = 0;
+		switch (key)
+		{
+		case GLFW_KEY_W:
+			dz += m_MoveSpeed;
+			break;
+		case GLFW_KEY_A:
+			dx -= m_MoveSpeed;
+			break;
+		case GLFW_KEY_S:
+			dz -= m_MoveSpeed;
+			break;
+		case GLFW_KEY_D:
+			dx += m_MoveSpeed;
+			break;
+		}
+		setPosition(m_Position + (m_Forward * dz + rightVec * dx));
+	}
+	
 }
 }

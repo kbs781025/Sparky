@@ -18,8 +18,9 @@ namespace sparky { namespace graphics
 		void updateView();
 
 		// Update each frame
-		void moveCamera(float frameTime, int key);
+		void moveCamera(float frameTime, int key); // for variable timestep
 		void rotateCamera(float deltaX, float deltaY);
+		void moveCamera(int key); // for fixed timestep
 
 	private:
 		// Translating
@@ -38,8 +39,8 @@ namespace sparky { namespace graphics
 		glm::mat4 m_ViewMatrix;
 		glm::vec3 m_Forward;
 
-		static const float m_CameraSpeed;
-
+		static const float m_MoveSpeed;
+		static const float m_RotationSpeed;
 	};
 
 } }
