@@ -76,6 +76,17 @@ namespace sparky { namespace graphics {
 		glfwSwapBuffers(m_Window);
 	}
 
+	void Window::update()
+	{
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			std::cout << "OpenGL Error : " << error << std::endl;
+		}
+
+		glfwPollEvents();
+	}
+
 	bool Window::isKeyPressed(unsigned int keycode) const
 	{
 		if (keycode >= MAX_KEYS)
@@ -143,24 +154,6 @@ namespace sparky { namespace graphics {
 			glfwSetWindowShouldClose(m_Window, true);
 		}
 
-		if (glfwGetKey(m_Window, GLFW_KEY_UP) == GLFW_PRESS)
-		{
-			m_MixingRatio += 0.005f;
-			if (m_MixingRatio >= 1.0f)
-			{
-				m_MixingRatio = 1.0f;
-			}
-		}
-		
-		if (glfwGetKey(m_Window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		{
-			m_MixingRatio -= 0.005f;
-			if (m_MixingRatio <= 0.0f)
-			{
-				m_MixingRatio = 0.0f;
-			}
-		}
-
 		if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
 		{
 			m_Camera.moveCamera(delta, GLFW_KEY_W);
@@ -176,6 +169,31 @@ namespace sparky { namespace graphics {
 		if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
 		{
 			m_Camera.moveCamera(delta, GLFW_KEY_D);
+		}
+	}
+
+	void Window::processInput()
+	{
+		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(m_Window, true);
+		}
+
+		if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(GLFW_KEY_W);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(GLFW_KEY_A);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(GLFW_KEY_S);
+		}
+		if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			m_Camera.moveCamera(GLFW_KEY_D);
 		}
 	}
 
