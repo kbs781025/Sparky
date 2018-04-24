@@ -524,6 +524,7 @@ int main()
 
 	Window window("Sparky", 800, 600);
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	const double MS_PER_UPDATE = 1.0f / 60.0f;
 
 	// State Setting
 	glEnable(GL_DEPTH_TEST);
@@ -597,13 +598,39 @@ int main()
 	Timer timer, t;
 	unsigned int frame = 0;
 
-	float time = 0.0f;
+	double time = 0.0f;
+	double lag = 0.0;
+	double prevClock = glfwGetTime();
 
 	while (!window.closed())
 	{
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		window.clear();
 
+		window.processInput();
+
+		// Update Block
+		double currentClock = glfwGetTime();
+		double frameTime = currentClock - prevClock;
+		prevClock = currentClock;
+		lag += frameTime;
+		while (lag >= MS_PER_UPDATE)
+		{
+			window.update();
+			lag -= MS_PER_UPDATE;
+		}
+
+		// FPS Timer block
+		{
+			frame++;
+			if (t.cyclicTimer(1.0f))
+			{
+				printf("%d frame\n", frame);
+				frame = 0;
+			}
+		}
+
+		//Render Block
 		glm::mat4 model;
 		//model = glm::scale(model, glm::vec3(0.2f));
 		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
@@ -653,18 +680,7 @@ int main()
 		drawSkyBox();
 		glDepthFunc(GL_LESS);
 
-		float delta = timer.elapsed();
-		window.update(delta);
-
-		// FPS Timer block
-		{
-			frame++;
-			if (t.cyclicTimer(1.0f))
-			{
-				printf("%d frame\n", frame);
-				frame = 0;
-			}
-		}
+		glfwSwapBuffers(window.getWindow());
 	}
 
 	return 0;
