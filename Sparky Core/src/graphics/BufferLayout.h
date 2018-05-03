@@ -40,18 +40,20 @@ namespace sparky { namespace graphics {
 		template <>
 		void Push<glm::vec3>(const std::string& name, bool normalize)
 		{
-			Push(name, 3, GL_FLOAT, false);
+			Push(name, 3, GL_FLOAT, normalize);
 		}
 
 		template<>
 		void Push<glm::vec2>(const std::string& name, bool normalize)
 		{
-			Push(name, 2, GL_FLOAT, false);
+			Push(name, 2, GL_FLOAT, normalize);
 		}
 
 		void PushPosition();
-		void PushNormal();
 		void PushTexCoord();
+		void PushTangent();
+		void PushBinormal();
+		void PushNormal();
 
 		inline const std::vector<BufferElement>& getLayOut() const { return m_Elements; }
 		inline GLuint getStride() const { return m_Size; }
@@ -61,6 +63,7 @@ namespace sparky { namespace graphics {
 		static BufferLayout getPosNormTexLayout();
 		static BufferLayout getPosTexLayout();
 		static BufferLayout getPosLayout();
+		static BufferLayout getPosTexTBNLayout();
 	};
 
 }}

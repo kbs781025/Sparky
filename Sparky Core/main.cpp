@@ -9,6 +9,7 @@
 #include "src/graphics/model.h"
 #include "src/graphics/VertexArray.h"
 #include "src/graphics/FramebufferDepth.h"
+#include "src/graphics/Light.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -138,15 +139,85 @@ void initQuad()
 	using namespace sparky;
 	using namespace graphics;
 
-	float quadVertices[] = {
-		// positions        // texture Coords
-		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-		1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	};
+	//float quadVertices[] = {
+	//	// positions        // texture Coords
+	//	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+	//	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	//	1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+	//	1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	//};
+	glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
+	glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+	glm::vec3 pos3(1.0f, -1.0f, 0.0f);
+	glm::vec3 pos4(1.0f, 1.0f, 0.0f);
+	// texture coordinates
+	glm::vec2 uv1(0.0f, 1.0f);
+	glm::vec2 uv2(0.0f, 0.0f);
+	glm::vec2 uv3(1.0f, 0.0f);
+	glm::vec2 uv4(1.0f, 1.0f);
+	// normal vector
+	glm::vec3 nm(0.0f, 0.0f, 1.0f);
 
-	VertexBufferContext context(GL_STATIC_DRAW, quadVertices, sizeof(quadVertices), BufferLayout::getPosTexLayout());
+	// calculate tangent/bitangent vectors of both triangles
+	glm::vec3 tangent1, bitangent1;
+	glm::vec3 tangent2, bitangent2;
+	// triangle 1
+	// ----------
+	glm::vec3 edge1 = pos2 - pos1;
+	glm::vec3 edge2 = pos3 - pos1;
+	glm::vec2 deltaUV1 = uv2 - uv1;
+	glm::vec2 deltaUV2 = uv3 - uv1;
+
+	GLfloat f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+	tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+	tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+	tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+	tangent1 = glm::normalize(tangent1);
+
+	bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+	bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+	bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+	bitangent1 = glm::normalize(bitangent1);
+
+	// triangle 2
+	// ----------
+	edge1 = pos3 - pos1;
+	edge2 = pos4 - pos1;
+	deltaUV1 = uv3 - uv1;
+	deltaUV2 = uv4 - uv1;
+
+	f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+	tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+	tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+	tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+	tangent2 = glm::normalize(tangent2);
+
+
+	bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+	bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+	bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+	bitangent2 = glm::normalize(bitangent2);
+
+
+	float quadVertices[] = {
+		// positions            // texcoords  // normal         // tangent                          // bitangent
+		pos1.x, pos1.y, pos1.z, uv1.x, uv1.y, nm.x, nm.y, nm.z, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+		pos2.x, pos2.y, pos2.z, uv2.x, uv2.y, nm.x, nm.y, nm.z, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+		pos3.x, pos3.y, pos3.z, uv3.x, uv3.y, nm.x, nm.y, nm.z, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+		pos1.x, pos1.y, pos1.z, uv1.x, uv1.y, nm.x, nm.y, nm.z, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+		pos3.x, pos3.y, pos3.z, uv3.x, uv3.y, nm.x, nm.y, nm.z, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+		pos4.x, pos4.y, pos4.z, uv4.x, uv4.y, nm.x, nm.y, nm.z, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
+	};
+	BufferLayout layout;
+	layout.PushPosition();
+	layout.PushTexCoord();
+	layout.PushNormal();
+	layout.PushTangent();
+	layout.PushBinormal();
+	VertexBufferContext context(GL_STATIC_DRAW, quadVertices, sizeof(quadVertices), layout);
 	pQuadVao = new VertexArray(context);
 }
 void renderQuad()
@@ -260,263 +331,6 @@ void drawSkyBox()
 	pSkyBoxVao->Draw();
 }
 
-#define MODEL_IMPORT
-#ifndef MODEL_IMPORT
-int main()
-{
-	using namespace sparky;
-	using namespace graphics;
-
-	Window window("Sparky", 800, 600);
-
-	Timer timer, t;
-	unsigned int frame = 0;
-
-	float cubeVertex[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right         
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		// Front face
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-	    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left					  
-		// Left face
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
-		// Right face
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right         
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left     
-		// Bottom face
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
-	    0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
-		// Top face
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left      
-	};
-
-	float planeVertices[] = {
-		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-		5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-
-		5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-		5.0f, -0.5f, -5.0f,  2.0f, 2.0f
-	};
-
-	float quadVertex[] =
-	{
-		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-		0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-		-0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
-
-		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-		0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-		0.05f,  0.05f,  0.0f, 1.0f, 1.0f
-	};
-
-	float screenWidth = window.getWidth();
-	float screenHeight = window.getHeight();
-	float screenVertex1[] =
-	{
-		0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-
-		0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		1.0f,  1.0f,  0.0f, 1.0f, 1.0f
-	};
-	float points[] = {
-		-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
-		-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
-	};
-
-	std::vector<glm::vec3> screenPos;
-	screenPos.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-	screenPos.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
-	screenPos.push_back(glm::vec3(-1.0f, -1.0f, 0.0f));
-	screenPos.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
-
-	unsigned int indicies[] =
-	{
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	glm::vec3 cubePositions[] =
-	{
-		glm::vec3(0.0f,  0.001f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-	};
-
-	/*unsigned int quadVAO, quadVBO;
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertex), quadVertex, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (void*)(2 * sizeof(GL_FLOAT)));
-	glEnableVertexAttribArray(1);
-
-	glm::vec2 translations[100];
-	int index = 0;
-	float offset = 0.1f;
-	for (int x = -10; x < 10; x += 2)
-	{
-		for (int y = -10; y < 10; y += 2)
-		{
-			glm::vec2 translation;
-			translation.x = (float)x / 10.0f + offset;
-			translation.y = (float)y / 10.0f + offset;
-			translations[index++] = translation;
-		}
-	}
-
-	unsigned int instanceVBO;
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, translations, GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glVertexAttribDivisor(2, 1);*/
-	
-	glBindVertexArray(0);
-
-	unsigned int amount = 10000;
-	glm::mat4* pModelMatrices = new glm::mat4[amount];
-	srand(glfwGetTime());
-	float radius = 50.0f;
-	float offset = 2.5f;
-	for (unsigned int i = 0; i < amount; i++)
-	{
-		glm::mat4 model;
-		// 1. translation: displace along circle with 'radius' in range [-offset, offset]
-		float angle = (float)i / (float)amount * 360.0f;
-		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float x = sin(angle) * radius + displacement;
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float y = displacement * 0.4f; // keep height of field smaller compared to width of x and z
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float z = cos(angle) * radius + displacement;
-		model = glm::translate(model, glm::vec3(x, y, z));
-
-		// 2. scale: Scale between 0.05 and 0.25f
-		float scale = (rand() % 20) / 100.0f + 0.05;
-		model = glm::scale(model, glm::vec3(scale));
-
-		// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
-		float rotAngle = (rand() % 360);
-		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-
-		// 4. now add to list of matrices
-		pModelMatrices[i] = model;
-	}
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
-
-	Shader basicShader = Shader("src/shaders/basicShader.vert", "src/shaders/basicShader.frag");
-	Shader instanceShader = Shader("src/shaders/instanceShader.vert", "src/shaders/instanceShader.frag");
-	Model planet = Model("Texture/planet/planet.obj");
-	Model rock = Model("Texture/rock/rock.obj");
-
-	unsigned int instanceVBO;
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	GLsizei vec4Size = sizeof(glm::vec4);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amount, pModelMatrices, GL_STATIC_DRAW);
-
-	for (unsigned int i = 0; i < rock.getMeshNum(); i++)
-	{
-		unsigned int meshVAO = rock.getMeshes()[i].getVAO();
-		glBindVertexArray(meshVAO);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(vec4Size));
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * vec4Size));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
-		glEnableVertexAttribArray(6);
-
-		glVertexAttribDivisor(3, 1);
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-	
-	float time = 0.0f;
-
-	while (!window.closed())
-	{
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		window.clear();
-
-		glm::mat4 view = window.getViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-		
-		basicShader.enable();
-		basicShader.setUniformMat4("projection", projection);
-		basicShader.setUniformMat4("view", view);
-		
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -4.0f));
-		model = glm::scale(model, glm::vec3(4.0f));
-		basicShader.setUniformMat4("model", model);
-		planet.Draw(basicShader);
-
-		instanceShader.enable();
-		instanceShader.setUniformMat4("projection", projection);
-		instanceShader.setUniformMat4("view", view);
-		rock.DrawInstances(instanceShader, amount);
-
-		float delta = timer.elapsed();
-		window.update(delta);
-
-		frame++;
-		if (t.cyclicTimer(1.0f))
-		{
-			printf("%d frame\n", frame);
-			frame = 0;
-		}
-	}
-
-	return 0;
-}
-#else
 int main()
 {
 	using namespace sparky;
@@ -529,7 +343,6 @@ int main()
 	// State Setting
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_CULL_FACE);
 	
 	// Shader loading
@@ -539,10 +352,13 @@ int main()
 	Shader* applyShadowShader = ShaderFactory::ApplyShadowShader();
 	Shader* debug = ShaderFactory::CreateShader("debugShader");
 	Shader* skyboxShader = ShaderFactory::CreateShader("cubeMapShader");
+	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
 	
 	// Texture and model loading
 	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
+	Texture2D brickWallDiffuse = Texture2D("brickwallDiffuse", "Texture/Images/brickwall.jpg");
+	Texture2D brickWallNormal = Texture2D("brickwallNormal", "Texture/Images/brickwall_normal.jpg");
 	std::vector<std::string> cubeMapFaces =
 	{
 		"Texture/Images/skybox/right.jpg",
@@ -557,7 +373,7 @@ int main()
 	// Light Setting
 	glm::vec3 pointLightPositions[] =
 	{
-		glm::vec3(-2.0f, 4.0f, -1.0f),
+		glm::vec3(2.0f, 4.0f, 2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
@@ -572,6 +388,14 @@ int main()
 			pointLightColor * 0.2f, pointLightColor * 0.7f, pointLightColor * 1.0f,
 			1.0f, 0.007f, 0.0002f);
 	}
+
+	normalMapShader->enable();
+	for (int i = 0; i < 1; i++)
+	{
+		setPointLightUniforms(normalMapShader, i, pointLightPositions[i],
+			pointLightColor * 0.2f, pointLightColor * 0.7f, pointLightColor * 1.0f,
+			1.0f, 0.007f, 0.0002f);
+	}
 	
 	// Buffer Object Setting
 	unsigned int uboBlock;
@@ -582,11 +406,9 @@ int main()
 
 	modelShader->bindUniformBlock("Matrices", 1);
 	applyShadowShader->bindUniformBlock("Matrices", 1);
+	normalMapShader->bindUniformBlock("Matrices", 1);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
@@ -631,15 +453,14 @@ int main()
 		}
 
 		//Render Block
-		glm::mat4 model;
-		//model = glm::scale(model, glm::vec3(0.2f));
-		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f));
+		glm::mat4 model = glm::rotate(glm::mat4(), glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		glm::mat4 view = window.getViewMatrix();
+		glm::mat4 MVP = projection * view * model;
 		glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(MVP));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		depthFBO.bind();
+		/*depthFBO.bind();
 		createShadowShader->enable();
 		glm::mat4 lightView = glm::lookAt(pointLightPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
@@ -658,7 +479,7 @@ int main()
 		applyShadowShader->setUniform1i("shadowMap", 1);
 		container.bind();
 		depthFBO.getTextureDepth()->bind(1);
-		renderScene(*applyShadowShader);
+		renderScene(*applyShadowShader);*/
 
 		/*modelShader.enable();
 		modelShader.setUniformMat4("model", model);
@@ -671,20 +492,30 @@ int main()
 		normalDisplayShader->setUniformMat4("model", model);
 		nanosuit.Draw(*normalDisplayShader, false);*/
 
-		glDepthFunc(GL_LEQUAL);
+		normalMapShader->enable();
+		normalMapShader->setUniformMat4("model", model);
+		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
+		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
+		normalMapShader->setUniform1i("material.texture_diffuse1", 0);
+		normalMapShader->setUniform1i("material.texture_normal1", 1);
+		normalMapShader->setUniform1f("material.shininess", 32);
+		brickWallDiffuse.bind(0);
+		brickWallNormal.bind(1);
+		renderQuad();
+
+		/*glDepthFunc(GL_LEQUAL);
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
 		skyboxShader->setUniformMat4("view", cubeMapView);
 		cubeMap.bind();
 		drawSkyBox();
-		glDepthFunc(GL_LESS);
+		glDepthFunc(GL_LESS);*/
 
 		glfwSwapBuffers(window.getWindow());
 	}
 
 	return 0;
 }
-#endif
 
 

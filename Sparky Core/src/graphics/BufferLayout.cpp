@@ -31,6 +31,16 @@ void sparky::graphics::BufferLayout::PushTexCoord()
 	Push<glm::vec2>("TEXCOORD", false);
 }
 
+void sparky::graphics::BufferLayout::PushTangent()
+{
+	Push<glm::vec3>("TANGENT", false);
+}
+
+void sparky::graphics::BufferLayout::PushBinormal()
+{
+	Push<glm::vec3>("BINORMAL", false);
+}
+
 sparky::graphics::BufferLayout sparky::graphics::BufferLayout::getPosNormTexLayout()
 {
 	BufferLayout bufferlayout;
@@ -55,5 +65,17 @@ sparky::graphics::BufferLayout sparky::graphics::BufferLayout::getPosLayout()
 	BufferLayout bufferLayout;
 	bufferLayout.PushPosition();
 
+	return bufferLayout;
+}
+
+sparky::graphics::BufferLayout sparky::graphics::BufferLayout::getPosTexTBNLayout()
+{
+	BufferLayout bufferLayout;
+	bufferLayout.PushPosition();
+	bufferLayout.PushTexCoord();
+	bufferLayout.PushTangent();
+	bufferLayout.PushBinormal();
+	bufferLayout.PushNormal();
+	
 	return bufferLayout;
 }

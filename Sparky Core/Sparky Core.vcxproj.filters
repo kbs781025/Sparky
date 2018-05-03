@@ -161,5 +161,7 @@
     <None Include="src\graphics\ShaderFactory\Shaders\modelShader.vert" />
     <None Include="src\graphics\ShaderFactory\Shaders\cubemapShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\cubemapShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalMappingShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalMappingShader.frag" />
   </ItemGroup>
 </Project>

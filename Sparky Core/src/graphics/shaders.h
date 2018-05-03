@@ -24,6 +24,8 @@ namespace sparky { namespace graphics {
 		void setUniform3f(const GLchar* name, const glm::vec3& value);
 		void setUniform4f(const GLchar* name, const glm::vec4& value);
 		void setUniformMat4(const GLchar* name, const glm::mat4& matrix);
+		void setPointLight(const std::vector<PointLight>& pointLight);
+		void setDirLight(const std::vector<DirectionLight>& dirLight);
 		void bindUniformBlock(const GLchar* name, GLuint bindingPoint);
 
 		void enable();
@@ -33,6 +35,10 @@ namespace sparky { namespace graphics {
 		GLuint compileShader(GLuint shaderType, const char* filePath);
 		void linkShader(GLuint vertShader, GLuint fragShader, GLuint geoShader = 0);
 		GLint getUniformLocation(const GLchar* name);
+		
+		static const std::string POINTLIGHT = "pointLights";
+		static const std::string DIRECTIONLIGHT = "dirLights";
+		static const std::string MATERIAL = "material";
 	};
 
 	}

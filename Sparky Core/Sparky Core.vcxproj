@@ -161,6 +161,7 @@
     <ClInclude Include="src\graphics\Framebuffer2D.h" />
     <ClInclude Include="src\graphics\FrameBufferDepth.h" />
     <ClInclude Include="src\graphics\IndexBuffer.h" />
+    <ClInclude Include="src\graphics\Light.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\camera.h" />
     <ClInclude Include="src\graphics\model.h" />
@@ -181,6 +182,8 @@
   <ItemGroup>
     <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.frag" />
     <None Include="src\graphics\ShaderFactory\Shaders\applyShadowShader.vert" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalMappingShader.frag" />
+    <None Include="src\graphics\ShaderFactory\Shaders\normalMappingShader.vert" />
     <None Include="src\shaders\basicShader.geom" />
     <None Include="src\graphics\ShaderFactory\Shaders\debugShader.frag" />
     <None Include="src\shaders\basicShaderBlur.frag" />

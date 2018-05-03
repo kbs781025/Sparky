@@ -1,5 +1,6 @@
 #include "shaders.h"
 #include "../utils/FileUtils.h"
+#include "Light.h"
 
 #include <vector>
 #include <iostream>
@@ -23,13 +24,10 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform1f(const GLchar * name, float value)
 	{
-		if(!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
+		assert(m_Enabled == true);
 
 		GLint uniformLocation = getUniformLocation(name);
+
 		if (uniformLocation < 0)
 		{
 			std::cout << "Unable to find uniform : " << name << std::endl;
@@ -122,6 +120,48 @@ namespace sparky { namespace graphics {
 			return;
 		}
 		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void Shader::setPointLight(const std::vector<PointLight> & pointLight)
+	{
+		for (unsigned int i = 0; i < pointLight.size(); ++i)
+		{
+			const std::string index = std::to_string(i);
+			const std::string uniformName = POINTLIGHT + "[" + index + "].";
+			const char* position = (uniformName + "position").c_str();
+			const char* constant = (uniformName + "constant").c_str();
+			const char* linear = (uniformName + "linear").c_str();
+			const char* quadratic = (uniformName + "quadratic").c_str();
+			const char* ambient = (uniformName + "ambient").c_str();
+			const char* diffuse= (uniformName + "diffuse").c_str();
+			const char* specular= (uniformName + "specular").c_str();
+
+			setUniform3f(position, pointLight[i].position);
+			setUniform1f(constant, pointLight[i].constant);
+			setUniform1f(linear, pointLight[i].linear);
+			setUniform1f(quadratic, pointLight[i].quadratic);
+			setUniform3f(ambient, pointLight[i].ambient);
+			setUniform3f(diffuse, pointLight[i].diffuse);
+			setUniform3f(specular, pointLight[i].specular);
+		}
+	}
+
+	void Shader::setDirLight(const std::vector<DirectionLight> & dirLight)
+	{
+		for (unsigned int i = 0; i < dirLight.size(); ++i)
+		{
+			const std::string index = std::to_string(i);
+			const std::string uniformName = DIRECTIONLIGHT + "[" + index + "].";
+			const std::string direction = uniformName + "direction";
+			const std::string ambient = uniformName + "ambient";
+			const std::string diffuse = uniformName + "diffuse";
+			const std::string specular = uniformName + "specular";
+
+			setUniform3f(direction, dirLight[i].direction);
+			setUniform3f(ambient, dirLight[i].ambient);
+			setUniform3f(diffuse, dirLight[i].diffuse);
+			setUniform3f(specular, dirLight[i].specular);
+		}
 	}
 
 	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint)
