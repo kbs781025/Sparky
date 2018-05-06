@@ -1,11 +1,16 @@
 #include "shaders.h"
 #include "../utils/FileUtils.h"
 #include "Light.h"
+#include "UniformBuffer.h"
 
 #include <vector>
 #include <iostream>
 
 namespace sparky { namespace graphics {
+
+	const std::string Shader::POINTLIGHT = "pointLights";
+	const std::string Shader::DIRECTIONLIGHT = "dirLights";
+	const std::string Shader::MATERIAL = "material";
 
 	Shader::Shader(const char * vertexPath, const char * fragPath, const char * geoPath)
 		:
@@ -152,10 +157,10 @@ namespace sparky { namespace graphics {
 		{
 			const std::string index = std::to_string(i);
 			const std::string uniformName = DIRECTIONLIGHT + "[" + index + "].";
-			const std::string direction = uniformName + "direction";
-			const std::string ambient = uniformName + "ambient";
-			const std::string diffuse = uniformName + "diffuse";
-			const std::string specular = uniformName + "specular";
+			const char* direction = (uniformName + "direction").c_str();
+			const char* ambient = (uniformName + "ambient").c_str();
+			const char* diffuse = (uniformName + "diffuse").c_str();
+			const char* specular = (uniformName + "specular").c_str();
 
 			setUniform3f(direction, dirLight[i].direction);
 			setUniform3f(ambient, dirLight[i].ambient);
@@ -173,6 +178,11 @@ namespace sparky { namespace graphics {
 			return;
 		}
 		glUniformBlockBinding(m_ShaderID, uniformBlockIndex, bindingPoint);
+	}
+
+	GLuint Shader::getBlockBindingPoint(const GLchar * name)
+	{
+		return glGetUniformBlockIndex(m_ShaderID, name);
 	}
 
 	void Shader::enable()
@@ -222,6 +232,7 @@ namespace sparky { namespace graphics {
 			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
 			std::vector<GLchar> error(maxLength);
 			glGetShaderInfoLog(shaderID, maxLength, &maxLength, error.data());
+			std::cout << filePath << std::endl;
 			std::cout << "Failed to compile shader. " << error.data() << std::endl;
 			glDeleteShader(shaderID);
 
