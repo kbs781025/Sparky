@@ -150,9 +150,11 @@
     <ClCompile Include="src\graphics\Texture2D.cpp" />
     <ClCompile Include="src\graphics\TextureCube.cpp" />
     <ClCompile Include="src\graphics\TextureDepth.cpp" />
+    <ClCompile Include="src\graphics\UniformBuffer.cpp" />
     <ClCompile Include="src\graphics\VertexArray.cpp" />
     <ClCompile Include="src\graphics\VertexBuffer.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
+    <ClCompile Include="src\platform\opengl\GLError.cpp" />
     <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,9 +173,11 @@
     <ClInclude Include="src\graphics\Texture2D.h" />
     <ClInclude Include="src\graphics\TextureCube.h" />
     <ClInclude Include="src\graphics\TextureDepth.h" />
+    <ClInclude Include="src\graphics\UniformBuffer.h" />
     <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\graphics\VertexBuffer.h" />
     <ClInclude Include="src\graphics\window.h" />
+    <ClInclude Include="src\platform\opengl\GLCommon.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
     <ClInclude Include="src\utils\stb_image.h" />

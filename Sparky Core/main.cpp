@@ -10,6 +10,7 @@
 #include "src/graphics/VertexArray.h"
 #include "src/graphics/FramebufferDepth.h"
 #include "src/graphics/Light.h"
+#include "src/graphics/UniformBuffer.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -381,34 +382,20 @@ int main()
 
 	glm::vec3 pointLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	modelShader->enable();
-	for (int i = 0; i < 4; i++)
-	{
-		setPointLightUniforms(modelShader, i, pointLightPositions[i],
-			pointLightColor * 0.2f, pointLightColor * 0.7f, pointLightColor * 1.0f,
-			1.0f, 0.007f, 0.0002f);
-	}
-
-	normalMapShader->enable();
-	for (int i = 0; i < 1; i++)
-	{
-		setPointLightUniforms(normalMapShader, i, pointLightPositions[i],
-			pointLightColor * 0.2f, pointLightColor * 0.7f, pointLightColor * 1.0f,
-			1.0f, 0.007f, 0.0002f);
-	}
+	std::vector<PointLight> pointLights;
+	pointLights.emplace_back(pointLightColor, pointLightPositions[0], glm::vec3(1.0f, 0.007f, 0.0002f));
+	pointLights.emplace_back(pointLightColor, pointLightPositions[1], glm::vec3(1.0f, 0.007f, 0.0002f));
 	
 	// Buffer Object Setting
-	unsigned int uboBlock;
-	glGenBuffers(1, &uboBlock);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 	modelShader->bindUniformBlock("Matrices", 1);
 	applyShadowShader->bindUniformBlock("Matrices", 1);
 	normalMapShader->bindUniformBlock("Matrices", 1);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboBlock, 0, sizeof(glm::mat4) * 2);
+	UniformBuffer* pMatrixUBO = new UniformBuffer(1, sizeof(glm::mat4));
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
+
+	normalMapShader->bindUniformBlock("PointLights", 2);
+	UniformBuffer* pLightUBO = new UniformBuffer(2, sizeof(PointLight));
+	pLightUBO->setUniformBlockData(pointLights);
 
 	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
@@ -455,11 +442,10 @@ int main()
 		//Render Block
 		glm::mat4 model = glm::rotate(glm::mat4(), glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		glm::mat4 view = window.getViewMatrix();
-		glm::mat4 MVP = projection * view * model;
-		glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(MVP));
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
+		std::vector<glm::mat4> matrices;
+		matrices.emplace_back(projection * view * model);
+		pMatrixUBO->setUniformBlockData(matrices);
+		
 		/*depthFBO.bind();
 		createShadowShader->enable();
 		glm::mat4 lightView = glm::lookAt(pointLightPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
