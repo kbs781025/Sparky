@@ -9,6 +9,8 @@ namespace sparky { namespace graphics {
 
 	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies, const std::vector<Texture2D>& textures)
 		:
+		m_Vertices(vertices),
+		m_Indicies(indicies),
 		m_Textures(textures)
 	{
 		setupMesh(vertices, indicies);
@@ -91,8 +93,8 @@ namespace sparky { namespace graphics {
 
 	void Mesh::setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies)
 	{
-		VertexBufferContext vbContext(GL_STATIC_DRAW, vertices.data(), vertices.size() * sizeof(Vertex), BufferLayout::getPosTexTBNLayout());
-		IndexBufferContext ibContext(indicies.data(), indicies.size());
+		VertexBufferContext vbContext(GL_STATIC_DRAW, m_Vertices.data(), m_Vertices.size() * sizeof(Vertex), BufferLayout::getPosTexTBNLayout());
+		IndexBufferContext ibContext(m_Indicies.data(), m_Indicies.size());
 		m_pVAO = new VertexArray(vbContext, ibContext);
 	}
 
