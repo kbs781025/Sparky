@@ -1,5 +1,7 @@
 #include "mesh.h"
 #include <cstddef>
+#include "../platform/opengl/GLCommon.h"
+
 namespace sparky { namespace graphics {
 
 	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture2D> textures)
@@ -13,17 +15,16 @@ namespace sparky { namespace graphics {
 
 	void Mesh::Draw(Shader& shader, bool textureOn)
 	{
-		unsigned int diffuseNum = 0;
-		unsigned int specularNum = 0;
-		unsigned int reflectNum = 0;
+		unsigned int diffuseNum = -1;
+		unsigned int specularNum = -1;
+		unsigned int reflectNum = -1;
 		shader.enable();
 		if (textureOn)
 		{
 			for (int i = 0; i < m_Textures.size(); i++)
 			{
+				std::string type = m_Textures[i].getType();
 				std::string number;
-				//std::string type = m_Textures[i].getType();
-				std::string type = "";
 
 				if (type == "texture_diffuse")
 				{
@@ -42,12 +43,13 @@ namespace sparky { namespace graphics {
 				shader.setUniform1i(("material." + type + number).c_str(), i);
 			}
 		}
+		shader.setUniform1f("material.shininess", 256.0);
 
-		glBindVertexArray(m_VAO);
-		glDrawElements(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		GLCall(glBindVertexArray(m_VAO));
+		GLCall(glDrawElements(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0));
+		GLCall(glBindVertexArray(0));
 
-		glActiveTexture(GL_TEXTURE0);
+		GLCall(glActiveTexture(GL_TEXTURE0));
 	}
 
 	void Mesh::DrawInstances(Shader & shader, unsigned int instanceCount)
@@ -59,8 +61,7 @@ namespace sparky { namespace graphics {
 		for (int i = 0; i < m_Textures.size(); i++)
 		{
 			std::string number;
-			//std::string type = m_Textures[i].getType();
-			std::string type = "";
+			std::string type = m_Textures[i].getType();
 
 			if (type == "texture_diffuse")
 			{
@@ -79,36 +80,36 @@ namespace sparky { namespace graphics {
 			shader.setUniform1i(("material." + type + number).c_str(), i);
 		}
 
-		glBindVertexArray(m_VAO);
-		glDrawElementsInstanced(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0, instanceCount);
-		glBindVertexArray(0);
+		GLCall(glBindVertexArray(m_VAO));
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0, instanceCount));
+		GLCall(glBindVertexArray(0));
 
-		glActiveTexture(GL_TEXTURE0);
+		GLCall(glActiveTexture(GL_TEXTURE0));
 	}
 
 	void Mesh::setupMesh()
 	{
-		glGenVertexArrays(1, &m_VAO);
-		glGenBuffers(1, &m_VBO);
-		glGenBuffers(1, &m_EBO);
+		GLCall(glGenVertexArrays(1, &m_VAO));
+		GLCall(glGenBuffers(1, &m_VBO));
+		GLCall(glGenBuffers(1, &m_EBO));
 
-		glBindVertexArray(m_VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-		glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), m_Vertices.data(), GL_STATIC_DRAW);
+		GLCall(glBindVertexArray(m_VAO));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), m_Vertices.data(), GL_STATIC_DRAW));
 		
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indicies.size() * sizeof(unsigned int), m_Indicies.data(), GL_STATIC_DRAW);
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indicies.size() * sizeof(unsigned int), m_Indicies.data(), GL_STATIC_DRAW));
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Position)));
+		GLCall(glEnableVertexAttribArray(0));
+		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Position))));
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Normal)));
+		GLCall(glEnableVertexAttribArray(1));
+		GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Normal))));
 
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_TexCoord)));
+		GLCall(glEnableVertexAttribArray(2));
+		GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_TexCoord))));
 
-		glBindVertexArray(0);
+		GLCall(glBindVertexArray(0));
 	}
 
 }

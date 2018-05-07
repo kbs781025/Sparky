@@ -1,5 +1,6 @@
 #include "TextureCube.h"
 #include "Texture2D.h"
+#include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::TextureCube::TextureCube(const std::string & name, std::string & filePath)
 	: m_Name(name)
@@ -16,19 +17,19 @@ sparky::graphics::TextureCube::TextureCube(const std::string & name, std::vector
 
 sparky::graphics::TextureCube::~TextureCube()
 {
-	glDeleteTextures(1, &m_Handle);
+	GLCall(glDeleteTextures(1, &m_Handle));
 }
 
 void sparky::graphics::TextureCube::bind(GLuint slot) const
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_Handle);
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_Handle));
 }
 
 void sparky::graphics::TextureCube::unBind(GLuint slot) const
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
 GLuint sparky::graphics::TextureCube::loadFromSingleFile()
@@ -41,8 +42,8 @@ GLuint sparky::graphics::TextureCube::loadFromSingleFile()
 GLuint sparky::graphics::TextureCube::loadFromMultipleFiles()
 {
 	unsigned int cubeMapID;
-	glGenTextures(1, &cubeMapID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
+	GLCall(glGenTextures(1, &cubeMapID));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID));
 
 	GLubyte* pixels = nullptr;
 
@@ -56,18 +57,18 @@ GLuint sparky::graphics::TextureCube::loadFromMultipleFiles()
 		}
 		m_Parameters.format = bytes == 3 ? TextureFormat::RGB : TextureFormat::RGBA;
 		GLenum format = Texture2D::textureFormatToGL(m_Parameters.format);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels);
+		GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels));
 	}
 
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	GLCall(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
 	
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 	
 	return cubeMapID;
 }

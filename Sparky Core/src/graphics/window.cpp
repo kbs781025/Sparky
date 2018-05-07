@@ -1,4 +1,5 @@
 #include "window.h"
+#include "../platform/opengl/GLCommon.h"
 
 namespace sparky { namespace graphics {
 
@@ -59,7 +60,7 @@ namespace sparky { namespace graphics {
 
 	void Window::clear() const
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 	}
 
 	void Window::update(float delta)
@@ -199,7 +200,7 @@ namespace sparky { namespace graphics {
 
 	void window_resize(GLFWwindow* window, int width, int height) // not part of window class
 	{
-		//glViewport(0, 0, width, height);
+		//GLCall(glViewport(0, 0, width, height));
 		Window* win = (Window*)glfwGetWindowUserPointer(window);
 		win->m_Width = width;
 		win->m_Height = height;

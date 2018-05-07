@@ -31,13 +31,8 @@ namespace sparky { namespace graphics {
 		void setUniformMat4(const GLchar* name, const glm::mat4& matrix);
 		void bindUniformBlock(const GLchar* name, GLuint bindingPoint);
 
-		
-
 		GLuint getShaderID() const { return m_ShaderID; }
 		GLuint getBlockBindingPoint(const GLchar* name);
-
-		void setPointLight(const std::vector<PointLight>& pointLight);
-		void setDirLight(const std::vector<DirectionLight>& dirLight);
 
 		void enable();
 		void disable();

@@ -1,38 +1,46 @@
 #include "Texture2D.h"
+#include "../platform/opengl/GLCommon.h"
 
-sparky::graphics::Texture2D::Texture2D(const std::string& name, const std::string& fileName, const TextureParameters& parametres)
-	: m_Name(name), m_FileName(fileName), m_Parameters(m_Parameters)
+sparky::graphics::Texture2D::Texture2D(const std::string & fileName, const std::string & typeName, const TextureParameters & parameters)
+	:
+	m_FileName(fileName), m_TypeName(typeName), m_Parameters(parameters)
+{
+	m_Handle = loadTexture();
+}
+
+sparky::graphics::Texture2D::Texture2D(const std::string& fileName, const TextureParameters& parameters)
+	: m_FileName(fileName), m_Parameters(parameters)
 {
 	m_Handle = loadTexture();
 }
 
 sparky::graphics::Texture2D::Texture2D(GLuint width, GLuint height, const TextureParameters & parameters)
-	: m_Name("FRAMEBUFFER_ATTACHMENT"), m_FileName("NULL"), m_Width(width), m_Height(height), m_Parameters(parameters)
+	: m_FileName("NULL"), m_Width(width), m_Height(height), m_Parameters(parameters)
 {
 	m_Handle = loadTexture();
 }
 
 sparky::graphics::Texture2D::~Texture2D()
 {
-	glDeleteTextures(1, &m_Handle);
+	//GLCall(glDeleteTextures(1, &m_Handle));
 }
 
 void sparky::graphics::Texture2D::bind(GLuint slot) const
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, m_Handle);
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_Handle));
 }
 
 void sparky::graphics::Texture2D::unBind(GLuint slot) const
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 void sparky::graphics::Texture2D::setData(const void * pixels)
 {
-	glBindTexture(GL_TEXTURE_2D, m_Handle);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, textureFormatToGL(m_Parameters.format), GL_UNSIGNED_BYTE, pixels);
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_Handle));
+	GLCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, textureFormatToGL(m_Parameters.format), GL_UNSIGNED_BYTE, pixels));
 }
 
 void sparky::graphics::Texture2D::setData(GLuint color)
@@ -54,17 +62,17 @@ GLuint sparky::graphics::Texture2D::loadTexture()
 	}
 
 	GLuint handle;
-	glGenTextures(1, &handle);
-	glBindTexture(GL_TEXTURE_2D, handle);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_Parameters.filter == TextureFilter::LINEAR ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_Parameters.filter == TextureFilter::LINEAR ? GL_LINEAR : GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapToGL(m_Parameters.wrap));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapToGL(m_Parameters.wrap));
+	GLCall(glGenTextures(1, &handle));
+	GLCall(glBindTexture(GL_TEXTURE_2D, handle));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_Parameters.filter == TextureFilter::LINEAR ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_Parameters.filter == TextureFilter::LINEAR ? GL_LINEAR : GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapToGL(m_Parameters.wrap)));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapToGL(m_Parameters.wrap)));
 
 	GLenum format = textureFormatToGL(m_Parameters.format);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels ? pixels : nullptr);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, pixels ? pixels : nullptr));
+	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 
 	if (pixels != nullptr)
 		ImageLoader::free_image(pixels);

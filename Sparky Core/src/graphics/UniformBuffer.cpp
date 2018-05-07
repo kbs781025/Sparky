@@ -17,7 +17,7 @@ sparky::graphics::UniformBuffer::UniformBuffer(const std::vector<float>& uniform
 
 sparky::graphics::UniformBuffer::~UniformBuffer()
 {
-	GLCall(glDeleteBuffers(1, &m_Handle));
+	GLCall((glDeleteBuffers(1, &m_Handle)));
 }
 
 void sparky::graphics::UniformBuffer::bind() const
@@ -52,7 +52,7 @@ void sparky::graphics::UniformBuffer::setData(const void * data)
 void sparky::graphics::UniformBuffer::setDataSegment(GLuint uniformOffset, const void * data, GLuint byteSize)
 {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
-	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, uniformOffset, byteSize * sizeof(float), data));
+	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, uniformOffset, byteSize, data));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 

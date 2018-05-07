@@ -9,7 +9,7 @@ namespace sparky { namespace graphics {
 		/*glm::vec3 ambient, diffuse, specular;
 		glm::vec3 position;
 		float constant, linear, quadratic;*/
-		glm::vec3 ambient;
+		/*glm::vec3 ambient;
 		float constant;
 		glm::vec3 diffuse;
 		float linear;
@@ -33,6 +33,15 @@ namespace sparky { namespace graphics {
 			constant = attenuation.x;
 			linear = attenuation.y;
 			quadratic = attenuation.z;
+		}*/
+		glm::vec4 lightColor;
+		glm::vec4 position;
+		glm::vec4 attenuation;
+
+		PointLight(const glm::vec3 lightColor, const glm::vec3& position, const glm::vec3& attenuation)
+			:
+			lightColor(glm::vec4(lightColor, 1.0f)), position(glm::vec4(position, 1.0f)), attenuation(glm::vec4(attenuation, 0.0f))
+		{
 		}
 	};
 

@@ -23,11 +23,6 @@ namespace sparky { namespace graphics {
 
 		void setBindingPoint(GLuint bindingPoint);
 
-		void setData(const std::vector<float>& uniformBlockData);
-		void setDataSegment(GLuint uniformOffset, const std::vector<float>& uniformBlockData); 
-		void setData(const void* data);
-		void setDataSegment(GLuint uniformOffset, const void* data, GLuint byteSize);
-
 		template<typename T>
 		void setUniformBlockData(const std::vector<T>& blockData)
 		{
@@ -38,7 +33,17 @@ namespace sparky { namespace graphics {
 				offset += sizeof(T);
 			}
 		}
+
+		template<typename T>
+		void setUniformBlockDataIndex(const T& blockData, GLuint index)
+		{
+			setDataSegment(sizeof(T) * index, &blockData, sizeof(T));
+		}
 	private:
+		void setData(const std::vector<float>& uniformBlockData);
+		void setDataSegment(GLuint uniformOffset, const std::vector<float>& uniformBlockData);
+		void setData(const void* data);
+		void setDataSegment(GLuint uniformOffset, const void* data, GLuint byteSize);
 		void initUniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize);
 		void initUniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize, const void* data);
 	};

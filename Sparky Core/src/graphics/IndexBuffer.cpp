@@ -1,4 +1,5 @@
 #include "IndexBuffer.h"
+#include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::IndexBuffer::IndexBuffer(const void* data, GLuint count)
 	: m_Count(count)
@@ -14,17 +15,17 @@ sparky::graphics::IndexBuffer::IndexBuffer(const IndexBufferContext & context)
 
 sparky::graphics::IndexBuffer::~IndexBuffer()
 {
-	glDeleteBuffers(1, &m_Handle);
+	GLCall(glDeleteBuffers(1, &m_Handle));
 }
 
 void sparky::graphics::IndexBuffer::bind() const
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle));
 }
 
 void sparky::graphics::IndexBuffer::unBind() const
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
 GLuint sparky::graphics::IndexBuffer::getHandle() const
@@ -34,8 +35,8 @@ GLuint sparky::graphics::IndexBuffer::getHandle() const
 
 void sparky::graphics::IndexBuffer::initIBObject(const void * data)
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(GLuint), data, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(GLuint), data, GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 

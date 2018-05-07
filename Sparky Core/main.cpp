@@ -11,6 +11,7 @@
 #include "src/graphics/FramebufferDepth.h"
 #include "src/graphics/Light.h"
 #include "src/graphics/UniformBuffer.h"
+#include "src/platform/opengl/GLCommon.h"
 #include <GLFW/glfw3.h>
 
 #include <time.h>
@@ -253,9 +254,9 @@ void renderScene(sparky::graphics::Shader &shader)
 	// floor
 	glm::mat4 model;
 	shader.setUniformMat4("model", model);
-	glDisable(GL_CULL_FACE);
+	GLCall(glDisable(GL_CULL_FACE));
 	pPlaneVao->Draw();
-	glEnable(GL_CULL_FACE);
+	GLCall(glEnable(GL_CULL_FACE));
 	// cubes
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
@@ -342,9 +343,9 @@ int main()
 	const double MS_PER_UPDATE = 1.0f / 60.0f;
 
 	// State Setting
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_CULL_FACE);
+	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
+	GLCall(glEnable(GL_CULL_FACE));
 	
 	// Shader loading
 	Shader* modelShader = ShaderFactory::ModelShader();
@@ -356,10 +357,10 @@ int main()
 	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
 	
 	// Texture and model loading
-	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
-	Texture2D container = Texture2D("container", "Texture/Images/container2.png");
-	Texture2D brickWallDiffuse = Texture2D("brickwallDiffuse", "Texture/Images/brickwall.jpg");
-	Texture2D brickWallNormal = Texture2D("brickwallNormal", "Texture/Images/brickwall_normal.jpg");
+	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	Texture2D container = Texture2D("Texture/Images/container2.png");
+	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
+	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
 	std::vector<std::string> cubeMapFaces =
 	{
 		"Texture/Images/skybox/right.jpg",
@@ -384,17 +385,19 @@ int main()
 
 	std::vector<PointLight> pointLights;
 	pointLights.emplace_back(pointLightColor, pointLightPositions[0], glm::vec3(1.0f, 0.007f, 0.0002f));
-	pointLights.emplace_back(pointLightColor, pointLightPositions[1], glm::vec3(1.0f, 0.007f, 0.0002f));
+	//pointLights.emplace_back(pointLightColor, pointLightPositions[1], glm::vec3(1.0f, 0.007f, 0.0002f));
 	
 	// Buffer Object Setting
 	modelShader->bindUniformBlock("Matrices", 1);
 	applyShadowShader->bindUniformBlock("Matrices", 1);
 	normalMapShader->bindUniformBlock("Matrices", 1);
+	normalDisplayShader->bindUniformBlock("Matrices", 1);
 	UniformBuffer* pMatrixUBO = new UniformBuffer(1, sizeof(glm::mat4));
 	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 
+	modelShader->bindUniformBlock("PointLights", 2);
 	normalMapShader->bindUniformBlock("PointLights", 2);
-	UniformBuffer* pLightUBO = new UniformBuffer(2, sizeof(PointLight));
+	UniformBuffer* pLightUBO = new UniformBuffer(2, pointLights.size() * sizeof(PointLight));
 	pLightUBO->setUniformBlockData(pointLights);
 
 	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
@@ -413,14 +416,13 @@ int main()
 
 	while (!window.closed())
 	{
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		window.clear();
-
-		window.processInput();
 
 		// Update Block
 		double currentClock = glfwGetTime();
 		double frameTime = currentClock - prevClock;
+		window.processInput();
 		prevClock = currentClock;
 		lag += frameTime;
 		while (lag >= MS_PER_UPDATE)
@@ -440,12 +442,28 @@ int main()
 		}
 
 		//Render Block
-		glm::mat4 model = glm::rotate(glm::mat4(), glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		glm::mat4 model;
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		modelShader->enable();
+		modelShader->setUniformMat4("model", model);
 		glm::mat4 view = window.getViewMatrix();
+		modelShader->setUniform3f("viewPos", window.getCamPosition());
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		
+		modelShader->setUniform1i("skybox", 3);
+		cubeMap.bind(3);
+		nanosuit.Draw(*modelShader);
+
+		GLCall(glDepthFunc(GL_LEQUAL));
+		skyboxShader->enable();
+		skyboxShader->setUniformMat4("projection", projection);
+		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
+		skyboxShader->setUniformMat4("view", cubeMapView);
+		cubeMap.bind();
+		drawSkyBox();
+		GLCall(glDepthFunc(GL_LESS)); 
+
 		/*depthFBO.bind();
 		createShadowShader->enable();
 		glm::mat4 lightView = glm::lookAt(pointLightPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -455,9 +473,9 @@ int main()
 		renderScene(*createShadowShader);
 
 		depthFBO.unBind();
-		glViewport(0, 0, window.getWidth(), window.getHeight());
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLCall(glViewport(0, 0, window.getWidth(), window.getHeight()));
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		applyShadowShader->enable();
 		applyShadowShader->setUniformMat4("lightSpaceMatrix", lightProjection * lightView);
 		applyShadowShader->setUniform3f("lightPosition", pointLightPositions[0]);
@@ -466,19 +484,11 @@ int main()
 		container.bind();
 		depthFBO.getTextureDepth()->bind(1);
 		renderScene(*applyShadowShader);*/
-
-		/*modelShader.enable();
-		modelShader.setUniformMat4("model", model);
-		modelShader.setUniform3f("viewPos", window.getCamPosition());
-		modelShader.setUniform1i("skybox", 3);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
-		nanosuit.Draw(modelShader);
-		normalDisplayShader->enable();
+		/*normalDisplayShader->enable();
 		normalDisplayShader->setUniformMat4("model", model);
 		nanosuit.Draw(*normalDisplayShader, false);*/
-
-		normalMapShader->enable();
+		
+		/*normalMapShader->enable();
 		normalMapShader->setUniformMat4("model", model);
 		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
 		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
@@ -489,14 +499,14 @@ int main()
 		brickWallNormal.bind(1);
 		renderQuad();
 
-		/*glDepthFunc(GL_LEQUAL);
+		GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
 		skyboxShader->setUniformMat4("view", cubeMapView);
 		cubeMap.bind();
 		drawSkyBox();
-		glDepthFunc(GL_LESS);*/
+		GLCall(glDepthFunc(GL_LESS));*/
 
 		glfwSwapBuffers(window.getWindow());
 	}

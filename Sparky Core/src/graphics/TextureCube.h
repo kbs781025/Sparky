@@ -23,7 +23,6 @@ namespace sparky { namespace graphics {
 		virtual GLuint getWidth() const override { return m_Width; }
 		virtual GLuint getHeight() const override { return m_Height; }
 
-		inline const std::string& getName() const override { return m_Name; }
 		inline const std::string& getFilePath() const override { return m_Files[0]; }
 		inline GLuint getHandle() const override { return m_Handle; }
 	private:

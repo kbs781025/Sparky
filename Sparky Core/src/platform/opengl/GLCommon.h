@@ -13,5 +13,5 @@ namespace sparky
 		x; \
 		if (!sparky::GLLogCall(#x, __FILE__, __LINE__)) __debugbreak();
 #else
-#define GLCall(x) x
+#define GLCall(x); x
 #endif

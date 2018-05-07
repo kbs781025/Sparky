@@ -41,7 +41,7 @@ namespace sparky { namespace graphics {
 		{
 			format = TextureFormat::RGBA;
 			filter = TextureFilter::LINEAR;
-			wrap = TextureWrap::CLAMP;
+			wrap = TextureWrap::REPEAT;
 		}
 
 		TextureParameters(TextureFormat format, TextureFilter filter, TextureWrap wrap)
@@ -84,7 +84,6 @@ namespace sparky { namespace graphics {
 		virtual void bind(GLuint slot = 0) const = 0;
 		virtual void unBind(GLuint slot = 0) const = 0;
 
-		virtual const std::string& getName() const = 0;
 		virtual const std::string& getFilePath() const = 0;
 		virtual GLuint getHandle() const = 0;
 

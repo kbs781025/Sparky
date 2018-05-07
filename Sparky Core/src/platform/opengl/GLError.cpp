@@ -14,7 +14,7 @@ namespace sparky
 		if (error != GL_NO_ERROR)
 		{
 			//SP_ERROR("[OpenGL Error] (", error, "): ", function, " ", file, ":", line);
-			printf("[OpenGL Error] ( %d ):, %s, %s, : %d", error, function, file, line);
+			printf("[OpenGL Error] ( %d ): %s \n %s : %d", error, function, file, line);
 			return false;
 		}
 		return true;

@@ -9,13 +9,14 @@ namespace sparky { namespace graphics {
 	class Texture2D : public Texture
 	{
 	private:
-		std::string m_Name;
 		std::string m_FileName;
+		std::string m_TypeName;
 		GLuint m_Handle;
 		GLuint m_Width, m_Height;
 		TextureParameters m_Parameters;
 	public:
-		Texture2D(const std::string& name, const std::string& fileName, const TextureParameters& parametres = TextureParameters());
+		Texture2D(const std::string& fileName, const std::string& typeName, const TextureParameters& parameters = TextureParameters());
+		Texture2D(const std::string& fileName, const TextureParameters& parameters = TextureParameters());
 		Texture2D(GLuint width, GLuint height, const TextureParameters& parameters = TextureParameters());
 		~Texture2D();
 
@@ -28,9 +29,9 @@ namespace sparky { namespace graphics {
 		void setData(const void* pixels);
 		void setData(GLuint color);
 
-		inline const std::string& getName() const override { return m_Name; }
 		inline const std::string& getFilePath() const override { return m_FileName; }
 		inline GLuint getHandle() const override { return m_Handle; }
+		inline const std::string& getType() const { return m_TypeName; }
 	private:
 		GLuint loadTexture();
 	public:
