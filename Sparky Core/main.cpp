@@ -422,7 +422,7 @@ int main()
 		// Update Block
 		double currentClock = glfwGetTime();
 		double frameTime = currentClock - prevClock;
-		window.processInput();
+		window.processInput(frameTime);
 		prevClock = currentClock;
 		lag += frameTime;
 		while (lag >= MS_PER_UPDATE)
@@ -451,8 +451,6 @@ int main()
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		modelShader->setUniform1i("skybox", 3);
-		cubeMap.bind(3);
 		nanosuit.Draw(*modelShader);
 
 		GLCall(glDepthFunc(GL_LEQUAL));

@@ -3,9 +3,11 @@
 #include <GL/glew.h>
 #include "BufferLayout.h"
 #include "Buffer.h"
+#include "Vertex.h"
 
 namespace sparky { namespace graphics {
 
+	
 	struct VertexBufferContext
 	{
 		GLenum VBUsage;
@@ -55,7 +57,7 @@ namespace sparky { namespace graphics {
 
 		virtual GLuint getHandle() const override;
 		inline GLuint getSize() { return m_Size; }
-		inline GLuint getCount() { return m_Size / sizeof(GL_FLOAT); }
+		inline GLuint getCount() { return m_Size / sizeof(Vertex); }
 	private:
 		void initVBObject(const void* data);
 	};

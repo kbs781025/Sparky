@@ -1,6 +1,5 @@
 #version 330 core
 #define SPECULAR_MAP
-#define REFLECT_MAP
 struct DirLight
 {
 	vec3 direction;
@@ -21,9 +20,6 @@ struct Material
 {
 	sampler2D texture_diffuse0;
 	sampler2D texture_specular0;
-	#ifdef REFLECT_MAP
-	sampler2D texture_reflect0;
-	#endif
 	float shininess;
 };
 
@@ -46,10 +42,6 @@ layout(std140) uniform PointLights
 };
 uniform Material material;
 uniform vec3 viewPos;
-
-#ifdef REFLECT_MAP
-uniform samplerCube skybox;
-#endif
 
 out vec4 FragColor;
 
@@ -93,15 +85,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 	specular *= specularMap;
 	#endif
 	
-	vec3 reflectIntensity = vec3(0.0);
-
-	#ifdef REFLECT_MAP
-	vec3 skyboxAlbedo = vec3(texture(skybox, reflectDir)) * 0.2;
-	vec3 reflectMap = vec3(texture(material.texture_reflect0, fs_in.TexCoord));
-	reflectIntensity += skyboxAlbedo * reflectMap;
-	#endif 
-
-	vec3 result = (ambient + diffuse + specular + reflectIntensity) * attenuation;
+	vec3 result = (ambient + diffuse + specular) * attenuation;
 
 	return pow(result, vec3(1/2.2));
 }
@@ -124,12 +108,12 @@ vec3 CalcTangentPointLight(PointLight light, vec3 normal, vec3 viewDir)
 	vec3 ambient = lightColor * 0.2 * albedo;
 	vec3 diffuse = lightColor * 0.7 * diffuseIntensity * albedo;
 	vec3 specular = lightColor * 1.0 * specularIntensity;
-	vec3 specularMap = vec3(texture(material.texture_specular0, fs_in.TexCoord));
-	if(specularMap.r > 0.0)
-	{
-		specular *= specularMap;
-	}
 
+	#ifdef SPECULAR_MAP
+	vec3 specularMap = vec3(texture(material.texture_specular0, fs_in.TexCoord));
+	specular *= specularMap;
+	#endif
+	
 	vec3 result = (ambient + diffuse + specular) * attenuation;
 
 	return pow(result, vec3(1/2.2));

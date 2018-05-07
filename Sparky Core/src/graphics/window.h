@@ -35,6 +35,7 @@ namespace sparky {  namespace graphics {
 		void update(float delta); // for variable timestep
 		void update(); // for fixed timestep
 		void processInput(); // for fixed timestep
+		void processInput(float delta); // for variable timestep
 
 		inline int getWidth() const { return m_Width; }
 		inline int getHeight() const { return m_Height; }
@@ -50,7 +51,6 @@ namespace sparky {  namespace graphics {
 		void getMouseCursorPosition(double& x, double& y) const;
 	private:
 		bool init();
-		void processInput(float delta); // for variable timestep
 		friend static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		friend static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 		friend static void mouse_cursor_callback(GLFWwindow* window, double xpos, double ypos);

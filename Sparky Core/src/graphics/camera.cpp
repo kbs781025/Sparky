@@ -4,7 +4,7 @@
 
 namespace sparky { namespace graphics
 {
-	const float Camera::m_MoveSpeed = 0.03f;
+	const float Camera::m_MoveSpeed = 5.0f;
 	const float Camera::m_RotationSpeed = 0.05f;
 
 	Camera::Camera()

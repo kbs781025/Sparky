@@ -48,3 +48,17 @@ void sparky::graphics::VertexArray::Draw()
 	}
 	unBind();
 }
+
+void sparky::graphics::VertexArray::DrawInstances(GLuint instanceCount)
+{
+	bind();
+	if (m_pIndexBuffer)
+	{
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_BYTE, 0, instanceCount));
+	}
+	else
+	{
+		GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, m_pVertexBuffer->getCount(), instanceCount));
+	}
+	unBind();
+}

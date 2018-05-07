@@ -21,6 +21,7 @@ namespace sparky { namespace graphics {
 		void unBind() const;
 
 		void Draw();
+		void DrawInstances(GLuint instanceCount);
 
 		inline GLuint getHandle() { return m_Handle; }
 	};

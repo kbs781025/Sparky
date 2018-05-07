@@ -1,23 +1,24 @@
 #include "mesh.h"
 #include <cstddef>
 #include "../platform/opengl/GLCommon.h"
+#include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 namespace sparky { namespace graphics {
 
-	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture2D> textures)
+	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies, const std::vector<Texture2D>& textures)
 		:
-		m_Vertices(vertices),
-		m_Indicies(indicies),
 		m_Textures(textures)
 	{
-		setupMesh();
+		setupMesh(vertices, indicies);
 	}
 
 	void Mesh::Draw(Shader& shader, bool textureOn)
 	{
 		unsigned int diffuseNum = -1;
 		unsigned int specularNum = -1;
-		unsigned int reflectNum = -1;
+		unsigned int normalNum = -1;
 		shader.enable();
 		if (textureOn)
 		{
@@ -34,9 +35,13 @@ namespace sparky { namespace graphics {
 				{
 					number = std::to_string(++specularNum);
 				}
-				else if (type == "texture_reflect")
+				else if (type == "texture_normal")
 				{
-					number = std::to_string(++reflectNum);
+					number = std::to_string(++normalNum);
+				}
+				else 
+				{
+					continue;
 				}
 
 				m_Textures[i].bind(i);
@@ -45,11 +50,7 @@ namespace sparky { namespace graphics {
 		}
 		shader.setUniform1f("material.shininess", 256.0);
 
-		GLCall(glBindVertexArray(m_VAO));
-		GLCall(glDrawElements(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0));
-		GLCall(glBindVertexArray(0));
-
-		GLCall(glActiveTexture(GL_TEXTURE0));
+		m_pVAO->Draw();
 	}
 
 	void Mesh::DrawInstances(Shader & shader, unsigned int instanceCount)
@@ -80,36 +81,19 @@ namespace sparky { namespace graphics {
 			shader.setUniform1i(("material." + type + number).c_str(), i);
 		}
 
-		GLCall(glBindVertexArray(m_VAO));
-		GLCall(glDrawElementsInstanced(GL_TRIANGLES, m_Indicies.size(), GL_UNSIGNED_INT, 0, instanceCount));
-		GLCall(glBindVertexArray(0));
-
-		GLCall(glActiveTexture(GL_TEXTURE0));
+		m_pVAO->DrawInstances(instanceCount);
 	}
 
-	void Mesh::setupMesh()
+	unsigned int Mesh::getVAOHandle()
 	{
-		GLCall(glGenVertexArrays(1, &m_VAO));
-		GLCall(glGenBuffers(1, &m_VBO));
-		GLCall(glGenBuffers(1, &m_EBO));
+		return m_pVAO->getHandle();
+	}
 
-		GLCall(glBindVertexArray(m_VAO));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), m_Vertices.data(), GL_STATIC_DRAW));
-		
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indicies.size() * sizeof(unsigned int), m_Indicies.data(), GL_STATIC_DRAW));
-
-		GLCall(glEnableVertexAttribArray(0));
-		GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Position))));
-
-		GLCall(glEnableVertexAttribArray(1));
-		GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_Normal))));
-
-		GLCall(glEnableVertexAttribArray(2));
-		GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, m_TexCoord))));
-
-		GLCall(glBindVertexArray(0));
+	void Mesh::setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies)
+	{
+		VertexBufferContext vbContext(GL_STATIC_DRAW, vertices.data(), vertices.size() * sizeof(Vertex), BufferLayout::getPosTexTBNLayout());
+		IndexBufferContext ibContext(indicies.data(), indicies.size());
+		m_pVAO = new VertexArray(vbContext, ibContext);
 	}
 
 }

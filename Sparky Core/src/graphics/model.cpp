@@ -2,6 +2,7 @@
 #include <iostream>
 #include "model.h"
 #include "../maths/maths.h"
+#include "Vertex.h"
 
 namespace sparky { namespace graphics {
 
@@ -24,7 +25,7 @@ namespace sparky { namespace graphics {
 	void Model::loadModel(const std::string & path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -56,6 +57,7 @@ namespace sparky { namespace graphics {
 		std::vector<unsigned int> indices;
 		std::vector<Texture2D> textures;
 
+		vertices.reserve(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
 			Vertex vertex;
@@ -81,7 +83,15 @@ namespace sparky { namespace graphics {
 			{
 				vertex.m_TexCoord = glm::vec2(0.0f, 0.0f);
 			}
-			
+
+			vertex.m_Tangent.x = mesh->mTangents[i].x;
+			vertex.m_Tangent.y = mesh->mTangents[i].y;
+			vertex.m_Tangent.z = mesh->mTangents[i].z;
+	
+			vertex.m_BiTangent.x = mesh->mBitangents[i].x;
+			vertex.m_BiTangent.y = mesh->mBitangents[i].y;
+			vertex.m_BiTangent.z = mesh->mBitangents[i].z;
+
 			vertices.push_back(vertex);
 		}
 
@@ -103,8 +113,8 @@ namespace sparky { namespace graphics {
 			std::vector<Texture2D> specularMaps = loadMaterialTextuers(material, aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-			std::vector<Texture2D> reflectMaps = loadMaterialTextuers(material, aiTextureType_AMBIENT, "texture_reflect");
-			textures.insert(textures.end(), reflectMaps.begin(), reflectMaps.end());
+			std::vector<Texture2D> normalMaps = loadMaterialTextuers(material, aiTextureType_HEIGHT, "texture_normal");
+			textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		}
 
 		return Mesh(vertices, indices, textures);
