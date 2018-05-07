@@ -1,4 +1,5 @@
 #version 330 core
+#define SPECULAR_MAP
 out vec4 FragColor;
 
 struct Material
@@ -33,7 +34,7 @@ in VS_DATA
 	vec3 viewPos;
 } fs_in;
 
-#define NR_POINT_LIGHTS 5
+#define NR_POINT_LIGHTS 1
 layout(std140) uniform DirLights
 {
 	DirLight dirLight;

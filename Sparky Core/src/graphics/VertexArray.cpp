@@ -40,9 +40,7 @@ void sparky::graphics::VertexArray::Draw()
 	bind();
 	if (m_pIndexBuffer)
 	{
-		m_pIndexBuffer->bind();
 		GLCall(glDrawElements(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_BYTE, 0));
-		m_pIndexBuffer->unBind();
 	}
 	else
 	{

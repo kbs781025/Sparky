@@ -444,23 +444,24 @@ int main()
 		//Render Block
 		glm::mat4 model;
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-		modelShader->enable();
-		modelShader->setUniformMat4("model", model);
+		normalMapShader->enable();
+		normalMapShader->setUniformMat4("model", model);
 		glm::mat4 view = window.getViewMatrix();
-		modelShader->setUniform3f("viewPos", window.getCamPosition());
+		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
+		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		nanosuit.Draw(*modelShader);
+		nanosuit.Draw(*normalMapShader);
 
-		GLCall(glDepthFunc(GL_LEQUAL));
+		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
 		skyboxShader->setUniformMat4("view", cubeMapView);
 		cubeMap.bind();
 		drawSkyBox();
-		GLCall(glDepthFunc(GL_LESS)); 
+		GLCall(glDepthFunc(GL_LESS)); */
 
 		/*depthFBO.bind();
 		createShadowShader->enable();

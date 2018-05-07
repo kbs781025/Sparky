@@ -11,13 +11,6 @@ layout (std140) uniform Matrices
 
 uniform mat4 model;
 
-//out VS_DATA
-//{
-//	vec3 FragPos;
-//	vec2 TexCoord;
-//	mat3 TBN;
-//} vs_out;
-
 out VS_DATA
 {
 	vec3 FragPos;

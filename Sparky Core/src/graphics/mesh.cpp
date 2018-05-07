@@ -59,7 +59,7 @@ namespace sparky { namespace graphics {
 	{
 		unsigned int diffuseNum = 0;
 		unsigned int specularNum = 0;
-		unsigned int reflectNum = 0;
+		unsigned int normalNum = 0;
 		shader.enable();
 		for (int i = 0; i < m_Textures.size(); i++)
 		{
@@ -74,9 +74,9 @@ namespace sparky { namespace graphics {
 			{
 				number = std::to_string(++specularNum);
 			}
-			else if (type == "texture_reflect")
+			else if (type == "texture_normal")
 			{
-				number = std::to_string(++reflectNum);
+				number = std::to_string(++normalNum);
 			}
 
 			m_Textures[i].bind(i);

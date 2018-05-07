@@ -93,7 +93,5 @@ void sparky::graphics::VertexBuffer::initVBObject(const void * data)
 		GLCall(glVertexAttribPointer(index, element.Count, element.Type, element.Normalize, m_Layout.getStride(), (void*)offset));
 		offset += elements[index].Size;
 	}
-
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
