@@ -2,13 +2,13 @@
 #include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::VertexBuffer::VertexBuffer(GLenum usage, GLuint size, const void* data, const BufferLayout& layout)
-	: m_Usage(usage), m_Size(size), m_Layout(layout)
+	: m_Usage(usage), m_Size(size)
 {
 	initVBObject(data);
 }
 
 sparky::graphics::VertexBuffer::VertexBuffer(const VertexBufferContext & context)
-	: m_Usage(context.VBUsage), m_Size(context.VBSize), m_Layout(context.VBLayout)
+	: m_Usage(context.VBUsage), m_Size(context.VBSize)
 {
 	initVBObject(context.VBData);
 }
@@ -31,20 +31,7 @@ void sparky::graphics::VertexBuffer::Resize(GLuint size)
 	GLCall(glBufferData(GL_ARRAY_BUFFER, size, nullptr, m_Usage));
 }
 
-void sparky::graphics::VertexBuffer::SetLayout(const BufferLayout & layout)
-{
-	m_Layout = layout;
 
-	const std::vector<BufferElement>& elements = layout.getLayOut();
-	GLuint offset = 0;
-	for (unsigned int index = 0; index < elements.size(); index++)
-	{
-		const BufferElement& element = elements[index];
-		GLCall(glEnableVertexAttribArray(index));
-		GLCall(glVertexAttribPointer(index, element.Count, element.Type, element.Normalize, layout.getStride(), (void*)offset));
-		offset += elements[index].Size;
-	}
-}
 
 void sparky::graphics::VertexBuffer::SetData(GLuint size, const void * data)
 {
@@ -83,15 +70,5 @@ void sparky::graphics::VertexBuffer::initVBObject(const void * data)
 	GLCall(glGenBuffers(1, &m_Handle));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_Handle));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, m_Size, data, m_Usage));
-
-	const std::vector<BufferElement>& elements = m_Layout.getLayOut();
-	GLuint offset = 0;
-	for (unsigned int index = 0; index < elements.size(); index++)
-	{
-		const BufferElement& element = elements[index];
-		GLCall(glEnableVertexAttribArray(index));
-		GLCall(glVertexAttribPointer(index, element.Count, element.Type, element.Normalize, m_Layout.getStride(), (void*)offset));
-		offset += elements[index].Size;
-	}
 }
 

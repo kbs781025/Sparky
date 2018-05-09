@@ -38,7 +38,6 @@ namespace sparky { namespace graphics {
 		GLuint m_Handle;
 		GLenum m_Usage;
 		GLuint m_Size; // array size in bytes
-		BufferLayout m_Layout;
 	public:
 		VertexBuffer(GLenum usage, GLuint size, const void* data, const BufferLayout& layout);
 		VertexBuffer(const VertexBufferContext& context);
@@ -46,7 +45,6 @@ namespace sparky { namespace graphics {
 		~VertexBuffer();
 
 		void Resize(GLuint size);
-		void SetLayout(const BufferLayout& layout);
 		void SetData(GLuint size, const void* data);
 
 		void* getInternalPointer();

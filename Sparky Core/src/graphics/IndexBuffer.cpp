@@ -35,6 +35,7 @@ GLuint sparky::graphics::IndexBuffer::getHandle() const
 
 void sparky::graphics::IndexBuffer::initIBObject(const void * data)
 {
+	GLCall(glGenBuffers(1, &m_Handle));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Count * sizeof(GLuint), data, GL_STATIC_DRAW));
 }

@@ -30,6 +30,7 @@ namespace sparky { namespace graphics {
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+			__debugbreak();
 			return;
 		}
 		m_Directory = path.substr(0, path.find_last_of('/'));
@@ -95,6 +96,7 @@ namespace sparky { namespace graphics {
 			vertices.push_back(vertex);
 		}
 
+		indices.reserve(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
 			const aiFace& face = mesh->mFaces[i];
@@ -130,7 +132,7 @@ namespace sparky { namespace graphics {
 			mat->GetTexture(type, i, &str);
 			for (unsigned int i = 0; i < m_LoadedTextures.size(); i++)
 			{
-				if (std::strcmp(m_LoadedTextures[i].getFilePath().c_str(), str.C_Str()) == 0)
+				if (std::strcmp(m_LoadedTextures[i].getFilePath().c_str(), str.C_Str()) == 0) // should return texture file name not path
 				{
 					textures.push_back(m_LoadedTextures[i]);
 					skip = true;

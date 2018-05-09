@@ -12,6 +12,7 @@ namespace sparky { namespace graphics {
 		GLuint m_Handle;
 		VertexBuffer* m_pVertexBuffer;
 		IndexBuffer* m_pIndexBuffer;
+		BufferLayout m_Layout;
 	public:
 		VertexArray(const VertexBufferContext& VBcontext, const IndexBufferContext& IBcontext);
 		VertexArray(const VertexBufferContext& VBcontext);
@@ -19,6 +20,8 @@ namespace sparky { namespace graphics {
 
 		void bind() const;
 		void unBind() const;
+
+		void SetLayout(const BufferLayout& layout);
 
 		void Draw();
 		void DrawInstances(GLuint instanceCount);
