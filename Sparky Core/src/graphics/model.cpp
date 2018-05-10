@@ -25,7 +25,7 @@ namespace sparky { namespace graphics {
 	void Model::loadModel(const std::string & path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs  | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -85,13 +85,27 @@ namespace sparky { namespace graphics {
 				vertex.m_TexCoord = glm::vec2(0.0f, 0.0f);
 			}
 
-			vertex.m_Tangent.x = mesh->mTangents[i].x;
-			vertex.m_Tangent.y = mesh->mTangents[i].y;
-			vertex.m_Tangent.z = mesh->mTangents[i].z;
-	
-			vertex.m_BiTangent.x = mesh->mBitangents[i].x;
-			vertex.m_BiTangent.y = mesh->mBitangents[i].y;
-			vertex.m_BiTangent.z = mesh->mBitangents[i].z;
+			if (mesh->HasTangentsAndBitangents())
+			{
+				vertex.m_Tangent.x = mesh->mTangents[i].x;
+				vertex.m_Tangent.y = mesh->mTangents[i].y;
+				vertex.m_Tangent.z = mesh->mTangents[i].z;
+
+				vertex.m_BiTangent.x = mesh->mBitangents[i].x;
+				vertex.m_BiTangent.y = mesh->mBitangents[i].y;
+				vertex.m_BiTangent.z = mesh->mBitangents[i].z;
+			}
+			else
+			{
+				vertex.m_Tangent.x = 0.3f;
+				vertex.m_Tangent.y = 0.3f;
+				vertex.m_Tangent.z = 0.3f;
+
+				vertex.m_BiTangent.x = 0.3f;
+				vertex.m_BiTangent.y = 0.3f;
+				vertex.m_BiTangent.z = 0.3f;
+			}
+			
 
 			vertices.push_back(vertex);
 		}
