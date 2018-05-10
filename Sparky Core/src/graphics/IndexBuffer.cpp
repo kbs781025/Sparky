@@ -2,13 +2,17 @@
 #include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::IndexBuffer::IndexBuffer(const void* data, GLuint count)
-	: m_Count(count)
+	:
+	m_Handle(0),
+	m_Count(count)
 {
 	initIBObject(data);
 }
 
 sparky::graphics::IndexBuffer::IndexBuffer(const IndexBufferContext & context)
-	: m_Count(context.Count)
+	:
+	m_Handle(0),
+	m_Count(context.Count)
 {
 	initIBObject(context.IBData);
 }

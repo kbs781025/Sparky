@@ -2,13 +2,19 @@
 #include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::VertexBuffer::VertexBuffer(GLenum usage, GLuint size, const void* data, const BufferLayout& layout)
-	: m_Usage(usage), m_Size(size)
+	: 
+	m_Handle(0),
+	m_Usage(usage), 
+	m_Size(size)
 {
 	initVBObject(data);
 }
 
 sparky::graphics::VertexBuffer::VertexBuffer(const VertexBufferContext & context)
-	: m_Usage(context.VBUsage), m_Size(context.VBSize)
+	: 
+	m_Handle(0),
+	m_Usage(context.VBUsage), 
+	m_Size(context.VBSize)
 {
 	initVBObject(context.VBData);
 }

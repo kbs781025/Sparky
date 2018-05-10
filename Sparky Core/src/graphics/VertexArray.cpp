@@ -2,24 +2,31 @@
 #include "../platform/opengl/GLCommon.h"
 
 sparky::graphics::VertexArray::VertexArray(const VertexBufferContext& VBcontext, const IndexBufferContext& IBcontext)
-	: m_pVertexBuffer(nullptr), m_pIndexBuffer(nullptr), m_Layout(VBcontext.VBLayout)
+	: 
+	m_Handle(0),
+	m_pVertexBuffer(nullptr), 
+	m_pIndexBuffer(nullptr), 
+	m_Layout(VBcontext.VBLayout)
 {
 	GLCall(glGenVertexArrays(1, &m_Handle));
 	GLCall(glBindVertexArray(m_Handle));
 	m_pVertexBuffer = new VertexBuffer(VBcontext);
-
 	SetLayout(VBcontext.VBLayout);
-
 	m_pIndexBuffer = new IndexBuffer(IBcontext);
 	GLCall(glBindVertexArray(0));
 }
 
 sparky::graphics::VertexArray::VertexArray(const VertexBufferContext & VBcontext)
-	: m_pVertexBuffer(nullptr), m_pIndexBuffer(nullptr), m_Layout(VBcontext.VBLayout)
+	: 
+	m_Handle(0), 
+	m_pVertexBuffer(nullptr),
+	m_pIndexBuffer(nullptr), 
+	m_Layout(VBcontext.VBLayout)
 {
 	GLCall(glGenVertexArrays(1, &m_Handle));
 	GLCall(glBindVertexArray(m_Handle));
 	m_pVertexBuffer = new VertexBuffer(VBcontext);
+	SetLayout(VBcontext.VBLayout);
 	GLCall(glBindVertexArray(0));
 }
 
