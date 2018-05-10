@@ -8,15 +8,7 @@ sparky::graphics::VertexArray::VertexArray(const VertexBufferContext& VBcontext,
 	GLCall(glBindVertexArray(m_Handle));
 	m_pVertexBuffer = new VertexBuffer(VBcontext);
 
-	const std::vector<BufferElement>& elements = m_Layout.getLayOut();
-	GLuint offset = 0;
-	for (unsigned int index = 0; index < elements.size(); index++)
-	{
-		const BufferElement& element = elements[index];
-		GLCall(glEnableVertexAttribArray(index));
-		GLCall(glVertexAttribPointer(index, element.Count, element.Type, element.Normalize, m_Layout.getStride(), (void*)offset));
-		offset += elements[index].Size;
-	}
+	SetLayout(VBcontext.VBLayout);
 
 	m_pIndexBuffer = new IndexBuffer(IBcontext);
 	GLCall(glBindVertexArray(0));
@@ -74,8 +66,6 @@ void sparky::graphics::VertexArray::DrawInstances(GLuint instanceCount)
 
 void sparky::graphics::VertexArray::SetLayout(const BufferLayout & layout)
 {
-	m_Layout = layout;
-
 	const std::vector<BufferElement>& elements = layout.getLayOut();
 	GLuint offset = 0;
 	for (unsigned int index = 0; index < elements.size(); index++)

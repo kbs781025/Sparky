@@ -21,12 +21,12 @@ namespace sparky { namespace graphics {
 		void bind() const;
 		void unBind() const;
 
-		void SetLayout(const BufferLayout& layout);
-
 		void Draw();
 		void DrawInstances(GLuint instanceCount);
 
 		inline GLuint getHandle() { return m_Handle; }
+	private:
+		void SetLayout(const BufferLayout& layout);
 	};
 
 }}
