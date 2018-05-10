@@ -358,6 +358,7 @@ int main()
 	
 	// Texture and model loading
 	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	Model cube("Texture/models/cube.obj");
 	Texture2D container = Texture2D("Texture/Images/container2.png");
 	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
 	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
@@ -452,7 +453,8 @@ int main()
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		nanosuit.Draw(*normalMapShader);
+		//nanosuit.Draw(*normalMapShader);
+		cube.Draw(*normalMapShader);
 
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
