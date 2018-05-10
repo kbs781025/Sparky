@@ -38,6 +38,7 @@ namespace sparky { namespace graphics {
 		GLuint m_Handle;
 		GLenum m_Usage;
 		GLuint m_Size; // array size in bytes
+		//TO DO : add layout memeber for flexible getCount
 	public:
 		VertexBuffer(GLenum usage, GLuint size, const void* data, const BufferLayout& layout);
 		VertexBuffer(const VertexBufferContext& context);
@@ -55,7 +56,7 @@ namespace sparky { namespace graphics {
 
 		virtual GLuint getHandle() const override;
 		inline GLuint getSize() { return m_Size; }
-		inline GLuint getCount() { return m_Size / sizeof(Vertex); }
+		inline GLuint getCount() { return m_Size / sizeof(Vertex); } // need actual data count that shader uses
 	private:
 		void initVBObject(const void* data);
 	};

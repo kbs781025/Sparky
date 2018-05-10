@@ -345,7 +345,7 @@ int main()
 	// State Setting
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
-	GLCall(glEnable(GL_CULL_FACE));
+	//GLCall(glEnable(GL_CULL_FACE));
 	
 	// Shader loading
 	Shader* modelShader = ShaderFactory::ModelShader();
@@ -357,8 +357,8 @@ int main()
 	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
 	
 	// Texture and model loading
-	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
-	Model cube("Texture/models/cube.obj");
+	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	//Model cube("Texture/models/cube.obj");
 	Texture2D container = Texture2D("Texture/Images/container2.png");
 	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
 	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
@@ -454,8 +454,10 @@ int main()
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
 		//nanosuit.Draw(*normalMapShader);
-		cube.Draw(*normalMapShader);
-
+		modelShader->enable();
+		modelShader->setUniformMat4("model", model);
+		//cube.Draw(*modelShader);
+		renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
