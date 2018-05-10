@@ -20,8 +20,6 @@ namespace sparky { namespace graphics {
 		unsigned int getVAOHandle();
 	private:
 		VertexArray* m_pVAO;
-		std::vector<Vertex> m_Vertices;
-		std::vector<unsigned int> m_Indicies;
 		std::vector<Texture2D> m_Textures;
 
 		void setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies);
