@@ -26,6 +26,8 @@ sparky::graphics::VertexArray::VertexArray(const VertexBufferContext & VBcontext
 sparky::graphics::VertexArray::~VertexArray()
 {
 	GLCall(glDeleteVertexArrays(1, &m_Handle));
+	delete m_pVertexBuffer;
+	delete m_pIndexBuffer;
 }
 
 void sparky::graphics::VertexArray::bind() const
