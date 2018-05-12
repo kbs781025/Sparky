@@ -3,6 +3,7 @@
 #include "model.h"
 #include "../maths/maths.h"
 #include "Vertex.h"
+#include "BufferLayout.h"
 
 namespace sparky { namespace graphics {
 
@@ -54,62 +55,68 @@ namespace sparky { namespace graphics {
 
 	Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 	{
-		std::vector<Vertex> vertices;
-		std::vector<unsigned int> indices;
-		std::vector<Texture2D> textures;
+		std::vector<float> vertices, positions, normals, texCoords, tangents;
+		BufferLayout layout;
 
-		vertices.reserve(mesh->mNumVertices);
+		positions.resize(3);
+		layout.PushPosition();
+		if (mesh->HasNormals())
+		{
+			normals.resize(3);
+			layout.PushNormal();
+		}
+		if (mesh->mTextureCoords[0])
+		{
+			texCoords.resize(2);
+			layout.PushTexCoord();
+		}
+		if (mesh->HasTangentsAndBitangents())
+		{
+			tangents.resize(6);
+			layout.PushTangent();
+			layout.PushBinormal();
+		}
+
+		GLuint vertexSize = positions.size() + normals.size() + texCoords.size() + tangents.size();
+		vertices.reserve(mesh->mNumVertices * vertexSize);
+
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			Vertex vertex;
-			glm::vec3 vector;
-			vector.x = mesh->mVertices[i].x;
-			vector.y = mesh->mVertices[i].y;
-			vector.z = mesh->mVertices[i].z;
-			vertex.m_Position = vector;
+			positions[0] = mesh->mVertices[i].x;
+			positions[1] = mesh->mVertices[i].y;
+			positions[2] = mesh->mVertices[i].z;
 
-			vector.x = mesh->mNormals[i].x;
-			vector.y = mesh->mNormals[i].y;
-			vector.z = mesh->mNormals[i].z;
-			vertex.m_Normal = vector;
+			if (mesh->HasNormals())
+			{
+				normals[0] = mesh->mNormals[i].x;
+				normals[1] = mesh->mNormals[i].y;
+				normals[2] = mesh->mNormals[i].z;
+			}
 
 			if (mesh->mTextureCoords[0])
 			{
-				glm::vec2 vec;
-				vec.x = mesh->mTextureCoords[0][i].x;
-				vec.y = mesh->mTextureCoords[0][i].y;
-				vertex.m_TexCoord = vec;
-			}
-			else
-			{
-				vertex.m_TexCoord = glm::vec2(0.0f, 0.0f);
+				texCoords[0] = mesh->mTextureCoords[0][i].x;
+				texCoords[1] = mesh->mTextureCoords[0][i].y;
 			}
 
 			if (mesh->HasTangentsAndBitangents())
 			{
-				vertex.m_Tangent.x = mesh->mTangents[i].x;
-				vertex.m_Tangent.y = mesh->mTangents[i].y;
-				vertex.m_Tangent.z = mesh->mTangents[i].z;
+				tangents[0] = mesh->mTangents[i].x;
+				tangents[1] = mesh->mTangents[i].y;
+				tangents[2] = mesh->mTangents[i].z;
 
-				vertex.m_BiTangent.x = mesh->mBitangents[i].x;
-				vertex.m_BiTangent.y = mesh->mBitangents[i].y;
-				vertex.m_BiTangent.z = mesh->mBitangents[i].z;
+				tangents[3] = mesh->mBitangents[i].x;
+				tangents[4] = mesh->mBitangents[i].y;
+				tangents[5] = mesh->mBitangents[i].z;
 			}
-			else
-			{
-				vertex.m_Tangent.x = 0.3f;
-				vertex.m_Tangent.y = 0.3f;
-				vertex.m_Tangent.z = 0.3f;
 
-				vertex.m_BiTangent.x = 0.3f;
-				vertex.m_BiTangent.y = 0.3f;
-				vertex.m_BiTangent.z = 0.3f;
-			}
-			
-
-			vertices.push_back(vertex);
+			vertices.insert(vertices.end(), positions.begin(), positions.end());
+			vertices.insert(vertices.end(), normals.begin(), normals.end());
+			vertices.insert(vertices.end(), texCoords.begin(), texCoords.end());
+			vertices.insert(vertices.end(), tangents.begin(), tangents.end());
 		}
 
+		std::vector<unsigned int> indices;
 		indices.reserve(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -120,6 +127,7 @@ namespace sparky { namespace graphics {
 			}
 		}
 
+		std::vector<Texture2D> textures;
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -133,7 +141,7 @@ namespace sparky { namespace graphics {
 			textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		}
 
-		return Mesh(vertices, indices, textures);
+		return Mesh(vertices, layout, indices, textures);
 	}
 
 	std::vector<Texture2D> Model::loadMaterialTextuers(aiMaterial * mat, aiTextureType type, std::string typeName)

@@ -358,7 +358,7 @@ int main()
 	
 	// Texture and model loading
 	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
-	//Model cube("Texture/models/cube.obj");
+	Model cube("Texture/models/cube/cube.obj");
 	Texture2D container = Texture2D("Texture/Images/container2.png");
 	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
 	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
@@ -456,8 +456,8 @@ int main()
 		//nanosuit.Draw(*normalMapShader);
 		modelShader->enable();
 		modelShader->setUniformMat4("model", model);
-		//cube.Draw(*modelShader);
-		renderCube();
+		cube.Draw(*modelShader);
+		//renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);

@@ -52,7 +52,7 @@ void sparky::graphics::VertexArray::Draw()
 	bind();
 	if (m_pIndexBuffer)
 	{
-		GLCall(glDrawElements(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_BYTE, 0));
+		GLCall(glDrawElements(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_INT, 0));
 	}
 	else
 	{
@@ -65,7 +65,7 @@ void sparky::graphics::VertexArray::DrawInstances(GLuint instanceCount)
 	bind();
 	if (m_pIndexBuffer)
 	{
-		GLCall(glDrawElementsInstanced(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_BYTE, 0, instanceCount));
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, m_pIndexBuffer->getCount(), GL_UNSIGNED_INT, 0, instanceCount));
 	}
 	else
 	{

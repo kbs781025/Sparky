@@ -7,12 +7,12 @@
 
 namespace sparky { namespace graphics {
 
-	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies, const std::vector<Texture2D>& textures)
+	Mesh::Mesh(const std::vector<float>& vertices, const BufferLayout& layout, const std::vector<unsigned int>& indicies, const std::vector<Texture2D>& textures)
 		:
 		m_pVAO(nullptr),
 		m_Textures(textures)
 	{
-		setupMesh(vertices, indicies);
+		setupMesh(vertices, layout, indicies);
 	}
 
 	void Mesh::Draw(Shader& shader, bool textureOn)
@@ -90,13 +90,9 @@ namespace sparky { namespace graphics {
 		return m_pVAO->getHandle();
 	}
 
-	void Mesh::setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicies)
+	void Mesh::setupMesh(const std::vector<float>& vertices, const BufferLayout& layout, const std::vector<unsigned int>& indicies)
 	{
-		BufferLayout layout;
-		layout.PushPosition();
-		layout.PushNormal();
-		layout.PushTexCoord();
-		VertexBufferContext vbContext(GL_STATIC_DRAW, vertices.data(), vertices.size() * sizeof(Vertex), layout);
+		VertexBufferContext vbContext(GL_STATIC_DRAW, vertices.data(), vertices.size() * sizeof(float), layout);
 		IndexBufferContext ibContext(indicies.data(), indicies.size());
 		m_pVAO = new VertexArray(vbContext, ibContext);
 	}
