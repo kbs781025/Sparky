@@ -359,6 +359,7 @@ int main()
 	// Texture and model loading
 	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Model cube("Texture/models/cube/cube.obj");
+	Model man("Texture/models/man/muro.obj");
 	Texture2D container = Texture2D("Texture/Images/container2.png");
 	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
 	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
@@ -444,7 +445,7 @@ int main()
 
 		//Render Block
 		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
 		normalMapShader->enable();
 		normalMapShader->setUniformMat4("model", model);
 		glm::mat4 view = window.getViewMatrix();
@@ -456,7 +457,8 @@ int main()
 		modelShader->enable();
 		modelShader->setUniformMat4("model", model);
 		modelShader->setUniform3f("viewPos", window.getCamPosition());
-		nanosuit.Draw(*modelShader);
+		//nanosuit.Draw(*normalMapShader);
+		man.Draw(*normalMapShader);
 		//renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
