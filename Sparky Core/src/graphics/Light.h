@@ -4,6 +4,11 @@
 
 namespace sparky { namespace graphics {
 
+	struct Light // Merge point and direction light
+	{
+
+	};
+
 	struct PointLight
 	{
 		/*glm::vec3 ambient, diffuse, specular;
