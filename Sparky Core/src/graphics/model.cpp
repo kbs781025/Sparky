@@ -60,15 +60,16 @@ namespace sparky { namespace graphics {
 
 		positions.resize(3);
 		layout.PushPosition();
-		if (mesh->HasNormals())
-		{
-			normals.resize(3);
-			layout.PushNormal();
-		}
+
 		if (mesh->mTextureCoords[0])
 		{
 			texCoords.resize(2);
 			layout.PushTexCoord();
+		}
+		if (mesh->HasNormals())
+		{
+			normals.resize(3);
+			layout.PushNormal();
 		}
 		if (mesh->HasTangentsAndBitangents())
 		{
@@ -86,17 +87,17 @@ namespace sparky { namespace graphics {
 			positions[1] = mesh->mVertices[i].y;
 			positions[2] = mesh->mVertices[i].z;
 
+			if (mesh->mTextureCoords[0])
+			{
+				texCoords[0] = mesh->mTextureCoords[0][i].x;
+				texCoords[1] = mesh->mTextureCoords[0][i].y;
+			}
+			
 			if (mesh->HasNormals())
 			{
 				normals[0] = mesh->mNormals[i].x;
 				normals[1] = mesh->mNormals[i].y;
 				normals[2] = mesh->mNormals[i].z;
-			}
-
-			if (mesh->mTextureCoords[0])
-			{
-				texCoords[0] = mesh->mTextureCoords[0][i].x;
-				texCoords[1] = mesh->mTextureCoords[0][i].y;
 			}
 
 			if (mesh->HasTangentsAndBitangents())
@@ -111,8 +112,8 @@ namespace sparky { namespace graphics {
 			}
 
 			vertices.insert(vertices.end(), positions.begin(), positions.end());
-			vertices.insert(vertices.end(), normals.begin(), normals.end());
 			vertices.insert(vertices.end(), texCoords.begin(), texCoords.end());
+			vertices.insert(vertices.end(), normals.begin(), normals.end());
 			vertices.insert(vertices.end(), tangents.begin(), tangents.end());
 		}
 

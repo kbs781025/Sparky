@@ -357,7 +357,7 @@ int main()
 	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
 	
 	// Texture and model loading
-	//Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
+	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
 	Model cube("Texture/models/cube/cube.obj");
 	Texture2D container = Texture2D("Texture/Images/container2.png");
 	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
@@ -453,10 +453,10 @@ int main()
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		//nanosuit.Draw(*normalMapShader);
 		modelShader->enable();
 		modelShader->setUniformMat4("model", model);
-		cube.Draw(*modelShader);
+		modelShader->setUniform3f("viewPos", window.getCamPosition());
+		nanosuit.Draw(*modelShader);
 		//renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
@@ -495,14 +495,14 @@ int main()
 		normalMapShader->setUniformMat4("model", model);
 		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
 		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
-		normalMapShader->setUniform1i("material.texture_diffuse1", 0);
-		normalMapShader->setUniform1i("material.texture_normal1", 1);
+		normalMapShader->setUniform1i("material.texture_diffuse0", 0);
+		normalMapShader->setUniform1i("material.texture_normal0", 1);
 		normalMapShader->setUniform1f("material.shininess", 32);
 		brickWallDiffuse.bind(0);
 		brickWallNormal.bind(1);
-		renderQuad();
+		renderQuad();*/
 
-		GLCall(glDepthFunc(GL_LEQUAL));
+		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
 		glm::mat4 cubeMapView = glm::mat4(glm::mat3(view));
