@@ -10,7 +10,7 @@ namespace sparky { namespace graphics {
 	typedef std::vector<RenderCommand> CommandQueue;
 	typedef std::vector<RendererUniform> SystemUniformList;
 
-	class Light;
+	struct Light;
 
 	class Renderer3D
 	{
@@ -26,7 +26,7 @@ namespace sparky { namespace graphics {
 		virtual void beginScene(const Camera* camera) = 0;
 		virtual void submit(const RenderCommand& command) = 0;
 		virtual void submitMesh(const Mesh* mesh, const glm::mat4& transform) = 0;
-		virtual void submitLightSetup(const Light& light) = 0;
+		virtual void submitLightSetup(const std::vector<Light>& light) = 0;
 		virtual void endScene() = 0;
 		virtual void end() = 0;
 		virtual void present() = 0;
