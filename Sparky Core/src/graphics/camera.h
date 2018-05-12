@@ -6,14 +6,14 @@ namespace sparky { namespace graphics
 	class Camera
 	{
 	public:
-		Camera();
-		Camera(const glm::vec3& position, const glm::vec3& up);
+		Camera(const glm::vec3& position, const glm::vec3& up, const glm::mat4& projection);
 
 		// Getter
-		glm::vec3 getCameraPosition() const { return m_Position; }
-		glm::vec3 getAngle() const { return glm::vec3(m_Roll, m_Pitch, m_Yaw); }
-		glm::mat4 getViewMatrix() const { return m_ViewMatrix; }
-		glm::vec3 getForward() const { return m_Forward; }
+		inline glm::mat4 getProjectionMatrix() const { return m_ProjectionMatrix; }
+		inline glm::mat4 getViewMatrix() const { return m_ViewMatrix; }
+		inline glm::vec3 getCameraPosition() const { return m_Position; }
+		inline glm::vec3 getForward() const { return m_Forward; }
+		inline glm::vec3 getAngle() const { return glm::vec3(m_Roll, m_Pitch, m_Yaw); }
 
 		void updateView();
 
@@ -32,12 +32,14 @@ namespace sparky { namespace graphics
 		void lookAt(const glm::vec3& position, const glm::vec3& target);
 
 	private:
+		glm::mat4 m_ProjectionMatrix;
+		glm::mat4 m_ViewMatrix;
 		glm::vec3 m_Position;
+		glm::vec3 m_Forward;
+
 		float m_Roll;
 		float m_Pitch;
 		float m_Yaw;
-		glm::mat4 m_ViewMatrix;
-		glm::vec3 m_Forward;
 
 		static const float m_MoveSpeed;
 		static const float m_RotationSpeed;
