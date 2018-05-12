@@ -17,7 +17,7 @@ namespace sparky { namespace graphics {
 		UniformBuffer* m_FSLightUniformBuffer;
 
 		std::vector<glm::mat4> m_MatrixData;
-		std::vector<glm::vec3> m_VecData;
+		std::vector<glm::vec4> m_VecData;
 		std::vector<Light> m_LightData;
 	public:
 		ForwardRenderer();
@@ -28,7 +28,8 @@ namespace sparky { namespace graphics {
 		void beginScene(const Camera* camera) override;
 		void submit(const RenderCommand& command) override;
 		void submitMesh(const Mesh* mesh, const glm::mat4& transform) override;
-		void submitLightSetup(const Light & light);
+		void submitMesh(const Mesh* mesh, const glm::mat4& transform, Shader* shader); // TODO : temporary method for forward rendering
+		void submitLightSetup(const std::vector<Light> & light);
 		void endScene() override;
 		void end() override;
 		void present() override;

@@ -55,7 +55,7 @@ namespace sparky { namespace graphics {
 		m_CommandQueue.reserve(1000);
 
 		m_VSMatUniformBuffer = new UniformBuffer(sizeof(glm::mat4) * VSMatUniformIndex_Size);
-		m_VSVecUniformBuffer = new UniformBuffer(sizeof(glm::vec3) * VSVecUniformIndex_Size);
+		m_VSVecUniformBuffer = new UniformBuffer(sizeof(glm::vec4) * VSVecUniformIndex_Size);
 		m_FSLightUniformBuffer = new UniformBuffer(sizeof(Light) * FSLightUniformIndex_Size); // 1 point light at the moment
 
 		m_MatrixData.resize(VSMatUniformIndex_Size);
@@ -76,7 +76,7 @@ namespace sparky { namespace graphics {
 		m_MatrixData[VSUniformIndex_ProjectionMatrix] = camera->getProjectionMatrix();
 		m_MatrixData[VSUniformIndex_ViewMatrix] = camera->getViewMatrix();
 
-		m_VecData[VSUniformIndex_CameraPosition] = camera->getCameraPosition();
+		m_VecData[VSUniformIndex_CameraPosition] = glm::vec4(camera->getCameraPosition(), 0.0f);
 	}
 
 	void ForwardRenderer::submit(const RenderCommand & command)
@@ -94,10 +94,20 @@ namespace sparky { namespace graphics {
 		submit(command);
 	}
 
-	// TODO : light setting method
-	void ForwardRenderer::submitLightSetup(const Light & light)
+	void ForwardRenderer::submitMesh(const Mesh * mesh, const glm::mat4 & transform, Shader * shader) 
 	{
-		
+		RenderCommand command;
+		command.mesh = mesh;
+		command.transform = transform;
+		command.shader = shader;
+		submit(command);
+	}
+
+	// TODO : increase light capacity from 1 to as many as possible
+	void ForwardRenderer::submitLightSetup(const std::vector<Light> & light)
+	{
+		assert(light.size() == 1);
+		m_LightData = light;
 	}
 
 	void ForwardRenderer::endScene()
@@ -114,25 +124,30 @@ namespace sparky { namespace graphics {
 		{
 			m_MatrixData[VSUniformIndex_ModelMatrix] = command.transform;
 			setSystemUniforms(command.shader);
-			command.mesh->Render(*this);
+			//command.mesh->Render(*this);
+			command.mesh->Draw(*command.shader);
 		}
 	}
 
 	void ForwardRenderer::setSystemUniforms(const Shader * shader)
 	{
+		shader->enable();
+
+		// TODO : bindUniformBlock should be in Init Method for performance
+		unsigned int bindingPoint = 0;
 		// TODO : flexible matrices uniform block name
-		unsigned int matrixBindingPoint = shader->getBlockBindingPoint("Matrices");
-		m_VSMatUniformBuffer->setBindingPoint(matrixBindingPoint);
+		shader->bindUniformBlock("Matrices", bindingPoint);
+		m_VSMatUniformBuffer->setBindingPoint(bindingPoint++);
 		m_VSMatUniformBuffer->setUniformBlockData(m_MatrixData);
 
 		// TODO : flexible matrices uniform block name
-		unsigned int vecBindingPoint = shader->getBlockBindingPoint("Vectors");
-		m_VSVecUniformBuffer->setBindingPoint(vecBindingPoint);
+		shader->bindUniformBlock("Vectors", bindingPoint);
+		m_VSVecUniformBuffer->setBindingPoint(bindingPoint++);
 		m_VSVecUniformBuffer->setUniformBlockData(m_VecData);
 
 		// TODO : flexible matrices uniform block name
-		unsigned int lightBindingPoint = shader->getBlockBindingPoint("PointLights");
-		m_FSLightUniformBuffer->setBindingPoint(lightBindingPoint);
+		shader->bindUniformBlock("Lights", bindingPoint);
+		m_FSLightUniformBuffer->setBindingPoint(bindingPoint++);
 		m_FSLightUniformBuffer->setUniformBlockData(m_LightData);
 	}
 
