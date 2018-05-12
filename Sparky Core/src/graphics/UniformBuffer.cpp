@@ -1,14 +1,14 @@
 #include "UniformBuffer.h"
 #include "../platform/opengl/GLCommon.h"
 
-sparky::graphics::UniformBuffer::UniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize)
+sparky::graphics::UniformBuffer::UniformBuffer(GLuint uniformBlockSize, GLuint bindingPoint)
 	:
 	m_BlockSize(uniformBlockSize)
 {
 	initUniformBuffer(bindingPoint, m_BlockSize);
 }
 
-sparky::graphics::UniformBuffer::UniformBuffer(const std::vector<float>& uniformBlockData, GLuint bindingPoint = 0)
+sparky::graphics::UniformBuffer::UniformBuffer(const std::vector<float>& uniformBlockData, GLuint bindingPoint)
 	:
 	m_BlockSize(uniformBlockData.size() * sizeof(float))
 {

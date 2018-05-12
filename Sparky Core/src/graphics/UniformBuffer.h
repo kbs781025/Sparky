@@ -12,8 +12,8 @@ namespace sparky { namespace graphics {
 		GLuint m_Handle;
 		GLuint m_BlockSize;
 	public:
-		UniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize);
-		UniformBuffer(const std::vector<float>& uniformBlockData, GLuint bindingPoint);
+		UniformBuffer(GLuint uniformBlockSize, GLuint bindingPoint = 0);
+		UniformBuffer(const std::vector<float>& uniformBlockData, GLuint bindingPoint = 0);
 		~UniformBuffer();
 
 		virtual void bind() const override;
