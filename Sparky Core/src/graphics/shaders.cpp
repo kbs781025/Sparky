@@ -172,7 +172,7 @@ namespace sparky { namespace graphics {
 		GLCall(glUniformBlockBinding(m_ShaderID, uniformBlockIndex, bindingPoint));
 	}
 
-	GLuint Shader::getBlockBindingPoint(const GLchar * name)
+	GLuint Shader::getBlockBindingPoint(const GLchar * name) const
 	{
 		GLCall(return glGetUniformBlockIndex(m_ShaderID, name));
 	}

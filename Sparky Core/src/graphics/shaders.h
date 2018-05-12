@@ -32,7 +32,7 @@ namespace sparky { namespace graphics {
 		void bindUniformBlock(const GLchar* name, GLuint bindingPoint);
 
 		GLuint getShaderID() const { return m_ShaderID; }
-		GLuint getBlockBindingPoint(const GLchar* name);
+		GLuint getBlockBindingPoint(const GLchar* name) const;
 
 		void enable();
 		void disable();
