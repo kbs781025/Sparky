@@ -23,25 +23,25 @@ namespace sparky { namespace graphics {
 		Shader(const char* vertexPath, const char* fragPath, const char* geoPath = nullptr);
 		~Shader();
 
-		void setUniform1f(const GLchar* name, float value);
-		void setUniform1i(const GLchar* name, int value);
-		void setUniform2f(const GLchar* name, const glm::vec2& value);
-		void setUniform3f(const GLchar* name, const glm::vec3& value);
-		void setUniform4f(const GLchar* name, const glm::vec4& value);
-		void setUniformMat4(const GLchar* name, const glm::mat4& matrix);
-		void bindUniformBlock(const GLchar* name, GLuint bindingPoint);
+		void setUniform1f(const GLchar* name, float value) const;
+		void setUniform1i(const GLchar* name, int value) const;
+		void setUniform2f(const GLchar* name, const glm::vec2& value) const;
+		void setUniform3f(const GLchar* name, const glm::vec3& value) const;
+		void setUniform4f(const GLchar* name, const glm::vec4& value) const;
+		void setUniformMat4(const GLchar* name, const glm::mat4& matrix) const;
+		void bindUniformBlock(const GLchar* name, GLuint bindingPoint) const;
 
 		GLuint getShaderID() const { return m_ShaderID; }
 		GLuint getBlockBindingPoint(const GLchar* name) const;
 
-		void enable();
-		void disable();
+		void enable() const;
+		void disable() const;
 	private:
 		void loadShaders();
 		GLuint compileShader(GLuint shaderType, const char* filePath);
 		void linkShader(GLuint vertShader, GLuint fragShader, GLuint geoShader = 0);
 
-		GLint getUniformLocation(const GLchar* name);
+		GLint getUniformLocation(const GLchar* name) const;
 	private:
 		static const std::string POINTLIGHT;
 		static const std::string DIRECTIONLIGHT;

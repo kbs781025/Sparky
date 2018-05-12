@@ -15,7 +15,7 @@ namespace sparky { namespace graphics {
 		setupMesh(vertices, layout, indicies);
 	}
 
-	void Mesh::Draw(Shader& shader, bool textureOn)
+	void Mesh::Draw(const Shader& shader, bool textureOn) const
 	{
 		unsigned int diffuseNum = -1;
 		unsigned int specularNum = -1;
@@ -54,7 +54,7 @@ namespace sparky { namespace graphics {
 		m_pVAO->Draw();
 	}
 
-	void Mesh::DrawInstances(Shader & shader, unsigned int instanceCount)
+	void Mesh::DrawInstances(const Shader & shader, unsigned int instanceCount) const
 	{
 		unsigned int diffuseNum = 0;
 		unsigned int specularNum = 0;
@@ -83,6 +83,10 @@ namespace sparky { namespace graphics {
 		}
 
 		m_pVAO->DrawInstances(instanceCount);
+	}
+
+	void Mesh::Render(const Renderer3D & renderer) const
+	{
 	}
 
 	unsigned int Mesh::getVAOHandle()

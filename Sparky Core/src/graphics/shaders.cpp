@@ -28,7 +28,7 @@ namespace sparky { namespace graphics {
 		GLCall(glDeleteProgram(m_ShaderID));
 	}
 
-	void Shader::setUniform1f(const GLchar * name, float value)
+	void Shader::setUniform1f(const GLchar * name, float value) const
 	{
 		assert(m_Enabled == true);
 
@@ -46,14 +46,8 @@ namespace sparky { namespace graphics {
 		GLCall(glUniform1f(uniformLocation, value));
 	}
 
-	void Shader::setUniform1i(const GLchar * name, int value)
+	void Shader::setUniform1i(const GLchar * name, int value) const
 	{
-		if (!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG
@@ -68,14 +62,8 @@ namespace sparky { namespace graphics {
 		GLCall(glUniform1i(uniformLocation, value));
 	}
 
-	void Shader::setUniform2f(const GLchar * name, const glm::vec2 & value)
+	void Shader::setUniform2f(const GLchar * name, const glm::vec2 & value) const
 	{
-		if (!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG
@@ -90,14 +78,8 @@ namespace sparky { namespace graphics {
 		GLCall(glUniform2f(uniformLocation, value.x, value.y));
 	}
 
-	void Shader::setUniform3f(const GLchar * name, const glm::vec3 & value)
+	void Shader::setUniform3f(const GLchar * name, const glm::vec3 & value) const
 	{
-		if (!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG
@@ -112,14 +94,8 @@ namespace sparky { namespace graphics {
 		GLCall(glUniform3f(uniformLocation, value.x, value.y, value.z));
 	}
 
-	void Shader::setUniform4f(const GLchar * name, const glm::vec4 & value)
+	void Shader::setUniform4f(const GLchar * name, const glm::vec4 & value) const
 	{
-		if (!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG
@@ -134,14 +110,8 @@ namespace sparky { namespace graphics {
 		GLCall(glUniform4f(uniformLocation, value.x, value.y, value.z, value.w));
 	}
 
-	void Shader::setUniformMat4(const GLchar * name, const glm::mat4 & matrix)
+	void Shader::setUniformMat4(const GLchar * name, const glm::mat4 & matrix) const
 	{
-		if (!m_Enabled)
-		{
-			std::cout << "Shader is not enabled." << std::endl;
-			return;
-		}
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG
@@ -156,7 +126,7 @@ namespace sparky { namespace graphics {
 		GLCall(glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
-	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint)
+	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint) const
 	{
 		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_ShaderID, name));
 
@@ -177,16 +147,14 @@ namespace sparky { namespace graphics {
 		GLCall(return glGetUniformBlockIndex(m_ShaderID, name));
 	}
 
-	void Shader::enable()
+	void Shader::enable() const
 	{
 		GLCall(glUseProgram(m_ShaderID));
-		m_Enabled = true;
 	}
 
-	void Shader::disable()
+	void Shader::disable() const
 	{
 		GLCall(glUseProgram(0));
-		m_Enabled = false;
 	}
 
 	void Shader::loadShaders()
@@ -273,7 +241,7 @@ namespace sparky { namespace graphics {
 		GLCall(glDeleteShader(geoShader));
 	}
 
-	GLint Shader::getUniformLocation(const GLchar * name)
+	GLint Shader::getUniformLocation(const GLchar * name) const
 	{
 		GLCall(return glGetUniformLocation(m_ShaderID, name));
 	}
