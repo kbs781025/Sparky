@@ -20,7 +20,7 @@ namespace sparky { namespace graphics {
 	{
 		const Mesh* mesh;
 		const Shader* shader;
-		std::vector<RendererUniform> uniforms;
+		//std::vector<RendererUniform> uniforms;
 		glm::mat4 transform;
 	};
 
