@@ -140,6 +140,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\graphics\BufferLayout.cpp" />
     <ClCompile Include="src\graphics\camera.cpp" />
+    <ClCompile Include="src\graphics\ForwardRenderer.cpp" />
     <ClCompile Include="src\graphics\Framebuffer2D.cpp" />
     <ClCompile Include="src\graphics\FrameBufferDepth.cpp" />
     <ClCompile Include="src\graphics\IndexBuffer.cpp" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="src\graphics\Buffer.h" />
     <ClInclude Include="src\graphics\BufferLayout.h" />
+    <ClInclude Include="src\graphics\ForwardRenderer.h" />
     <ClInclude Include="src\graphics\Framebuffer2D.h" />
     <ClInclude Include="src\graphics\FrameBufferDepth.h" />
     <ClInclude Include="src\graphics\IndexBuffer.h" />
@@ -167,6 +169,8 @@
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\camera.h" />
     <ClInclude Include="src\graphics\model.h" />
+    <ClInclude Include="src\graphics\RenderCommand.h" />
+    <ClInclude Include="src\graphics\Renderer3D.h" />
     <ClInclude Include="src\graphics\ShaderFactory\ShaderFactory.h" />
     <ClInclude Include="src\graphics\shaders.h" />
     <ClInclude Include="src\graphics\texture.h" />

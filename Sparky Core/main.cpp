@@ -12,11 +12,15 @@
 #include "src/graphics/Light.h"
 #include "src/graphics/UniformBuffer.h"
 #include "src/platform/opengl/GLCommon.h"
-#include <GLFW/glfw3.h>
+#include "src/graphics/ForwardRenderer.h"
+#include "src/graphics/camera.h"
 
+#include <GL/glew.h>
 #include <time.h>
+#include <GLFW/glfw3.h>
 #include <vector>
-#include <sstream>
+
+
 
 void moveLightPosition(glm::vec3& lightPos)
 {
@@ -342,6 +346,9 @@ int main()
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	const double MS_PER_UPDATE = 1.0f / 60.0f;
 
+	Camera* camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::perspective(glm::radians(45.0f), 
+		(float)window.getWidth() / window.getHeight(), 0.1f, 100.0f));
+
 	// State Setting
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
@@ -382,26 +389,17 @@ int main()
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
 	};
+	glm::vec3 lightDir = glm::vec3(-0.5f, -0.5f, -0.5f);
+	glm::vec4 pointLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glm::vec3 pointLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	std::vector<Light> Lights;
+	Lights.emplace_back(pointLightColor, pointLightPositions[0], lightDir, glm::vec3(1.0f, 0.007f, 0.0002f));
 
-	std::vector<PointLight> pointLights;
-	pointLights.emplace_back(pointLightColor, pointLightPositions[0], glm::vec3(1.0f, 0.007f, 0.0002f));
-	//pointLights.emplace_back(pointLightColor, pointLightPositions[1], glm::vec3(1.0f, 0.007f, 0.0002f));
+	// Renderer
+	ForwardRenderer* renderer = new ForwardRenderer(window.getWidth(), window.getHeight());
+	renderer->init();
 	
 	// Buffer Object Setting
-	modelShader->bindUniformBlock("Matrices", 1);
-	applyShadowShader->bindUniformBlock("Matrices", 1);
-	normalMapShader->bindUniformBlock("Matrices", 1);
-	normalDisplayShader->bindUniformBlock("Matrices", 1);
-	UniformBuffer* pMatrixUBO = new UniformBuffer(1, sizeof(glm::mat4));
-	glm::mat4 projection = glm::perspective(glm::radians(window.getFov()), (float)window.getWidth() / window.getHeight(), 0.1f, 100.0f);
-
-	modelShader->bindUniformBlock("PointLights", 2);
-	normalMapShader->bindUniformBlock("PointLights", 2);
-	UniformBuffer* pLightUBO = new UniformBuffer(2, pointLights.size() * sizeof(PointLight));
-	pLightUBO->setUniformBlockData(pointLights);
-
 	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
 
 	initCube();
@@ -415,7 +413,7 @@ int main()
 	double time = 0.0f;
 	double lag = 0.0;
 	double prevClock = glfwGetTime();
-
+	
 	while (!window.closed())
 	{
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -444,22 +442,25 @@ int main()
 		}
 
 		//Render Block
-		glm::mat4 model;
-		//model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-		normalMapShader->enable();
-		normalMapShader->setUniformMat4("model", model);
-		glm::mat4 view = window.getViewMatrix();
-		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
-		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
-		std::vector<glm::mat4> matrices;
-		matrices.emplace_back(projection * view * model);
-		pMatrixUBO->setUniformBlockData(matrices);
-		/*modelShader->enable();
-		modelShader->setUniformMat4("model", model);
-		modelShader->setUniform3f("viewPos", window.getCamPosition());*/
-		//nanosuit.Draw(*normalMapShader);
-		//man.Draw(*normalMapShader);
-		renderCube();
+		renderer->begin();
+		renderer->beginScene(window.getCamera()); 
+		renderer->submitLightSetup(Lights);
+		man.SubmitMesh(renderer, normalMapShader);
+		renderer->present();
+		renderer->endScene();
+		renderer->end();
+
+		//normalMapShader->enable();
+		/*renderer->setSystemUniforms(normalMapShader);
+		normalMapShader->setUniform1i("material.texture_diffuse0", 0);
+		normalMapShader->setUniform1i("material.texture_normal0", 1);
+		normalMapShader->setUniform1f("material.shininess", 32);
+		brickWallDiffuse.bind(0);
+		brickWallNormal.bind(1);
+		renderQuad(); */
+		
+		
+		//renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
