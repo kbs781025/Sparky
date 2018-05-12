@@ -17,8 +17,7 @@ namespace sparky { namespace graphics {
 		:
 		m_VertPath(vertexPath),
 		m_FragPath(fragPath),
-		m_GeoPath(geoPath),
-		m_Enabled(false)
+		m_GeoPath(geoPath)
 	{
 		loadShaders();
 	}
@@ -30,8 +29,6 @@ namespace sparky { namespace graphics {
 
 	void Shader::setUniform1f(const GLchar * name, float value) const
 	{
-		assert(m_Enabled == true);
-
 		GLCall(GLint uniformLocation = getUniformLocation(name));
 
 		#ifdef _DEBUG

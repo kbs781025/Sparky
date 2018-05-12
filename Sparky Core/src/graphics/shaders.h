@@ -18,7 +18,6 @@ namespace sparky { namespace graphics {
 		const char* m_VertPath;
 		const char* m_FragPath;
 		const char* m_GeoPath;
-		bool m_Enabled;
 	public:
 		Shader(const char* vertexPath, const char* fragPath, const char* geoPath = nullptr);
 		~Shader();
