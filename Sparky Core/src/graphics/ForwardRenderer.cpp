@@ -52,6 +52,12 @@ namespace sparky { namespace graphics {
 
 	void ForwardRenderer::init()
 	{
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
+		GLCall(glEnable(GL_CULL_FACE));
+
 		m_CommandQueue.reserve(1000);
 
 		m_VSMatUniformBuffer = new UniformBuffer(sizeof(glm::mat4) * VSMatUniformIndex_Size);
