@@ -21,7 +21,7 @@
 #include <vector>
 
 
-
+#if 1
 void moveLightPosition(glm::vec3& lightPos)
 {
 	lightPos.x = sin(glfwGetTime());
@@ -336,6 +336,7 @@ void drawSkyBox()
 {
 	pSkyBoxVao->Draw();
 }
+#endif
 
 int main()
 {
@@ -346,30 +347,16 @@ int main()
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	const double MS_PER_UPDATE = 1.0f / 60.0f;
 
-	Camera* camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::perspective(glm::radians(45.0f), 
-		(float)window.getWidth() / window.getHeight(), 0.1f, 100.0f));
-
-	// State Setting
-	GLCall(glEnable(GL_DEPTH_TEST));
-	GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
-	//GLCall(glEnable(GL_CULL_FACE));
-	
 	// Shader loading
 	Shader* modelShader = ShaderFactory::ModelShader();
-	Shader* normalDisplayShader = ShaderFactory::NormalShader();
-	Shader* createShadowShader = ShaderFactory::CreateShadowShader();
-	Shader* applyShadowShader = ShaderFactory::ApplyShadowShader();
-	Shader* debug = ShaderFactory::CreateShader("debugShader");
-	Shader* skyboxShader = ShaderFactory::CreateShader("cubeMapShader");
 	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
 	
-	// Texture and model loading
-	Model nanosuit("Texture/models/nanosuit/nanosuit.obj");
-	Model cube("Texture/models/cube/cube.obj");
-	Model man("Texture/models/man/muro.obj");
-	Texture2D container = Texture2D("Texture/Images/container2.png");
-	Texture2D brickWallDiffuse = Texture2D("Texture/Images/brickwall.jpg");
-	Texture2D brickWallNormal = Texture2D("Texture/Images/brickwall_normal.jpg");
+	#ifdef DEBUG
+	Shader* normalDisplayShader = ShaderFactory::NormalShader();
+	Shader* debug = ShaderFactory::CreateShader("debugShader");
+	#endif
+	
+	#ifdef SKYBOX
 	std::vector<std::string> cubeMapFaces =
 	{
 		"Texture/Images/skybox/right.jpg",
@@ -380,32 +367,36 @@ int main()
 		"Texture/Images/skybox/back.jpg"
 	};
 	TextureCube cubeMap = TextureCube("skybox", cubeMapFaces);
+	Shader* skyboxShader = ShaderFactory::CreateShader("cubeMapShader");
+	initSkyBox();
+	#endif
+
+	#ifdef SHADOWMAP
+	Shader* createShadowShader = ShaderFactory::CreateShadowShader();
+	Shader* applyShadowShader = ShaderFactory::ApplyShadowShader();
+	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
+	#endif
+
+	#ifdef PRIMITIVES
+	initCube();
+	initQuad();
+	initPlane();
+	#endif
+
+	// Texture and model loading
+	Model man("Texture/models/man/muro.obj");
 
 	// Light Setting
-	glm::vec3 pointLightPositions[] =
-	{
-		glm::vec3(2.0f, 4.0f, 2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
-	};
+	glm::vec3 pointLightPositions = glm::vec3(2.0f, 4.0f, 2.0f);
 	glm::vec3 lightDir = glm::vec3(-0.5f, -0.5f, -0.5f);
 	glm::vec4 pointLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	std::vector<Light> Lights;
-	Lights.emplace_back(pointLightColor, pointLightPositions[0], lightDir, glm::vec3(1.0f, 0.007f, 0.0002f));
+	Lights.emplace_back(pointLightColor, pointLightPositions, lightDir, glm::vec3(1.0f, 0.007f, 0.0002f));
 
 	// Renderer
 	ForwardRenderer* renderer = new ForwardRenderer(window.getWidth(), window.getHeight());
 	renderer->init();
-	
-	// Buffer Object Setting
-	FrameBufferDepth depthFBO(SHADOW_WIDTH, SHADOW_HEIGHT);
-
-	initCube();
-	initQuad();
-	initPlane();
-	initSkyBox();
 	
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -416,7 +407,6 @@ int main()
 	
 	while (!window.closed())
 	{
-		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		window.clear();
 
 		// Update Block
@@ -449,18 +439,8 @@ int main()
 		renderer->present();
 		renderer->endScene();
 		renderer->end();
-
-		//normalMapShader->enable();
-		/*renderer->setSystemUniforms(normalMapShader);
-		normalMapShader->setUniform1i("material.texture_diffuse0", 0);
-		normalMapShader->setUniform1i("material.texture_normal0", 1);
-		normalMapShader->setUniform1f("material.shininess", 32);
-		brickWallDiffuse.bind(0);
-		brickWallNormal.bind(1);
-		renderQuad(); */
 		
-		
-		//renderCube();
+		#ifdef GARBAGE
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);
@@ -490,20 +470,6 @@ int main()
 		container.bind();
 		depthFBO.getTextureDepth()->bind(1);
 		renderScene(*applyShadowShader);*/
-		/*normalDisplayShader->enable();
-		normalDisplayShader->setUniformMat4("model", model);
-		nanosuit.Draw(*normalDisplayShader, false);*/
-		
-		/*normalMapShader->enable();
-		normalMapShader->setUniformMat4("model", model);
-		normalMapShader->setUniform3f("worldLightPos", pointLightPositions[0]);
-		normalMapShader->setUniform3f("worldViewPos", window.getCamPosition());
-		normalMapShader->setUniform1i("material.texture_diffuse0", 0);
-		normalMapShader->setUniform1i("material.texture_normal0", 1);
-		normalMapShader->setUniform1f("material.shininess", 32);
-		brickWallDiffuse.bind(0);
-		brickWallNormal.bind(1);
-		renderQuad();*/
 
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
@@ -513,6 +479,7 @@ int main()
 		cubeMap.bind();
 		drawSkyBox();
 		GLCall(glDepthFunc(GL_LESS));*/
+		#endif
 
 		glfwSwapBuffers(window.getWindow());
 	}
