@@ -1,8 +1,14 @@
+#include "model.h"
 
 #include <iostream>
-#include "model.h"
+
 #include "../maths/maths.h"
+
+#include "shaders.h"
 #include "BufferLayout.h"
+#include "mesh.h"
+#include "Texture2D.h"
+#include "ForwardRenderer.h"
 
 namespace sparky { namespace graphics {
 
@@ -19,6 +25,16 @@ namespace sparky { namespace graphics {
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
 		{
 			m_Meshes[i].DrawInstances(shader, instanceCount);
+		}
+	}
+
+	void Model::SubmitMesh(ForwardRenderer* renderer, Shader* shader)
+	{
+		glm::mat4 model;
+		model = glm::scale(model, glm::vec3(0.05f));
+		for (unsigned int i = 0; i < m_Meshes.size(); i++)
+		{
+			renderer->submitMesh(&m_Meshes[i], model, shader);
 		}
 	}
 

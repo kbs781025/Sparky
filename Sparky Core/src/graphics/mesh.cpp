@@ -1,9 +1,13 @@
-#include "mesh.h"
 #include <cstddef>
+
 #include "../platform/opengl/GLCommon.h"
+
+#include "mesh.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Texture2D.h"
+#include "shaders.h"
 
 namespace sparky { namespace graphics {
 
@@ -85,8 +89,10 @@ namespace sparky { namespace graphics {
 		m_pVAO->DrawInstances(instanceCount);
 	}
 
+	// TODO : Implement this method
 	void Mesh::Render(const Renderer3D & renderer) const
 	{
+
 	}
 
 	unsigned int Mesh::getVAOHandle()

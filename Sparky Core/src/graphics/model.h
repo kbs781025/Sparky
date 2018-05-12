@@ -3,11 +3,14 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "shaders.h"
+
 #include "mesh.h"
-#include "texture.h"
 
 namespace sparky { namespace graphics {
+
+	class Shader;
+	class Texture2D;
+	class ForwardRenderer;
 
 	class Model
 	{
@@ -18,6 +21,9 @@ namespace sparky { namespace graphics {
 		}
 		void Draw(Shader& shader, bool textureOn = true);
 		void DrawInstances(Shader& shader, unsigned int instanceCount);
+
+		// TODO : temporary method rendering by renderer
+		void SubmitMesh(ForwardRenderer* renderer, Shader* shader);
 
 		unsigned int getMeshNum() { return m_Meshes.size(); }
 		std::vector<Mesh> getMeshes() { return m_Meshes; }

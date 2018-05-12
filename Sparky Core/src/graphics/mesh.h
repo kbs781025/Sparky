@@ -1,8 +1,9 @@
 #pragma once
+
 #include <vector>
+
 #include "../maths/maths.h"
-#include "Texture2D.h"
-#include "shaders.h"
+
 namespace sparky { namespace graphics {
 
 	class VertexArray;
@@ -10,6 +11,8 @@ namespace sparky { namespace graphics {
 	class IndexBuffer;
 	class BufferLayout;
 	class Renderer3D;
+	class Texture2D;
+	class Shader;
 
 	class Mesh
 	{
