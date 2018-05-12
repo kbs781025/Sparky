@@ -128,7 +128,7 @@ void initCube()
 		-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
 		-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left  
 		};
-
+	BufferLayout layout;
 	VertexBufferContext context(GL_STATIC_DRAW, vertices, sizeof(vertices), BufferLayout::getPosNormTexLayout());
 	pCubeVao = new VertexArray(context);
 }
@@ -445,7 +445,7 @@ int main()
 
 		//Render Block
 		glm::mat4 model;
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+		//model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
 		normalMapShader->enable();
 		normalMapShader->setUniformMat4("model", model);
 		glm::mat4 view = window.getViewMatrix();
@@ -454,12 +454,12 @@ int main()
 		std::vector<glm::mat4> matrices;
 		matrices.emplace_back(projection * view * model);
 		pMatrixUBO->setUniformBlockData(matrices);
-		modelShader->enable();
+		/*modelShader->enable();
 		modelShader->setUniformMat4("model", model);
-		modelShader->setUniform3f("viewPos", window.getCamPosition());
+		modelShader->setUniform3f("viewPos", window.getCamPosition());*/
 		//nanosuit.Draw(*normalMapShader);
-		man.Draw(*normalMapShader);
-		//renderCube();
+		//man.Draw(*normalMapShader);
+		renderCube();
 		/*GLCall(glDepthFunc(GL_LEQUAL));
 		skyboxShader->enable();
 		skyboxShader->setUniformMat4("projection", projection);

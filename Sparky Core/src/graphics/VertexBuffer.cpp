@@ -5,7 +5,8 @@ sparky::graphics::VertexBuffer::VertexBuffer(GLenum usage, GLuint size, const vo
 	: 
 	m_Handle(0),
 	m_Usage(usage), 
-	m_Size(size)
+	m_Size(size),
+	m_VertexSize(layout.getStride())
 {
 	initVBObject(data);
 }
@@ -14,7 +15,8 @@ sparky::graphics::VertexBuffer::VertexBuffer(const VertexBufferContext & context
 	: 
 	m_Handle(0),
 	m_Usage(context.VBUsage), 
-	m_Size(context.VBSize)
+	m_Size(context.VBSize),
+	m_VertexSize(context.VBLayout.getStride())
 {
 	initVBObject(context.VBData);
 }

@@ -2,7 +2,6 @@
 #include <iostream>
 #include "model.h"
 #include "../maths/maths.h"
-#include "Vertex.h"
 #include "BufferLayout.h"
 
 namespace sparky { namespace graphics {

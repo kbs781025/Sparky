@@ -174,7 +174,6 @@
     <ClInclude Include="src\graphics\TextureCube.h" />
     <ClInclude Include="src\graphics\TextureDepth.h" />
     <ClInclude Include="src\graphics\UniformBuffer.h" />
-    <ClInclude Include="src\graphics\Vertex.h" />
     <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\graphics\VertexBuffer.h" />
     <ClInclude Include="src\graphics\window.h" />

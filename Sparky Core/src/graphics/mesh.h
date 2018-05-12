@@ -9,7 +9,6 @@ namespace sparky { namespace graphics {
 	class VertexBuffer;
 	class IndexBuffer;
 	class BufferLayout;
-	struct Vertex;
 
 	class Mesh
 	{
