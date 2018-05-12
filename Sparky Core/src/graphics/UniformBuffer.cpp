@@ -39,21 +39,30 @@ void sparky::graphics::UniformBuffer::setBindingPoint(GLuint bindingPoint)
 {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_Handle));
+
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::setData(const void * data)
 {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, m_BlockSize, data));
+
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::setDataSegment(GLuint uniformOffset, const void * data, GLuint byteSize)
 {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, uniformOffset, byteSize, data));
+
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::setData(const std::vector<float>& uniformBlockData)
@@ -61,14 +70,20 @@ void sparky::graphics::UniformBuffer::setData(const std::vector<float>& uniformB
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	_ASSERT(uniformBlockData.size() * sizeof(float) == m_BlockSize);
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, m_BlockSize, uniformBlockData.data()));
+	
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::setDataSegment(GLuint uniformOffset, const std::vector<float>& uniformBlockData)
 {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, uniformOffset, uniformBlockData.size() * sizeof(float), uniformBlockData.data()));
+	
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::initUniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize)
@@ -77,7 +92,10 @@ void sparky::graphics::UniformBuffer::initUniformBuffer(GLuint bindingPoint, GLu
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBufferData(GL_UNIFORM_BUFFER, uniformBlockSize, nullptr, GL_DYNAMIC_DRAW));
 	GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_Handle));
+	
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
 
 void sparky::graphics::UniformBuffer::initUniformBuffer(GLuint bindingPoint, GLuint uniformBlockSize, const void * data)
@@ -86,5 +104,8 @@ void sparky::graphics::UniformBuffer::initUniformBuffer(GLuint bindingPoint, GLu
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_Handle));
 	GLCall(glBufferData(GL_UNIFORM_BUFFER, uniformBlockSize, data, GL_DYNAMIC_DRAW));
 	GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_Handle));
+	
+	#ifdef _DEBUG
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	#endif
 }
