@@ -52,11 +52,7 @@ namespace sparky { namespace graphics {
 
 	void ForwardRenderer::init()
 	{
-		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-
-		GLCall(glEnable(GL_DEPTH_TEST));
-		GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
-		GLCall(glEnable(GL_CULL_FACE));
+		
 
 		m_CommandQueue.reserve(1000);
 
@@ -72,6 +68,12 @@ namespace sparky { namespace graphics {
 	void ForwardRenderer::begin()
 	{
 		GLCall(glViewport(0, 0, m_ScreenWidth, m_ScreenHeight));
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		GLCall(glClearDepth(0.0f));
+		GLCall(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
+		GLCall(glEnable(GL_CULL_FACE));
 
 		m_CommandQueue.clear();
 		m_SystemUniforms.clear();
