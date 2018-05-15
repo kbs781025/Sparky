@@ -8,6 +8,8 @@
 
 namespace sparky { namespace graphics {
 
+	class Shader;
+
 	class ShaderSet
 	{
 	private:
@@ -24,7 +26,7 @@ namespace sparky { namespace graphics {
 			}
 		};
 
-		struct Shader
+		struct ShaderData
 		{
 			ShaderHandle Handle;
 			uint64_t Timestamp;
@@ -40,14 +42,15 @@ namespace sparky { namespace graphics {
 	private:
 		std::string m_Version;
 		std::string m_Preamble;
-		std::map<ShaderNameTypePair, Shader> m_Shaders;
+		std::map<ShaderNameTypePair, ShaderData> m_Shaders;
 		std::map<std::vector<const ShaderNameTypePair*>, Program> m_Programs;
+	private:
+		GLuint* AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders);
 	public:
 		ShaderSet() = default;
 		~ShaderSet();
 		void SetVersion(const std::string& version);
 		void SetPreambleFile(const std::string& preambleFileName);
-		const GLuint* AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders);
 		void UpdatePrograms();
 
 		// vertex shader: .vert
@@ -57,7 +60,7 @@ namespace sparky { namespace graphics {
 		// tessellation evaluation shader: .tese
 		// compute shader: .comp
 		// eg: AddProgramFromExts({"foo.vert", "bar.frag"});
-		const GLuint* AddProgramFromExts(const std::vector<std::string>& shaders);
+		Shader* AddProgramFromExts(const std::vector<std::string>& shaders);
 
 		// eg: AddProgramFromCombinedFile("shader.glsl", { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER });
 		//
@@ -77,7 +80,7 @@ namespace sparky { namespace graphics {
 		//     #ifdef FRAGMENT_SHADER
 		//     void main() { /* your fragment shader main */ }
 		//     #endif
-		const GLuint* AddProgramFromCombinedFile(const std::string& fileName, const std::vector<GLenum>& shaderTypes);
+		Shader* AddProgramFromCombinedFile(const std::string& fileName, const std::vector<GLenum>& shaderTypes);
 	};
 
 }}

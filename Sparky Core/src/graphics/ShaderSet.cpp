@@ -7,8 +7,11 @@
 #include <set>
 
 #include "../platform/opengl/GLCommon.h"
+#include "shaders.h"
 
 namespace sparky { namespace graphics {
+
+	const std::string SHADER_DIRECTORY = "src/graphics/ShaderFactory/Shaders/";
 
 	static uint64_t GetShaderFileTimestamp(const char* fileName)
 	{
@@ -48,12 +51,12 @@ namespace sparky { namespace graphics {
 
 	ShaderSet::~ShaderSet()
 	{
-		for (std::pair<const ShaderNameTypePair, Shader>& shader : m_Shaders)
+		for (auto& shader : m_Shaders)
 		{
 			glDeleteShader(shader.second.Handle);
 		}
 
-		for (std::pair<const std::vector<const ShaderNameTypePair*>, Program>& program : m_Programs)
+		for (auto& program : m_Programs)
 		{
 			glDeleteProgram(program.second.InternalHandle);
 		}
@@ -66,17 +69,18 @@ namespace sparky { namespace graphics {
 
 	void ShaderSet::SetPreambleFile(const std::string & preambleFileName)
 	{
-		m_Preamble = preambleFileName;
+		m_Preamble = SHADER_DIRECTORY + preambleFileName;
 	}
 
-	const GLuint * ShaderSet::AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders)
+	GLuint* ShaderSet::AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders)
 	{
 		std::vector<const ShaderNameTypePair*> shaderNameTypes;
 
-		for (const auto shaderNameType : typedShaders)
+		for (const auto& shaderNameType : typedShaders)
 		{
 			ShaderNameTypePair tmpShaderNameType;
-			std::tie(tmpShaderNameType.Name, tmpShaderNameType.Type) = shaderNameType;
+			std::string shaderPath = SHADER_DIRECTORY + shaderNameType.first;
+			std::tie(tmpShaderNameType.Name, tmpShaderNameType.Type) = std::move(std::make_tuple(shaderPath, shaderNameType.second));
 
 			{
 				std::ifstream ifs(tmpShaderNameType.Name);
@@ -86,13 +90,13 @@ namespace sparky { namespace graphics {
 				}
 			}
 
-			auto foundShader = m_Shaders.emplace(std::move(tmpShaderNameType), Shader{}).first;
+			auto foundShader = m_Shaders.emplace(std::move(tmpShaderNameType), ShaderData{}).first;
 			if (!foundShader->second.Handle)
 			{
 				GLCall(foundShader->second.Handle = glCreateShader(shaderNameType.second));
 				// Mask the hash to 16 bits because some implementations are limited to that number of bits.
 				// The sign bit is masked out, since some shader compilers treat the #line as signed, and others treat it unsigned.
-				foundShader->second.HashName = (int32_t)std::hash<std::string>()(shaderNameType.first) & 0x7FFF;
+				foundShader->second.HashName = (int32_t)std::hash<std::string>()(shaderPath) & 0x7FFF;
 			}
 			shaderNameTypes.push_back(&foundShader->first);
 		}
@@ -117,8 +121,8 @@ namespace sparky { namespace graphics {
 
 	void ShaderSet::UpdatePrograms()
 	{
-		std::set<std::pair<const ShaderNameTypePair, Shader>*> updatedShaders;
-		for (auto shader : m_Shaders)
+		std::set<std::pair<const ShaderNameTypePair, ShaderData>*> updatedShaders;
+		for (auto& shader : m_Shaders)
 		{
 			uint64_t timestamp = GetShaderFileTimestamp(shader.first.Name.c_str());
 			if (timestamp > shader.second.Timestamp)
@@ -130,7 +134,7 @@ namespace sparky { namespace graphics {
 
 		for (auto shader : updatedShaders)
 		{
-			std::string version = "#version" + m_Version + "\n";
+			std::string version = "#version " + m_Version + "\n";
 
 			std::string define;
 			switch (shader->first.Type)
@@ -145,7 +149,7 @@ namespace sparky { namespace graphics {
 
 			std::string preamble_hash = std::to_string((int32_t)std::hash<std::string>()("preamble") & 0x7FFF);
 			std::string preamble = "#line 1" + preamble_hash + "\n" + 
-									m_Preamble + "\n";
+									ShaderStringFromFile(m_Preamble.c_str()) + "\n";
 
 			std::string source_hash = std::to_string(shader->second.HashName);
 			std::string source = "#line 1" + source_hash + "\n" +
@@ -166,7 +170,7 @@ namespace sparky { namespace graphics {
 				(GLint)source.length()
 			};
 
-			GLCall(glShaderSource(shader->second.Handle, 4, strings, lengths));
+			GLCall(glShaderSource(shader->second.Handle, 3, strings, lengths));
 			GLCall(glCompileShader(shader->second.Handle));
 
 			GLint status;
@@ -192,12 +196,12 @@ namespace sparky { namespace graphics {
 			}
 		}
 
-		for (auto program : m_Programs)
+		for (auto& program : m_Programs)
 		{
 			bool programNeedsRelink = false;
 			for (const auto programShader : program.first)
 			{
-				for (auto shader : updatedShaders)
+				for (const auto shader : updatedShaders)
 				{
 					if (&shader->first == programShader)
 					{
@@ -294,7 +298,7 @@ namespace sparky { namespace graphics {
 		}
 	}
 
-	const GLuint * ShaderSet::AddProgramFromExts(const std::vector<std::string>& shaders)
+	Shader* ShaderSet::AddProgramFromExts(const std::vector<std::string>& shaders)
 	{
 		std::vector<std::pair<std::string, GLenum>> typedShaders;
 		for (const auto& shader : shaders)
@@ -326,16 +330,20 @@ namespace sparky { namespace graphics {
 			typedShaders.emplace_back(shader, shaderType);
 		}
 
-		return AddProgram(typedShaders);
+		GLuint* shaderID = AddProgram(typedShaders);
+
+		return new Shader(shaderID);
 	}
-	const GLuint * ShaderSet::AddProgramFromCombinedFile(const std::string & fileName, const std::vector<GLenum>& shaderTypes)
+	Shader* ShaderSet::AddProgramFromCombinedFile(const std::string & fileName, const std::vector<GLenum>& shaderTypes)
 	{
 		std::vector<std::pair<std::string, GLenum>> typedShaders;
 
 		for (const auto type : shaderTypes)
 			typedShaders.emplace_back(fileName, type);
 
-		return AddProgram(typedShaders);
+		GLuint* shaderID = AddProgram(typedShaders);
+
+		return new Shader(shaderID);
 	}
 
 }}
