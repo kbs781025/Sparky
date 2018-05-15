@@ -72,7 +72,6 @@ namespace sparky { namespace graphics {
 		GLCall(glClearDepth(0.0f));
 		GLCall(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GLCall(glEnable(GL_DEPTH_TEST));
-		GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
 		GLCall(glEnable(GL_CULL_FACE));
 
 		m_CommandQueue.clear();
@@ -102,7 +101,7 @@ namespace sparky { namespace graphics {
 		submit(command);
 	}
 
-	void ForwardRenderer::submitMesh(const Mesh * mesh, const glm::mat4 & transform, Shader * shader) 
+	void ForwardRenderer::submitMesh(const Mesh * mesh, const glm::mat4 & transform, const Shader * shader) 
 	{
 		RenderCommand command;
 		command.mesh = mesh;

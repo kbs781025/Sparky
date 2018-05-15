@@ -28,7 +28,7 @@ namespace sparky { namespace graphics {
 		void beginScene(const Camera* camera) override;
 		void submit(const RenderCommand& command) override;
 		void submitMesh(const Mesh* mesh, const glm::mat4& transform) override;
-		void submitMesh(const Mesh* mesh, const glm::mat4& transform, Shader* shader); // TODO : temporary method for forward rendering
+		void submitMesh(const Mesh* mesh, const glm::mat4& transform, const Shader* shader); // TODO : temporary method for forward rendering
 		void submitLightSetup(const std::vector<Light> & light);
 		void endScene() override;
 		void end() override;
