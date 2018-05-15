@@ -23,7 +23,7 @@ namespace sparky { namespace graphics {
 		void DrawInstances(Shader& shader, unsigned int instanceCount);
 
 		// TODO : temporary method rendering by renderer
-		void SubmitMesh(ForwardRenderer* renderer, Shader* shader);
+		void SubmitMesh(ForwardRenderer* renderer, const Shader* shader);
 
 		unsigned int getMeshNum() { return m_Meshes.size(); }
 		std::vector<Mesh> getMeshes() { return m_Meshes; }

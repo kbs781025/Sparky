@@ -28,7 +28,7 @@ namespace sparky { namespace graphics {
 		}
 	}
 
-	void Model::SubmitMesh(ForwardRenderer* renderer, Shader* shader)
+	void Model::SubmitMesh(ForwardRenderer* renderer, const Shader* shader)
 	{
 		glm::mat4 model;
 		model = glm::scale(model, glm::vec3(0.05f));
