@@ -9,22 +9,15 @@
 
 namespace sparky { namespace graphics {
 
-	const std::string Shader::POINTLIGHT = "pointLights";
-	const std::string Shader::DIRECTIONLIGHT = "dirLights";
-	const std::string Shader::MATERIAL = "material";
-
-	Shader::Shader(const char * vertexPath, const char * fragPath, const char * geoPath)
+	Shader::Shader(GLuint* shaderID)
 		:
-		m_VertPath(vertexPath),
-		m_FragPath(fragPath),
-		m_GeoPath(geoPath)
+		m_pShaderID(shaderID)
 	{
-		loadShaders();
 	}
 
 	Shader::~Shader()
 	{
-		GLCall(glDeleteProgram(m_ShaderID));
+		GLCall(glDeleteProgram(*m_pShaderID));
 	}
 
 	void Shader::setUniform1f(const GLchar * name, float value) const
@@ -125,7 +118,7 @@ namespace sparky { namespace graphics {
 
 	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint) const
 	{
-		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_ShaderID, name));
+		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(*m_pShaderID, name));
 
 		#ifdef _DEBUG
 		if (uniformBlockIndex < 0)
@@ -136,17 +129,17 @@ namespace sparky { namespace graphics {
 		}
 		#endif
 
-		GLCall(glUniformBlockBinding(m_ShaderID, uniformBlockIndex, bindingPoint));
+		GLCall(glUniformBlockBinding(*m_pShaderID, uniformBlockIndex, bindingPoint));
 	}
 
 	GLuint Shader::getBlockBindingPoint(const GLchar * name) const
 	{
-		GLCall(return glGetUniformBlockIndex(m_ShaderID, name));
+		GLCall(return glGetUniformBlockIndex(*m_pShaderID, name));
 	}
 
 	void Shader::enable() const
 	{
-		GLCall(glUseProgram(m_ShaderID));
+		GLCall(glUseProgram(*m_pShaderID));
 	}
 
 	void Shader::disable() const
@@ -154,93 +147,9 @@ namespace sparky { namespace graphics {
 		GLCall(glUseProgram(0));
 	}
 
-	void Shader::loadShaders()
-	{
-		GLCall(m_ShaderID = glCreateProgram());
-		GLuint vertex = compileShader(GL_VERTEX_SHADER, m_VertPath);
-		GLuint fragment = compileShader(GL_FRAGMENT_SHADER, m_FragPath);
-		GLuint geoMetry = 0;
-		if (m_GeoPath)
-		{
-			geoMetry = compileShader(GL_GEOMETRY_SHADER, m_GeoPath);
-		}
-
-		linkShader(vertex, fragment, geoMetry);
-	}
-
-	GLuint Shader::compileShader(GLuint shaderType, const char* filePath)
-	{
-		GLCall(GLuint shaderID = glCreateShader(shaderType));
-
-		std::string sourceString = read_file(filePath);
-		if (sourceString == "")
-			return 0;
-
-		const char* shaderSource = sourceString.c_str();
-		GLCall(glShaderSource(shaderID, 1, &shaderSource, nullptr));;
-		GLCall(glCompileShader(shaderID));;
-
-		GLint result;
-		GLCall(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result));
-
-		if (result == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			GLCall(glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength));
-			std::vector<GLchar> error(maxLength);
-			GLCall(glGetShaderInfoLog(shaderID, maxLength, &maxLength, error.data()));
-			std::cout << filePath << std::endl;
-			std::cout << "Failed to compile shader. " << error.data() << std::endl;
-			GLCall(glDeleteShader(shaderID));
-
-			return 0;
-		}
-
-		return shaderID;
-	}
-
-	void Shader::linkShader(GLuint vertShader, GLuint fragShader, GLuint geoShader)
-	{
-		GLCall(glAttachShader(m_ShaderID, vertShader));
-		GLCall(glAttachShader(m_ShaderID, fragShader));
-		if (geoShader > 0)
-		{
-			GLCall(glAttachShader(m_ShaderID, geoShader));
-		}
-
-		GLCall(glLinkProgram(m_ShaderID));
-
-		GLint isLinked = 0;
-		GLCall(glGetProgramiv(m_ShaderID, GL_LINK_STATUS, &isLinked));
-		if (isLinked == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			GLCall(glGetProgramiv(m_ShaderID, GL_INFO_LOG_LENGTH, &maxLength));
-
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			GLCall(glGetProgramInfoLog(m_ShaderID, maxLength, &maxLength, &infoLog[0]));
-			std::cout << "Failed to compiled shader : " << infoLog.data() << std::endl;
-
-			// The program is useless now. So delete it.
-			GLCall(glDeleteProgram(m_ShaderID));
-
-			// Provide the infolog in whatever manner you deem best.
-			// Exit with failure.
-			m_ShaderID = 0;
-			return;
-		}
-
-		GLCall(glValidateProgram(m_ShaderID));
-
-		GLCall(glDeleteShader(vertShader));
-		GLCall(glDeleteShader(fragShader));
-		GLCall(glDeleteShader(geoShader));
-	}
-
 	GLint Shader::getUniformLocation(const GLchar * name) const
 	{
-		GLCall(return glGetUniformLocation(m_ShaderID, name));
+		GLCall(return glGetUniformLocation(*m_pShaderID, name));
 	}
 
 }
