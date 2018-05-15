@@ -2,7 +2,6 @@
 #include "src/graphics/window.h"
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
-#include "src/graphics/ShaderFactory/ShaderFactory.h"
 #include "src/graphics/Texture2D.h"
 #include "src/graphics/TextureCube.h"
 #include "src/graphics/TextureDepth.h"
@@ -13,7 +12,7 @@
 #include "src/graphics/UniformBuffer.h"
 #include "src/platform/opengl/GLCommon.h"
 #include "src/graphics/ForwardRenderer.h"
-#include "src/graphics/camera.h"
+#include "src/graphics/ShaderSet.h"
 
 #include <GL/glew.h>
 #include <time.h>
@@ -22,57 +21,6 @@
 
 
 #if 1
-void moveLightPosition(glm::vec3& lightPos)
-{
-	lightPos.x = sin(glfwGetTime());
-	lightPos.y = cos(glfwGetTime());
-}
-
-void turnLightColor(glm::vec3& lightColor)
-{
-	lightColor.x = sin(glfwGetTime() * 2.0f);
-	lightColor.y = sin(glfwGetTime() * 0.7f);
-	lightColor.z = sin(glfwGetTime() * 1.3f);
-}
-
-void setPoint(const glm::vec3& point, const glm::vec3& color, std::vector<float>& vector, int index)
-{
-	int pointIndex = index * 6;
-	vector[pointIndex + 0] = point.x;
-	vector[pointIndex + 1] = point.y;
-	vector[pointIndex + 2] = point.z;
-	vector[pointIndex + 3] = color.x;
-	vector[pointIndex + 4] = color.y;
-	vector[pointIndex + 5] = color.z;
-}
-
-void setPointLightUniforms(sparky::graphics::Shader* const pShader, int index, const glm::vec3& position, 
-							const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, 
-							float constant, float linear, float quadratic)
-{
-	std::string leftStr = "pointLights[";
-
-	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].position").c_str(), position);
-	leftStr = "pointLights[";
-
-	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].ambient").c_str(), ambient);
-	leftStr = "pointLights[";
-
-	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].diffuse").c_str(), diffuse);
-	leftStr = "pointLights[";
-
-	pShader->setUniform3f(leftStr.append(std::to_string(index)).append("].specular").c_str(), specular);
-	leftStr = "pointLights[";
-
-	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].constant").c_str(), constant);
-	leftStr = "pointLights[";
-
-	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].linear").c_str(), linear);
-	leftStr = "pointLights[";
-
-	pShader->setUniform1f(leftStr.append(std::to_string(index)).append("].quadratic").c_str(), quadratic);
-}
-
 sparky::graphics::VertexArray* pCubeVao;
 sparky::graphics::VertexArray* pQuadVao;
 sparky::graphics::VertexArray* pPlaneVao;
@@ -343,14 +291,17 @@ int main()
 	using namespace sparky;
 	using namespace graphics;
 
-	Window window("Sparky", 800, 600);
+	Window window("Sparky", 720, 560);
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	const double MS_PER_UPDATE = 1.0f / 60.0f;
 
 	// Shader loading
-	Shader* modelShader = ShaderFactory::ModelShader();
-	Shader* normalMapShader = ShaderFactory::CreateShader("normalMappingShader");
-	
+	ShaderSet shaderset;
+	shaderset.SetVersion("450");
+	shaderset.SetPreambleFile("preamble.glsl");
+	const Shader* normalMapShader = shaderset.AddProgramFromExts({ "normalMappingShader.vert", "normalMappingShader.frag" });
+	shaderset.UpdatePrograms();
+
 	#ifdef DEBUG
 	Shader* normalDisplayShader = ShaderFactory::NormalShader();
 	Shader* debug = ShaderFactory::CreateShader("debugShader");
@@ -384,7 +335,7 @@ int main()
 	#endif
 
 	// Texture and model loading
-	Model man("Texture/models/man/muro.obj");
+	Model man("res/Texture/models/man/muro.obj");
 
 	// Light Setting
 	glm::vec3 pointLightPositions = glm::vec3(2.0f, 4.0f, 2.0f);
@@ -432,6 +383,7 @@ int main()
 		}
 
 		//Render Block
+		shaderset.UpdatePrograms();
 		renderer->begin();
 		renderer->beginScene(window.getCamera()); 
 		renderer->submitLightSetup(Lights);

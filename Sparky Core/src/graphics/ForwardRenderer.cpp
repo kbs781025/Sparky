@@ -1,5 +1,7 @@
 #include <GL/glew.h>
 
+#include "../../res/shaders/preamble.glsl"
+
 #include "../platform/opengl/GLCommon.h"
 
 #include "ForwardRenderer.h"
@@ -8,13 +10,16 @@
 #include "shaders.h"
 #include "mesh.h"
 
-namespace sparky { namespace graphics {
 
+namespace sparky { namespace graphics {
+	// TODO : Currently uniformblock causes for entire program to recompile. 
+	// Should find flexible way to do this
 	enum VSMatUniformIndices
 	{
 		VSUniformIndex_ProjectionMatrix = 0,
 		VSUniformIndex_ViewMatrix = 1,
 		VSUniformIndex_ModelMatrix = 2,
+		VSUniformIndex_MVPMatrix = 3,
 		VSMatUniformIndex_Size
 	};
 
@@ -69,8 +74,8 @@ namespace sparky { namespace graphics {
 	{
 		GLCall(glViewport(0, 0, m_ScreenWidth, m_ScreenHeight));
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		GLCall(glClearDepth(0.0f));
-		GLCall(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLCall(glClearDepth(1.0f));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glEnable(GL_CULL_FACE));
 
@@ -114,7 +119,7 @@ namespace sparky { namespace graphics {
 	void ForwardRenderer::submitLightSetup(const std::vector<Light> & light)
 	{
 		assert(light.size() == 1);
-		m_LightData = light;
+		m_LightData = std::move(light);
 	}
 
 	void ForwardRenderer::endScene()
@@ -130,8 +135,11 @@ namespace sparky { namespace graphics {
 		for (const auto& command : m_CommandQueue)
 		{
 			m_MatrixData[VSUniformIndex_ModelMatrix] = command.transform;
+			m_MatrixData[VSUniformIndex_MVPMatrix] = m_MatrixData[VSUniformIndex_ProjectionMatrix] * 
+				m_MatrixData[VSUniformIndex_ViewMatrix] * m_MatrixData[VSUniformIndex_ModelMatrix];
 			setSystemUniforms(command.shader);
 			//command.mesh->Render(*this);
+			// TODO : temporary method
 			command.mesh->Draw(*command.shader);
 		}
 	}
@@ -140,21 +148,16 @@ namespace sparky { namespace graphics {
 	{
 		shader->enable();
 
-		// TODO : bindUniformBlock should be in Init Method for performance
-		unsigned int bindingPoint = 0;
 		// TODO : flexible matrices uniform block name
-		shader->bindUniformBlock("Matrices", bindingPoint);
-		m_VSMatUniformBuffer->setBindingPoint(bindingPoint++);
+		m_VSMatUniformBuffer->setBindingPoint(MVP_UNIFORM_BLOCK_BINDING);
 		m_VSMatUniformBuffer->setUniformBlockData(m_MatrixData);
 
 		// TODO : flexible matrices uniform block name
-		shader->bindUniformBlock("Vectors", bindingPoint);
-		m_VSVecUniformBuffer->setBindingPoint(bindingPoint++);
+		m_VSVecUniformBuffer->setBindingPoint(VEC_UNIFORM_BLOCK_BINDING);
 		m_VSVecUniformBuffer->setUniformBlockData(m_VecData);
 
 		// TODO : flexible matrices uniform block name
-		shader->bindUniformBlock("Lights", bindingPoint);
-		m_FSLightUniformBuffer->setBindingPoint(bindingPoint++);
+		m_FSLightUniformBuffer->setBindingPoint(LIGHT_UNIFORM_BLOCK_BINDING);
 		m_FSLightUniformBuffer->setUniformBlockData(m_LightData);
 	}
 

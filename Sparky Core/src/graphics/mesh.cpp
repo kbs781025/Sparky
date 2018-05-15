@@ -1,5 +1,7 @@
 #include <cstddef>
 
+#include "../../res/shaders/preamble.glsl"
+
 #include "../platform/opengl/GLCommon.h"
 
 #include "mesh.h"
@@ -21,39 +23,32 @@ namespace sparky { namespace graphics {
 
 	void Mesh::Draw(const Shader& shader, bool textureOn) const
 	{
-		unsigned int diffuseNum = -1;
-		unsigned int specularNum = -1;
-		unsigned int normalNum = -1;
 		shader.enable();
 		if (textureOn)
 		{
 			for (int i = 0; i < m_Textures.size(); i++)
 			{
 				std::string type = m_Textures[i].getType();
-				std::string number;
 
 				if (type == "texture_diffuse")
 				{
-					number = std::to_string(++diffuseNum);
+					m_Textures[i].bind(DIFFUSE_TEXTURE_BINDING);
 				}
 				else if (type == "texture_specular")
 				{
-					number = std::to_string(++specularNum);
+					m_Textures[i].bind(SPEUCLAR_TEXTURE_BINDING);
 				}
 				else if (type == "texture_normal")
 				{
-					number = std::to_string(++normalNum);
+					m_Textures[i].bind(NORMAL_TEXTURE_BINDING);
 				}
 				else 
 				{
 					continue;
 				}
-
-				m_Textures[i].bind(i);
-				shader.setUniform1i(("material." + type + number).c_str(), i);
 			}
 		}
-		shader.setUniform1f("material.shininess", 256.0);
+		//shader.setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
 
 		m_pVAO->Draw();
 	}

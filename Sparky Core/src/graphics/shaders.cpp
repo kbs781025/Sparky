@@ -116,6 +116,36 @@ namespace sparky { namespace graphics {
 		GLCall(glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
+	void Shader::setUniform1f(GLuint location, float value) const
+	{
+		GLCall(glUniform1f(location, value));
+	}
+
+	void Shader::setUniform1i(GLuint location, int value) const
+	{
+		GLCall(glUniform1i(location, value));
+	}
+
+	void Shader::setUniform2f(GLuint location, const glm::vec2 & value) const
+	{
+		GLCall(glUniform2f(location, value.x, value.y));
+	}
+
+	void Shader::setUniform3f(GLuint location, const glm::vec3 & value) const
+	{
+		GLCall(glUniform3f(location, value.x, value.y, value.z));
+	}
+
+	void Shader::setUniform4f(GLuint location, const glm::vec4 & value) const
+	{
+		GLCall(glUniform4f(location, value.x, value.y, value.z, value.w));
+	}
+
+	void Shader::setUniformMat4(GLuint location, const glm::mat4 & matrix) const
+	{
+		GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
+	}
+
 	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint) const
 	{
 		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(*m_pShaderID, name));

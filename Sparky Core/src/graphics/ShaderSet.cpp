@@ -11,7 +11,7 @@
 
 namespace sparky { namespace graphics {
 
-	const std::string SHADER_DIRECTORY = "src/graphics/ShaderFactory/Shaders/";
+	const std::string SHADER_DIRECTORY = "res/shaders/";
 
 	static uint64_t GetShaderFileTimestamp(const char* fileName)
 	{
@@ -53,12 +53,12 @@ namespace sparky { namespace graphics {
 	{
 		for (auto& shader : m_Shaders)
 		{
-			glDeleteShader(shader.second.Handle);
+			GLCall(glDeleteShader(shader.second.Handle));
 		}
 
 		for (auto& program : m_Programs)
 		{
-			glDeleteProgram(program.second.InternalHandle);
+			GLCall(glDeleteProgram(program.second.InternalHandle));
 		}
 	}
 
