@@ -19,7 +19,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-
+#define PRIMITIVES
 #if 1
 sparky::graphics::VertexArray* pCubeVao;
 sparky::graphics::VertexArray* pQuadVao;

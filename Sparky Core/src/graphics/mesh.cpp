@@ -48,7 +48,7 @@ namespace sparky { namespace graphics {
 				}
 			}
 		}
-		//shader.setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
+		shader.setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
 
 		m_pVAO->Draw();
 	}

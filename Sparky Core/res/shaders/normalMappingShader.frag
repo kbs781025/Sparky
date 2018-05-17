@@ -8,10 +8,10 @@ struct Light
 	vec4 attenuation;
 };
 
-layout (binding = DIFFUSE_TEXTURE_BINDING) sampler2D texture_diffuse;
-layout (binding = SPEUCLAR_TEXTURE_BINDING) sampler2D texture_specular;
-layout (binding = NORMAL_TEXTURE_BINDING) sampler2D texture_normal;
-layout (location = SPECULAR_SHININESS_LOCATION) float shininess;
+layout (binding = DIFFUSE_TEXTURE_BINDING) uniform sampler2D texture_diffuse;
+layout (binding = SPEUCLAR_TEXTURE_BINDING) uniform sampler2D texture_specular;
+layout (binding = NORMAL_TEXTURE_BINDING) uniform sampler2D texture_normal;
+layout (location = SPECULAR_SHININESS_LOCATION) uniform float shininess;
 
 in VS_DATA
 {
@@ -47,8 +47,7 @@ void main()
 	{
 		result += CalcTangentPointLight(lights[i], normal, fs_in.FragPos, viewDir);
 	}
-	//FragColor = vec4(result, 1.0);
-	FragColor = vec4(vec3(0.5), 1.0);
+	FragColor = vec4(result, 1.0);
 }
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)

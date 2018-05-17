@@ -148,11 +148,11 @@ namespace sparky { namespace graphics {
 			}
 
 			std::string preamble_hash = std::to_string((int32_t)std::hash<std::string>()("preamble") & 0x7FFF);
-			std::string preamble = "#line 1" + preamble_hash + "\n" + 
+			std::string preamble = /*"#line 1" + preamble_hash + "\n" + */
 									ShaderStringFromFile(m_Preamble.c_str()) + "\n";
 
 			std::string source_hash = std::to_string(shader->second.HashName);
-			std::string source = "#line 1" + source_hash + "\n" +
+			std::string source = /*"#line 1" + source_hash + "\n" +*/
 								 ShaderStringFromFile(shader->first.Name.c_str()) + "\n";
 
 			const char* strings[] =
@@ -170,7 +170,7 @@ namespace sparky { namespace graphics {
 				(GLint)source.length()
 			};
 
-			GLCall(glShaderSource(shader->second.Handle, 3, strings, lengths));
+			GLCall(glShaderSource(shader->second.Handle, 4, strings, lengths));
 			GLCall(glCompileShader(shader->second.Handle));
 
 			GLint status;
