@@ -300,6 +300,7 @@ int main()
 	shaderset.SetVersion("450");
 	shaderset.SetPreambleFile("preamble.glsl");
 	const Shader* normalMapShader = shaderset.AddProgramFromExts({ "normalMappingShader.vert", "normalMappingShader.frag" });
+	const Shader* parallaxMapShader = shaderset.AddProgramFromExts({ "ParallaxMapping.vert", "ParallaxMapping.frag" });
 	shaderset.UpdatePrograms();
 
 	#ifdef DEBUG
@@ -344,7 +345,9 @@ int main()
 
 	std::vector<Light> Lights;
 	Lights.emplace_back(pointLightColor, pointLightPositions, lightDir, glm::vec3(1.0f, 0.007f, 0.0002f));
-
+	glm::mat4 model;
+	model = glm::scale(secondModel, glm::vec3(0.05f));
+	model = glm::translate(secondModel, glm::vec3(100.0f, 0.0f, 0.0f));
 	// Renderer
 	ForwardRenderer* renderer = new ForwardRenderer(window.getWidth(), window.getHeight());
 	renderer->init();
@@ -387,7 +390,7 @@ int main()
 		renderer->begin();
 		renderer->beginScene(window.getCamera()); 
 		renderer->submitLightSetup(Lights);
-		man.SubmitMesh(renderer, normalMapShader);
+		man.SubmitMesh(renderer, model, parallaxMapShader);
 		renderer->present();
 		renderer->endScene();
 		renderer->end();

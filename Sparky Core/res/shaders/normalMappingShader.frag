@@ -1,5 +1,15 @@
 out vec4 FragColor;
 
+in VS_DATA
+{
+	vec3 FragPos;
+	vec2 TexCoord;
+	vec3 ViewPos;
+	vec3 Normal;
+	vec3 BiNormal;
+	vec3 Tangent;
+} fs_in;
+
 struct Light
 {
 	vec4 lightColor;
@@ -12,16 +22,6 @@ layout (binding = DIFFUSE_TEXTURE_BINDING) uniform sampler2D texture_diffuse;
 layout (binding = SPEUCLAR_TEXTURE_BINDING) uniform sampler2D texture_specular;
 layout (binding = NORMAL_TEXTURE_BINDING) uniform sampler2D texture_normal;
 layout (location = SPECULAR_SHININESS_LOCATION) uniform float shininess;
-
-in VS_DATA
-{
-	vec3 FragPos;
-	vec2 TexCoord;
-	vec3 ViewPos;
-	vec3 Normal;
-	vec3 BiNormal;
-	vec3 Tangent;
-} fs_in;
 
 #define NR_POINT_LIGHTS 1
 layout(std140, binding = LIGHT_UNIFORM_BLOCK_BINDING) uniform Lights
@@ -89,5 +89,6 @@ vec3  CalcTangentPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 	vec3 result = (ambient + diffuse + specular) * attenuation;
 
-	return pow(result, vec3(1.0/2.2));
+	//return pow(result, vec3(1.0/2.2));
+	return vec3(lightDir);
 }

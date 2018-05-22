@@ -24,6 +24,7 @@ namespace sparky { namespace graphics {
 
 		// TODO : temporary method rendering by renderer
 		void SubmitMesh(ForwardRenderer* renderer, const Shader* shader);
+		void SubmitMesh(ForwardRenderer* renderer, const glm::mat4& model, const Shader* shader);
 
 		unsigned int getMeshNum() { return m_Meshes.size(); }
 		std::vector<Mesh> getMeshes() { return m_Meshes; }

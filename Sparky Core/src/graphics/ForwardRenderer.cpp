@@ -57,8 +57,6 @@ namespace sparky { namespace graphics {
 
 	void ForwardRenderer::init()
 	{
-		
-
 		m_CommandQueue.reserve(1000);
 
 		m_VSMatUniformBuffer = new UniformBuffer(sizeof(glm::mat4) * VSMatUniformIndex_Size);
@@ -159,6 +157,8 @@ namespace sparky { namespace graphics {
 		// TODO : flexible matrices uniform block name
 		m_FSLightUniformBuffer->setBindingPoint(LIGHT_UNIFORM_BLOCK_BINDING);
 		m_FSLightUniformBuffer->setUniformBlockData(m_LightData);
+
+		shader->setUniform3f(LIGHT_POSITION_LOCATION, glm::vec3(m_LightData[0].position));
 	}
 
 } }

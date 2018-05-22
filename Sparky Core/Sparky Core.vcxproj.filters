@@ -158,6 +158,9 @@
     <ClInclude Include="src\graphics\ShaderSet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="res\shaders\ParallaxMapping.vert">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Sparky.props" />
@@ -179,5 +182,6 @@
     <None Include="res\shaders\normalVecShader.geom" />
     <None Include="res\shaders\normalVecShader.vert" />
     <None Include="res\shaders\preamble.glsl" />
+    <None Include="res\shaders\ParallaxMapping.frag" />
   </ItemGroup>
 </Project>

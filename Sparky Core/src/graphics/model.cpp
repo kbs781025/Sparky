@@ -38,6 +38,14 @@ namespace sparky { namespace graphics {
 		}
 	}
 
+	void Model::SubmitMesh(ForwardRenderer * renderer, const glm::mat4 & model, const Shader * shader)
+	{
+		for (unsigned int i = 0; i < m_Meshes.size(); i++)
+		{
+			renderer->submitMesh(&m_Meshes[i], model, shader);
+		}
+	}
+
 	void Model::loadModel(const std::string & path)
 	{
 		Assimp::Importer importer;

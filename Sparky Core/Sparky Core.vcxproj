@@ -159,6 +159,7 @@
     <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="res\shaders\ParallaxMapping.vert" />
     <ClInclude Include="src\graphics\Buffer.h" />
     <ClInclude Include="src\graphics\BufferLayout.h" />
     <ClInclude Include="src\graphics\ForwardRenderer.h" />
@@ -193,6 +194,7 @@
     <None Include="res\shaders\applyShadowShader.vert" />
     <None Include="res\shaders\normalMappingShader.frag" />
     <None Include="res\shaders\normalMappingShader.vert" />
+    <None Include="res\shaders\ParallaxMapping.frag" />
     <None Include="res\shaders\preamble.glsl" />
     <None Include="res\shaders\debugShader.frag" />
     <None Include="res\shaders\createShadowShader.frag" />
