@@ -1,6 +1,7 @@
 #ifndef PREAMBLE_GLSL
 #define PREAMBLE_GLSL
 
+// Vertex shader locations & uniform blocks
 #define POSITION_ATTRIB_LOCATION 0
 #define TEXCOORD_ATTRIB_LOCATION 1
 #define NORMAL_ATTRIB_LOCATION 2
@@ -12,6 +13,7 @@
 #define VEC_UNIFORM_BLOCK_BINDING 1
 #define LIGHT_UNIFORM_BLOCK_BINDING 2
 
+// Fragment shader uniforms & uniform blocks
 #define DIFFUSE_TEXTURE_BINDING 3
 #define SPEUCLAR_TEXTURE_BINDING 4
 #define NORMAL_TEXTURE_BINDING 5
@@ -20,6 +22,7 @@
 #define SPECULAR_SHININESS_LOCATION 6
 #define PARALLAX_SCALE_LOCATION 7
 
-
+#define HDR_COLOR_ATTACHMENT 0
+#define BLOOM_COLOR_ATTACHMENT 1
 
 #endif 

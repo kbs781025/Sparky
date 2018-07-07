@@ -20,7 +20,7 @@
 #include <vector>
 
 #define PRIMITIVES
-#if 1
+
 sparky::graphics::VertexArray* pCubeVao;
 sparky::graphics::VertexArray* pQuadVao;
 sparky::graphics::VertexArray* pPlaneVao;
@@ -80,7 +80,6 @@ void initCube()
 		-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
 		-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left  
 		};
-	BufferLayout layout;
 	VertexBufferContext context(GL_STATIC_DRAW, vertices, sizeof(vertices), BufferLayout::getPosNormTexLayout());
 	pCubeVao = new VertexArray(context);
 }
@@ -284,7 +283,6 @@ void drawSkyBox()
 {
 	pSkyBoxVao->Draw();
 }
-#endif
 
 int main()
 {
@@ -300,7 +298,8 @@ int main()
 	shaderset.SetVersion("450");
 	shaderset.SetPreambleFile("preamble.glsl");
 	const Shader* normalMapShader = shaderset.AddProgramFromExts({ "normalMappingShader.vert", "normalMappingShader.frag" });
-	const Shader* parallaxMapShader = shaderset.AddProgramFromExts({ "ParallaxMapping.vert", "ParallaxMapping.frag" });
+	const Shader* hdrShader = shaderset.AddProgramFromExts({ "hdrShader.vert", "hdrShader.frag" });
+	const Shader* bloomShader = shaderset.AddProgramFromExts({ "hdrShader.vert", "bloomShader.frag" });
 	shaderset.UpdatePrograms();
 
 	#ifdef DEBUG
@@ -341,16 +340,72 @@ int main()
 	// Light Setting
 	glm::vec3 pointLightPositions = glm::vec3(2.0f, 4.0f, 2.0f);
 	glm::vec3 lightDir = glm::vec3(-0.5f, -0.5f, -0.5f);
-	glm::vec4 pointLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 pointLightColor = glm::vec4(10.0f, 10.0f, 10.0f, 5.0f);
 
 	std::vector<Light> Lights;
 	Lights.emplace_back(pointLightColor, pointLightPositions, lightDir, glm::vec3(1.0f, 0.007f, 0.0002f));
+
 	glm::mat4 model;
-	model = glm::scale(secondModel, glm::vec3(0.05f));
-	model = glm::translate(secondModel, glm::vec3(100.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.05f));
+
 	// Renderer
 	ForwardRenderer* renderer = new ForwardRenderer(window.getWidth(), window.getHeight());
 	renderer->init();
+
+	// HDR FrameBuffer
+	unsigned int hdrFBO;
+	GLCall(glGenFramebuffers(1, &hdrFBO));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO));
+
+	unsigned int colorBuffers[2];
+	GLCall(glGenTextures(2, colorBuffers));
+	for (int i = 0; i < 2; ++i)
+	{
+		GLCall(glBindTexture(GL_TEXTURE_2D, colorBuffers[i]));
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window.getWidth(), window.getHeight(), 0, GL_RGBA, GL_FLOAT, NULL));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0));
+	}
+
+	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
+
+	unsigned int rboDepth;
+	GLCall(glGenRenderbuffers(1, &rboDepth));
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rboDepth));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, window.getWidth(), window.getHeight()));
+	
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth));
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Framebuffer error" << std::endl;
+	}
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	unsigned int tempFBO[2];
+	GLCall(glGenFramebuffers(2, tempFBO));
+	unsigned int tempColorBuffer[2];
+	GLCall(glGenTextures(2, tempColorBuffer));
+
+	for (int i = 0; i < 2; i++)
+	{
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, tempFBO[i]));
+		GLCall(glBindTexture(GL_TEXTURE_2D, tempColorBuffer[i]));
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, window.getWidth(), window.getHeight(), 0, GL_RGBA, GL_FLOAT, NULL));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempColorBuffer[i], 0));
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		{
+			std::cout << "Framebuffer error" << std::endl;
+		}
+	}
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -390,10 +445,40 @@ int main()
 		renderer->begin();
 		renderer->beginScene(window.getCamera()); 
 		renderer->submitLightSetup(Lights);
-		man.SubmitMesh(renderer, model, parallaxMapShader);
+		man.SubmitMesh(renderer, model, normalMapShader);
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		renderer->present();
 		renderer->endScene();
 		renderer->end();
+
+		bloomShader->enable();
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, tempFBO[0]));
+		GLCall(glActiveTexture(GL_TEXTURE0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, colorBuffers[1]));
+		renderQuad();
+
+		for (int i = 0; i < 10; ++i)
+		{
+			static bool horizontal = true;
+			bloomShader->setUniform1i("horizontal", horizontal);
+			GLCall(glBindFramebuffer(GL_FRAMEBUFFER, tempFBO[horizontal]));
+			GLCall(glClear(GL_COLOR_BUFFER_BIT));
+			GLCall(glActiveTexture(GL_TEXTURE0));
+			GLCall(glBindTexture(GL_TEXTURE_2D, tempColorBuffer[!horizontal]));
+			renderQuad();
+			horizontal = !horizontal;
+		}
+
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		hdrShader->enable();
+		GLCall(glActiveTexture(GL_TEXTURE0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, colorBuffers[0]));
+		GLCall(glActiveTexture(GL_TEXTURE1));
+		GLCall(glBindTexture(GL_TEXTURE_2D, tempColorBuffer[0]));
+		hdrShader->setUniform1f("exposure", 1.0);
+		renderQuad();
 		
 		#ifdef GARBAGE
 		/*GLCall(glDepthFunc(GL_LEQUAL));

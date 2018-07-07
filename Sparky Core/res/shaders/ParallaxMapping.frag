@@ -4,8 +4,8 @@ in VS_DATA
 {
 	vec2 TexCoord;
 	vec3 TangentFragPos;
-	vec3 TangentViewPos;
-	vec3 TangentLightPos;
+	vec3 TangentViewDir;
+	vec3 TangentLightDir;
 } fs_in;
 
 struct Light
@@ -110,9 +110,10 @@ float ParallaxSoftShadowMultiplier(Light light, vec2 texCoord, float initialHeig
 vec4 NormalMappingLighting(Light light, vec3 viewDir, vec2 texCoord, float shadowMultiplier)
 {
 	vec3 normal = normalize(texture(texture_normal, texCoord).xyz * 2.0 - 1.0);
-	vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
 	vec3 diffuse = texture(texture_diffuse, texCoord).rgb;
 	diffuse = pow(diffuse, vec3(2.2));
+
+	vec3 lightDir = normalize(fs_in.TangentLightDir);
 
 	float iamb = 0.2;
 	float idiff = max(dot(normal, lightDir), 0.0);
@@ -123,7 +124,7 @@ vec4 NormalMappingLighting(Light light, vec3 viewDir, vec2 texCoord, float shado
 		ispec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 	}
 
-	float dist = distance(fs_in.TangentLightPos, fs_in.TangentFragPos);
+	float dist = length(fs_in.TangentLightDir);
 	float attenuation = light.attenuation.r + light.attenuation.g * dist + light.attenuation.b * dist * dist;
 
 	vec3 ambientColor = light.lightColor.rgb * diffuse * iamb;
@@ -140,7 +141,7 @@ vec4 NormalMappingLighting(Light light, vec3 viewDir, vec2 texCoord, float shado
 
 void main()
 {
-	vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+	vec3 viewDir = normalize(fs_in.TangentViewDir);
 	vec2 texCoord = ParallaxMapping(fs_in.TexCoord, viewDir);
 
 	float shadowFactor = 1.0;

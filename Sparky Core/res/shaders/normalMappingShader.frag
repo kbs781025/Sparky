@@ -1,4 +1,5 @@
-out vec4 FragColor;
+layout(location = HDR_COLOR_ATTACHMENT) out vec4 FragColor;
+layout(location = BLOOM_COLOR_ATTACHMENT) out vec4 BrightColor;
 
 in VS_DATA
 {
@@ -47,7 +48,14 @@ void main()
 	{
 		result += CalcTangentPointLight(lights[i], normal, fs_in.FragPos, viewDir);
 	}
+
 	FragColor = vec4(result, 1.0);
+
+	float brightness = dot(result.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1.0)
+		BrightColor = FragColor;
+	else
+		BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
@@ -89,6 +97,5 @@ vec3  CalcTangentPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 	vec3 result = (ambient + diffuse + specular) * attenuation;
 
-	//return pow(result, vec3(1.0/2.2));
-	return vec3(lightDir);
+	return pow(result, vec3(1.0/2.2));
 }

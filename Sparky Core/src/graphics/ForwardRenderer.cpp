@@ -26,6 +26,7 @@ namespace sparky { namespace graphics {
 	enum VSVecUniformIndices
 	{
 		VSUniformIndex_CameraPosition = 0,
+		VSUniformIndex_LightPosition = 1,
 		VSVecUniformIndex_Size
 	};
 
@@ -118,6 +119,7 @@ namespace sparky { namespace graphics {
 	{
 		assert(light.size() == 1);
 		m_LightData = std::move(light);
+		m_VecData[VSUniformIndex_LightPosition] = light[0].position;
 	}
 
 	void ForwardRenderer::endScene()
@@ -157,8 +159,6 @@ namespace sparky { namespace graphics {
 		// TODO : flexible matrices uniform block name
 		m_FSLightUniformBuffer->setBindingPoint(LIGHT_UNIFORM_BLOCK_BINDING);
 		m_FSLightUniformBuffer->setUniformBlockData(m_LightData);
-
-		shader->setUniform3f(LIGHT_POSITION_LOCATION, glm::vec3(m_LightData[0].position));
 	}
 
 } }

@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{37F2E31D-1EE1-437F-B033-B879E8E5EB60}</ProjectGuid>
     <RootNamespace>SparkyCore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -192,6 +192,9 @@
     <None Include="Properties\Sparky.props" />
     <None Include="res\shaders\applyShadowShader.frag" />
     <None Include="res\shaders\applyShadowShader.vert" />
+    <None Include="res\shaders\bloomShader.frag" />
+    <None Include="res\shaders\hdrShader.frag" />
+    <None Include="res\shaders\hdrShader.vert" />
     <None Include="res\shaders\normalMappingShader.frag" />
     <None Include="res\shaders\normalMappingShader.vert" />
     <None Include="res\shaders\ParallaxMapping.frag" />

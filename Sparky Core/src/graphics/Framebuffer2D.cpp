@@ -4,6 +4,7 @@
 sparky::graphics::FrameBuffer2D::FrameBuffer2D(GLuint width, GLuint height)
 	: m_Width(width), m_Height(height)
 {
+	initFrameBuffer();
 }
 
 sparky::graphics::FrameBuffer2D::~FrameBuffer2D()
