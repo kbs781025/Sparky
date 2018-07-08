@@ -193,6 +193,8 @@
     <None Include="res\shaders\applyShadowShader.frag" />
     <None Include="res\shaders\applyShadowShader.vert" />
     <None Include="res\shaders\bloomShader.frag" />
+    <None Include="res\shaders\DefferedGPass.frag" />
+    <None Include="res\shaders\DefferedGPass.vert" />
     <None Include="res\shaders\hdrShader.frag" />
     <None Include="res\shaders\hdrShader.vert" />
     <None Include="res\shaders\normalMappingShader.frag" />

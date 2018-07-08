@@ -8,6 +8,7 @@
 #include "src/graphics/model.h"
 #include "src/graphics/VertexArray.h"
 #include "src/graphics/FramebufferDepth.h"
+#include "src/graphics/Framebuffer2D.h"
 #include "src/graphics/Light.h"
 #include "src/graphics/UniformBuffer.h"
 #include "src/platform/opengl/GLCommon.h"
@@ -300,6 +301,7 @@ int main()
 	const Shader* normalMapShader = shaderset.AddProgramFromExts({ "normalMappingShader.vert", "normalMappingShader.frag" });
 	const Shader* hdrShader = shaderset.AddProgramFromExts({ "hdrShader.vert", "hdrShader.frag" });
 	const Shader* bloomShader = shaderset.AddProgramFromExts({ "hdrShader.vert", "bloomShader.frag" });
+	const Shader* defferedGeoPassShader = shaderset.AddProgramFromExts({ "DefferedGPass.vert", "DefferedGPass.frag" });
 	shaderset.UpdatePrograms();
 
 	#ifdef DEBUG
@@ -406,6 +408,50 @@ int main()
 		}
 	}
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	// GBuffer
+	unsigned int GBuffer;
+	GLCall(glGenFramebuffers(1, &GBuffer));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, GBuffer));
+
+	unsigned int GBufferTextures[3]; //POS, NORMAL, ALBEDO, SPECULAR
+	GLCall(glGenTextures(3, GBufferTextures));
+
+	//POS Texture
+	GLCall(glBindTexture(GL_TEXTURE_2D, GBufferTextures[0]));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, window.getWidth(), window.getHeight(), 0, GL_RGB, GL_FLOAT, NULL));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, GBufferTextures[0], 0));
+
+	// Normal Texture
+	GLCall(glBindTexture(GL_TEXTURE_2D, GBufferTextures[1]));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, window.getWidth(), window.getHeight(), 0, GL_RGB, GL_FLOAT, NULL));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, GBufferTextures[1], 0));
+
+	// Albedo + Specular Texture
+	GLCall(glBindTexture(GL_TEXTURE_2D, GBufferTextures[2]));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window.getWidth(), window.getHeight(), 0, GL_RGBA, GL_FLOAT, NULL));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, GBufferTextures[2], 0));
+
+	unsigned int GBufferAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, GBufferAttachments);
+
+	unsigned int GBufferDepth;
+	GLCall(glGenRenderbuffers(1, &GBufferDepth));
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, GBufferDepth));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, window.getWidth(), window.getHeight()));
+
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, GBufferDepth));
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Framebuffer error" << std::endl;
+	}
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	
 	Timer timer, t;
 	unsigned int frame = 0;
@@ -445,14 +491,30 @@ int main()
 		renderer->begin();
 		renderer->beginScene(window.getCamera()); 
 		renderer->submitLightSetup(Lights);
-		man.SubmitMesh(renderer, model, normalMapShader);
-		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO));
+		man.SubmitMesh(renderer, model, defferedGeoPassShader);
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, GBuffer));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		renderer->present();
 		renderer->endScene();
 		renderer->end();
 
-		bloomShader->enable();
+		// Blitting 4 screen
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, GBuffer));
+		GLuint halfWidth = window.getWidth() / 2.0f;
+		GLuint halfHeight = window.getHeight() / 2.0f;
+
+		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
+		GLCall(glBlitFramebuffer(0, 0, window.getWidth(), window.getHeight(), 0, halfHeight, halfWidth, window.getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT1));
+		GLCall(glBlitFramebuffer(0, 0, window.getWidth(), window.getHeight(), halfWidth, halfHeight, window.getWidth(), window.getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT2));
+		GLCall(glBlitFramebuffer(0, 0, window.getWidth(), window.getHeight(), 0, 0, halfWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+		/*bloomShader->enable();
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, tempFBO[0]));
 		GLCall(glActiveTexture(GL_TEXTURE0));
 		GLCall(glBindTexture(GL_TEXTURE_2D, colorBuffers[1]));
@@ -478,7 +540,7 @@ int main()
 		GLCall(glActiveTexture(GL_TEXTURE1));
 		GLCall(glBindTexture(GL_TEXTURE_2D, tempColorBuffer[0]));
 		hdrShader->setUniform1f("exposure", 1.0);
-		renderQuad();
+		renderQuad();*/
 		
 		#ifdef GARBAGE
 		/*GLCall(glDepthFunc(GL_LEQUAL));

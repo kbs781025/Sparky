@@ -25,4 +25,9 @@
 #define HDR_COLOR_ATTACHMENT 0
 #define BLOOM_COLOR_ATTACHMENT 1
 
+// For Defferd Shading GPass
+#define GBUFFER_POS 0
+#define GBUFFER_NORMAL 1
+#define GBUFFER_ALBEDO_SPECULAR 2
+
 #endif 
