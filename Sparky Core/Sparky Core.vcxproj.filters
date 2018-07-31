@@ -75,6 +75,9 @@
     <ClCompile Include="src\graphics\ShaderSet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\GBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\graphics\window.h">
@@ -161,6 +164,9 @@
     <ClInclude Include="res\shaders\ParallaxMapping.vert">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\graphics\GBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Sparky.props" />
@@ -188,5 +194,7 @@
     <None Include="res\shaders\bloomShader.frag" />
     <None Include="res\shaders\DefferedGPass.vert" />
     <None Include="res\shaders\DefferedGPass.frag" />
+    <None Include="res\shaders\DeferredLPassPositionLight.frag" />
+    <None Include="res\shaders\DefferedLPass.vert" />
   </ItemGroup>
 </Project>

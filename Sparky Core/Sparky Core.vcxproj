@@ -143,6 +143,7 @@
     <ClCompile Include="src\graphics\ForwardRenderer.cpp" />
     <ClCompile Include="src\graphics\Framebuffer2D.cpp" />
     <ClCompile Include="src\graphics\FrameBufferDepth.cpp" />
+    <ClCompile Include="src\graphics\GBuffer.cpp" />
     <ClCompile Include="src\graphics\IndexBuffer.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="src\graphics\ForwardRenderer.h" />
     <ClInclude Include="src\graphics\Framebuffer2D.h" />
     <ClInclude Include="src\graphics\FrameBufferDepth.h" />
+    <ClInclude Include="src\graphics\GBuffer.h" />
     <ClInclude Include="src\graphics\IndexBuffer.h" />
     <ClInclude Include="src\graphics\Light.h" />
     <ClInclude Include="src\graphics\mesh.h" />
@@ -193,8 +195,10 @@
     <None Include="res\shaders\applyShadowShader.frag" />
     <None Include="res\shaders\applyShadowShader.vert" />
     <None Include="res\shaders\bloomShader.frag" />
+    <None Include="res\shaders\DeferredLPassPositionLight.frag" />
     <None Include="res\shaders\DefferedGPass.frag" />
     <None Include="res\shaders\DefferedGPass.vert" />
+    <None Include="res\shaders\DefferedLPass.vert" />
     <None Include="res\shaders\hdrShader.frag" />
     <None Include="res\shaders\hdrShader.vert" />
     <None Include="res\shaders\normalMappingShader.frag" />

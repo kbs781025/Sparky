@@ -27,7 +27,9 @@
 
 // For Defferd Shading GPass
 #define GBUFFER_POS 0
-#define GBUFFER_NORMAL 1
-#define GBUFFER_ALBEDO_SPECULAR 2
+#define GBUFFER_ALBEDO 1
+#define GBUFFER_NORMAL 2
+#define GBUFFER_TEXCOORD 3
+#define WINDOW_SIZE_LOCATION 8
 
 #endif 
