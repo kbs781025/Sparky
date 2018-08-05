@@ -22,6 +22,8 @@ bool Sparky::Graphics::GBuffer::Init(unsigned int WindowWidth, unsigned int Wind
 	{
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_Textures[i]));
 		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, WindowWidth, WindowHeight, 0, GL_RGB, GL_FLOAT, nullptr));
+		GLCall(glTexParamterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+		GLCall(glTexParamterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_Textures[i], 0));
 	}
 
@@ -52,7 +54,13 @@ void Sparky::Graphics::GBuffer::BindForWriting()
 
 void Sparky::Graphics::GBuffer::BindForReading()
 {
-	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO));
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
+	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; ++i)
+	{
+		GLCall(glActiveTexture(GL_TEXTURE0 + i));
+		GLCall(glBindTexture(GL_TEXTURE_2D, m_Textures[i]));
+	}
 }
 
 void Sparky::Graphics::GBuffer::SetReadBuffer(GBUFFER_TEXTURE_TYPE TextureType)
