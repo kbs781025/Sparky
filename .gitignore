@@ -260,3 +260,7 @@ paket-files/
 __pycache__/
 *.pyc
 /Sparky Core/Texture/nanosuit/LICENSE.txt
+/Sparky Core/res/shaders/Shadowmap.vert
+/Sparky Core/res/shaders/Shadowmap.frag
+/Sparky Core/res/shaders/ShadowLighting.frag
+/Sparky Core/res/shaders/ShadowLighing.vert

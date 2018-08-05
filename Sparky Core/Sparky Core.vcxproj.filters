@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\window.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\graphics\shaders.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
     <ClCompile Include="src\graphics\VertexArray.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\FrameBufferDepth.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\graphics\Framebuffer2D.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -75,11 +69,26 @@
     <ClCompile Include="src\graphics\ShaderSet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\ShadowMapFBO.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\opengl\ModelGL.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\Window\ViewGL.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\Window\ControllerGL.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\Window\Window.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\Window\Procedure.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\graphics\window.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\utils\FileUtils.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -131,9 +140,6 @@
     <ClInclude Include="src\graphics\Buffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\FrameBufferDepth.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\graphics\Framebuffer2D.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -159,6 +165,27 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="res\shaders\ParallaxMapping.vert">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\ShadowMapFBO.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\Window\Window.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\Window\Controller.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\Window\ControllerGL.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\opengl\ModelGL.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\Window\ViewGL.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\Window\Procedure.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -188,5 +215,9 @@
     <None Include="res\shaders\bloomShader.frag" />
     <None Include="res\shaders\DefferedGPass.vert" />
     <None Include="res\shaders\DefferedGPass.frag" />
+    <None Include="res\shaders\Shadowmap.vert" />
+    <None Include="res\shaders\Shadowmap.frag" />
+    <None Include="res\shaders\ShadowLighing.vert" />
+    <None Include="res\shaders\ShadowLighting.frag" />
   </ItemGroup>
 </Project>

@@ -22,14 +22,14 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{37F2E31D-1EE1-437F-B033-B879E8E5EB60}</ProjectGuid>
     <RootNamespace>SparkyCore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -74,7 +74,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)dependencies\FreeImage\include;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dependencies\FreeImage\include;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\GLFW\lib-vc2015;$(SolutionDir)dependencies\GLEW\lib;$(SolutionDir)dependencies\FreeImage\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(Configuration)\intermediate\</IntDir>
@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;WIN_32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -99,6 +99,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,20 +143,24 @@
     <ClCompile Include="src\graphics\camera.cpp" />
     <ClCompile Include="src\graphics\ForwardRenderer.cpp" />
     <ClCompile Include="src\graphics\Framebuffer2D.cpp" />
-    <ClCompile Include="src\graphics\FrameBufferDepth.cpp" />
     <ClCompile Include="src\graphics\IndexBuffer.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
     <ClCompile Include="src\graphics\shaders.cpp" />
     <ClCompile Include="src\graphics\ShaderSet.cpp" />
+    <ClCompile Include="src\graphics\ShadowMapFBO.cpp" />
     <ClCompile Include="src\graphics\Texture2D.cpp" />
     <ClCompile Include="src\graphics\TextureCube.cpp" />
     <ClCompile Include="src\graphics\TextureDepth.cpp" />
     <ClCompile Include="src\graphics\UniformBuffer.cpp" />
     <ClCompile Include="src\graphics\VertexArray.cpp" />
     <ClCompile Include="src\graphics\VertexBuffer.cpp" />
-    <ClCompile Include="src\graphics\window.cpp" />
+    <ClCompile Include="src\platform\opengl\ModelGL.cpp" />
+    <ClCompile Include="src\platform\Window\ControllerGL.cpp" />
+    <ClCompile Include="src\platform\Window\Procedure.cpp" />
+    <ClCompile Include="src\platform\Window\ViewGL.cpp" />
     <ClCompile Include="src\platform\opengl\GLError.cpp" />
+    <ClCompile Include="src\platform\Window\Window.cpp" />
     <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,7 +169,6 @@
     <ClInclude Include="src\graphics\BufferLayout.h" />
     <ClInclude Include="src\graphics\ForwardRenderer.h" />
     <ClInclude Include="src\graphics\Framebuffer2D.h" />
-    <ClInclude Include="src\graphics\FrameBufferDepth.h" />
     <ClInclude Include="src\graphics\IndexBuffer.h" />
     <ClInclude Include="src\graphics\Light.h" />
     <ClInclude Include="src\graphics\mesh.h" />
@@ -174,6 +178,7 @@
     <ClInclude Include="src\graphics\Renderer3D.h" />
     <ClInclude Include="src\graphics\shaders.h" />
     <ClInclude Include="src\graphics\ShaderSet.h" />
+    <ClInclude Include="src\graphics\ShadowMapFBO.h" />
     <ClInclude Include="src\graphics\texture.h" />
     <ClInclude Include="src\graphics\Texture2D.h" />
     <ClInclude Include="src\graphics\TextureCube.h" />
@@ -181,7 +186,12 @@
     <ClInclude Include="src\graphics\UniformBuffer.h" />
     <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\graphics\VertexBuffer.h" />
-    <ClInclude Include="src\graphics\window.h" />
+    <ClInclude Include="src\platform\opengl\ModelGL.h" />
+    <ClInclude Include="src\platform\Window\Procedure.h" />
+    <ClInclude Include="src\platform\Window\ViewGL.h" />
+    <ClInclude Include="src\platform\Window\Controller.h" />
+    <ClInclude Include="src\platform\Window\ControllerGL.h" />
+    <ClInclude Include="src\platform\Window\Window.h" />
     <ClInclude Include="src\platform\opengl\GLCommon.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
@@ -214,6 +224,10 @@
     <None Include="res\shaders\normalVecShader.frag" />
     <None Include="res\shaders\normalVecShader.geom" />
     <None Include="res\shaders\normalVecShader.vert" />
+    <None Include="res\shaders\ShadowLighing.vert" />
+    <None Include="res\shaders\ShadowLighting.frag" />
+    <None Include="res\shaders\Shadowmap.frag" />
+    <None Include="res\shaders\Shadowmap.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

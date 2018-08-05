@@ -1,5 +1,4 @@
 #include "src/utils/timer.h"
-#include "src/graphics/window.h"
 #include "src/maths/maths.h"
 #include "src/graphics/shaders.h"
 #include "src/graphics/Texture2D.h"
