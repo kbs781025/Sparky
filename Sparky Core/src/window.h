@@ -6,7 +6,7 @@
 #include "../maths/maths.h"
 #include "../graphics/camera.h"
 
-namespace sparky {  namespace graphics {
+namespace sparky {
 
 	#define MAX_KEYS 1024 
 	#define MAX_BUTTONS 32 
@@ -59,7 +59,5 @@ namespace sparky {  namespace graphics {
 		friend static void window_resize(GLFWwindow* window, int width, int height);
 		friend static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	};
-
-	}
 
 }

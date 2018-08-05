@@ -1,7 +1,7 @@
 #include "window.h"
 #include "../platform/opengl/GLCommon.h"
 
-namespace sparky { namespace graphics {
+namespace sparky {
 
 	void Window::zoomCamera(float xoffset, float yoffset)
 	{
@@ -237,4 +237,4 @@ namespace sparky { namespace graphics {
 	}
 
 
-} }
+}
