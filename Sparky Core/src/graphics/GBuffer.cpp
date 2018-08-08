@@ -34,7 +34,7 @@ bool Sparky::Graphics::GBuffer::Init(unsigned int WindowWidth, unsigned int Wind
 	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 	GLCall(glDrawBuffers(4, DrawBuffers));
 
-	GLenum Status = GLCall(glCheckFramebufferStatus(GL_FRAMEBUFFER));
+	GLCall(GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
 	if (Status != GL_FRAMEBUFFER_COMPLETE)
 	{

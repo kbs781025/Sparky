@@ -15,6 +15,8 @@ namespace sparky { namespace win {
 		void Show(int cmdShow = SW_SHOWDEFAULT);
 		HWND GetHandle() { return m_Handle; };
 
+		void InitializeOpenGL();
+
 		void SetClassStyle(UINT style) { m_WinClass.style = style; };
 		void SetIcon(int id) { m_WinClass.hIcon = _LoadIcon(id); };
 		void SetIconSmall(int id) { m_WinClass.hIconSm = _LoadIcon(id); };

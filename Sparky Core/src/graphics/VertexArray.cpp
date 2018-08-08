@@ -8,6 +8,10 @@ sparky::graphics::VertexArray::VertexArray(const VertexBufferContext& VBcontext,
 	m_pIndexBuffer(nullptr), 
 	m_Layout(VBcontext.VBLayout)
 {
+	if (glGenVertexArrays == nullptr)
+	{
+		return;
+	}
 	GLCall(glGenVertexArrays(1, &m_Handle));
 	GLCall(glBindVertexArray(m_Handle));
 	m_pVertexBuffer = new VertexBuffer(VBcontext);

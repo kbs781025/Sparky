@@ -60,6 +60,46 @@ void sparky::win::Window::Show(int cmdShow)
 	::UpdateWindow(m_Handle);
 }
 
+void sparky::win::Window::InitializeOpenGL()
+{
+	WNDCLASSEX DummyClass;
+	DummyClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	DummyClass.lpfnWndProc = ::DefWindowProc;
+	DummyClass.hInstance = ::GetModuleHandle(0);
+	DummyClass.lpszClassName = "Dummy_WGL";
+
+	if (!::RegisterClassEx(&DummyClass)) return;
+
+	HWND DummyWnd = ::CreateWindowEx(0, DummyClass.lpszClassName, "Dummy OpenGL Window", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, DummyClass.hInstance, 0);
+
+	if (!DummyWnd) return;
+
+	HDC DummyDc = ::GetDC(DummyWnd);
+
+	PIXELFORMATDESCRIPTOR pfd;
+	pfd.nSize = sizeof(pfd);
+	pfd.nVersion = 1;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.cColorBits = 32;
+	pfd.cAlphaBits = 8;
+	pfd.iLayerType = PFD_MAIN_PLANE;
+	pfd.cDepthBits = 24;
+	pfd.cStencilBits = 8;
+
+	int PixelFormat = ::ChoosePixelFormat(DummyDc, &pfd);
+	if (!PixelFormat) return;
+	if (!::SetPixelFormat(DummyDc, PixelFormat, &pfd)) return;
+
+	HGLR DummyContext = ::wglCreateContext(DummyDc);
+	if (!DummyContext) return;
+
+	if (!::wglMakeCurrent(DummyDc, DummyContext)) return;
+
+	::wglCreateContextAttribsARB
+
+}
+
 HICON sparky::win::Window::_LoadIcon(int id)
 {
 	return (HICON)::LoadImage(m_Instance, MAKEINTRESOURCE(id), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE);
