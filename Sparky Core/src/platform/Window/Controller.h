@@ -45,17 +45,6 @@ namespace sparky { namespace win {
 
 	};
 
-	Controller::Controller()
-		:
-		handle(0)
-	{
-	}
-
-	Controller::~Controller()
-	{
-		::DestroyWindow(handle);
-	}
-
 	inline void Controller::SetHandle(HWND hwnd) { handle = hwnd; }
 	inline int Controller::Close() { ::DestroyWindow(handle); return 0; }
 	inline int Controller::Command(int id, int cmd, LPARAM msg) { return 0; }

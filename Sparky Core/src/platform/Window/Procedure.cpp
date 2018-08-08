@@ -1,7 +1,7 @@
 #include "Procedure.h"
 #include "Controller.h"
 
-LRESULT sparky::win::_WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK sparky::win::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT ReturnValue = 0;
 
@@ -57,7 +57,7 @@ LRESULT sparky::win::_WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 		break;
 
 	case WM_SYSCOMMAND:
-		ReturnValue = ::DefDlgProc(hwnd, msg, wParam, lParam);
+		ReturnValue = ::DefWindowProc(hwnd, msg, wParam, lParam);
 		break;
 
 	case WM_CHAR:
@@ -133,15 +133,85 @@ LRESULT sparky::win::_WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 	case WM_CONTEXTMENU:
 		ReturnValue = pController->ContextMenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam));
+		break;
 
 	default:
 		ReturnValue = ::DefWindowProc(hwnd, msg, wParam, lParam);
+		break;
 	}
 
 	return ReturnValue;
 }
 
-INT_PTR sparky::win::_DialogProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK sparky::win::DialogProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return INT_PTR();
+	static win::Controller* pController;
+	pController = (Controller*)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+	if (msg == WM_INITDIALOG)
+	{
+		pController = (Controller*)lParam;
+		pController->SetHandle(hwnd);
+
+		::SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pController);
+
+		pController->Create();
+
+		return true;
+	}
+
+	if (!pController)
+		return false;
+
+	switch (msg)
+	{
+	case WM_COMMAND:
+		pController->Command(LOWORD(wParam), HIWORD(wParam), lParam);   // id, code, msg
+		return true;
+
+	case WM_TIMER:
+		pController->Timer(LOWORD(wParam), HIWORD(wParam));
+		return true;
+
+	case WM_PAINT:
+		pController->Paint();
+		::DefWindowProc(hwnd, msg, wParam, lParam);
+		return true;
+
+	case WM_DESTROY:
+		pController->Destroy();
+		return true;
+
+	case WM_CLOSE:
+		pController->Close();
+		return true;
+
+	case WM_HSCROLL:
+		pController->HScroll(wParam, lParam);
+		return true;
+
+	case WM_VSCROLL:
+		pController->VScroll(wParam, lParam);
+		return true;
+
+	case WM_NOTIFY:
+		pController->Notify((int)wParam, lParam);                      // controllerID, lParam
+		return true;
+
+	case WM_MOUSEMOVE:
+		pController->MouseMove(wParam, LOWORD(lParam), HIWORD(lParam));
+		//pController->mouseMove(wParam, (int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam));  // state, x, y
+		return true;
+
+	case WM_LBUTTONUP:
+		pController->LButtonUp(wParam, LOWORD(lParam), HIWORD(lParam));    // state, x, y
+		return true;
+
+	case WM_CONTEXTMENU:
+		pController->ContextMenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam));    // handle, x, y (from screen coords)
+		return true;
+
+	default:
+		return false;
+	}
 }

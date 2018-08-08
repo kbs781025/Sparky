@@ -13,73 +13,30 @@
 
 namespace sparky { namespace graphics {
 
-	Mesh::Mesh(const std::vector<float>& vertices, const BufferLayout& layout, const std::vector<unsigned int>& indicies, const std::vector<Texture2D>& textures)
+	Mesh::Mesh(const std::vector<float>& vertices, const BufferLayout& layout, const std::vector<unsigned int>& indicies, Material* material)
 		:
 		m_pVAO(nullptr),
-		m_Textures(textures)
+		m_Material(material)
 	{
 		setupMesh(vertices, layout, indicies);
 	}
 
-	void Mesh::Draw(const Shader& shader, bool textureOn) const
+	void Mesh::Draw() const
 	{
-		shader.enable();
-		if (textureOn)
-		{
-			for (int i = 0; i < m_Textures.size(); i++)
-			{
-				std::string type = m_Textures[i].getType();
-
-				if (type == "texture_diffuse")
-				{
-					m_Textures[i].bind(DIFFUSE_TEXTURE_BINDING);
-				}
-				else if (type == "texture_specular")
-				{
-					m_Textures[i].bind(SPEUCLAR_TEXTURE_BINDING);
-				}
-				else if (type == "texture_normal")
-				{
-					m_Textures[i].bind(NORMAL_TEXTURE_BINDING);
-				}
-				else 
-				{
-					continue;
-				}
-			}
-		}
-		shader.setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
+		m_Material->GetShader()->enable();
+		m_Material->Bind();
+		
+		m_Material->GetShader()->setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
 
 		m_pVAO->Draw();
 	}
 
-	void Mesh::DrawInstances(const Shader & shader, unsigned int instanceCount) const
+	void Mesh::DrawInstances(unsigned int instanceCount) const
 	{
-		unsigned int diffuseNum = 0;
-		unsigned int specularNum = 0;
-		unsigned int normalNum = 0;
-		shader.enable();
-		for (int i = 0; i < m_Textures.size(); i++)
-		{
-			std::string number;
-			std::string type = m_Textures[i].getType();
+		m_Material->GetShader()->enable();
+		m_Material->Bind();
 
-			if (type == "texture_diffuse")
-			{
-				number = std::to_string(++diffuseNum);
-			}
-			else if (type == "texture_specular")
-			{
-				number = std::to_string(++specularNum);
-			}
-			else if (type == "texture_normal")
-			{
-				number = std::to_string(++normalNum);
-			}
-
-			m_Textures[i].bind(i);
-			shader.setUniform1i(("material." + type + number).c_str(), i);
-		}
+		m_Material->GetShader()->setUniform1f(SPECULAR_SHININESS_LOCATION, 128.0);
 
 		m_pVAO->DrawInstances(instanceCount);
 	}

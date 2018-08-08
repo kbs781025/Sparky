@@ -9,22 +9,28 @@
 #include "mesh.h"
 #include "Texture2D.h"
 #include "ForwardRenderer.h"
+#include "Material.h"
 
 namespace sparky { namespace graphics {
 
-	void Model::Draw(Shader& shader, bool textureOn)
+	Model::Model(char * path)
+	{
+		loadModel(path);
+	}
+
+	void Model::Draw()
 	{
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
 		{
-			m_Meshes[i].Draw(shader, textureOn);
+			m_Meshes[i].Draw();
 		}
 	}
 
-	void Model::DrawInstances(Shader & shader, unsigned int instanceCount)
+	void Model::DrawInstances(unsigned int instanceCount)
 	{
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
 		{
-			m_Meshes[i].DrawInstances(shader, instanceCount);
+			m_Meshes[i].DrawInstances(instanceCount);
 		}
 	}
 
@@ -151,51 +157,37 @@ namespace sparky { namespace graphics {
 			}
 		}
 
-		std::vector<Texture2D> textures;
+		Material* ModelMaterial = nullptr;
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			std::vector<Texture2D> diffuseMaps = loadMaterialTextuers(material, aiTextureType_DIFFUSE, "texture_diffuse");
-			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			
-			std::vector<Texture2D> specularMaps = loadMaterialTextuers(material, aiTextureType_SPECULAR, "texture_specular");
-			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-			std::vector<Texture2D> normalMaps = loadMaterialTextuers(material, aiTextureType_HEIGHT, "texture_normal");
-			textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+			ModelMaterial = loadMaterialTextuers(material);
 		}
 
-		return Mesh(vertices, layout, indices, textures);
+		return Mesh(vertices, layout, indices, ModelMaterial);
 	}
 
-	std::vector<Texture2D> Model::loadMaterialTextuers(aiMaterial * mat, aiTextureType type, std::string typeName)
+	Material* Model::loadMaterialTextuers(aiMaterial * mat)
 	{
-		std::vector<Texture2D> textures;
-		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-		{
-			aiString str;
-			bool skip = false;
-			mat->GetTexture(type, i, &str);
-			for (unsigned int i = 0; i < m_LoadedTextures.size(); i++)
-			{
-				if (std::strcmp(m_LoadedTextures[i].getFilePath().c_str(), str.C_Str()) == 0) // should return texture file name not path
-				{
-					textures.push_back(m_LoadedTextures[i]);
-					skip = true;
-					break;
-				}
-			}
+		Material* material = new Material();
+		//TODO : material texture loading should be more flexible
+		aiTextureType aiTextureTypes[3] = { aiTextureType_DIFFUSE , aiTextureType_SPECULAR , aiTextureType_HEIGHT };
+		TextureType MaterialTextureTypes[3] = { TextureType::ALBEDO, TextureType::SPECULAR, TextureType::NORMAL };
 
-			if (!skip)
+		for (unsigned int i = 0; i < 3; ++i)
+		{
+			for (unsigned int j = 0; j < mat->GetTextureCount(aiTextureTypes[i]); ++j)
 			{
+				assert(j < 1); // TODO : Now only one texture of the same kind is supported
+				aiString str;
+				mat->GetTexture(aiTextureTypes[i], i, &str);
+
 				std::string filePath = m_Directory + '/' + std::string(str.C_Str());
-				Texture2D texture(filePath, typeName);
-				textures.push_back(texture);
-				m_LoadedTextures.push_back(texture);
+				material->AddTexture(MaterialTextureTypes[i], filePath);
 			}
 		}
 
-		return textures;
+		return material;
 	}
 
 }

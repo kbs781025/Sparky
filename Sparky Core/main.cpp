@@ -13,11 +13,19 @@
 #include "src/platform/opengl/GLCommon.h"
 #include "src/graphics/ForwardRenderer.h"
 #include "src/graphics/ShaderSet.h"
+#include "src/utils/imageLoader.h"
 
 #include <GL/glew.h>
 #include <time.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+
+#include <Windows.h>
+#include "src/platform/opengl/ModelGL.h"
+#include "src/platform/Window/ControllerGL.h"
+#include "src/platform/Window/ViewGL.h"
+#include "src/platform/Window/Window.h"
+
 
 #define PRIMITIVES
 
@@ -284,6 +292,7 @@ void drawSkyBox()
 	pSkyBoxVao->Draw();
 }
 
+#ifdef A
 int main()
 {
 	using namespace sparky;
@@ -488,5 +497,62 @@ int main()
 
 	return 0;
 }
+#endif
 
+int MainMessageLoop(HACCEL hAccelTable = 0);
 
+using namespace sparky;
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdArgs, int cmdShow)
+{
+	AllocConsole();
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+	printf("Debugging Window:\n");
+
+	opengl::ModelGL model;
+	win::ViewGL view;
+
+	win::ControllerGL glCtrl(&model, &view);
+	
+	win::Window glWin(hInst, L"glWinSimple", 0, &glCtrl);
+	glWin.SetWindowStyle(WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+	glWin.SetClassStyle(CS_OWNDC);
+	glWin.SetWidth(800);
+	glWin.SetHeight(600);
+	glWin.Create();
+	
+	RECT rect;
+	rect.left = 0;
+	rect.right = 800;
+	rect.top = 0;
+	rect.bottom = 600;
+	DWORD style = (DWORD)::GetWindowLongPtr(glWin.GetHandle(), GWL_STYLE);
+	DWORD styleEx = (DWORD)::GetWindowLongPtr(glWin.GetHandle(), GWL_EXSTYLE);
+	::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
+	::SetWindowPos(glWin.GetHandle(), 0, 0, 0, (rect.right - rect.left), (rect.bottom - rect.top), SWP_NOZORDER);
+
+	glWin.Show();
+
+	int ExitCode;
+	ExitCode = MainMessageLoop();
+
+	FreeConsole();
+	return ExitCode;
+}
+
+int MainMessageLoop(HACCEL hAccelTabel)
+{
+	MSG msg;
+
+	while (::GetMessage(&msg, 0, 0, 0))
+	{
+		if (!::TranslateAccelerator(msg.hwnd, hAccelTabel, &msg))
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+	}
+
+	return (int)msg.wParam;
+}

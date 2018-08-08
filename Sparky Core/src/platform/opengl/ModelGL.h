@@ -2,6 +2,7 @@
 
 #include "../../graphics/camera.h"
 #include "../../graphics/model.h"
+#include "../../maths/maths.h"
 #include <map>
 
 namespace sparky { namespace opengl {
@@ -14,7 +15,6 @@ namespace sparky { namespace opengl {
 		~ModelGL();
 
 		void Init();
-		void SetCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
 		void SetViewport(int width, int height);
 		void Draw();
 
@@ -32,6 +32,7 @@ namespace sparky { namespace opengl {
 		int m_MouseY;
 
 		graphics::Camera* m_Camera;
+		glm::mat4 m_ProjectionMat;
 		std::map<std::string, graphics::Model*> m_Models;
 	};
 

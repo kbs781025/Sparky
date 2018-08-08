@@ -29,27 +29,27 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -145,18 +145,25 @@
     <ClCompile Include="src\graphics\FrameBufferDepth.cpp" />
     <ClCompile Include="src\graphics\GBuffer.cpp" />
     <ClCompile Include="src\graphics\IndexBuffer.cpp" />
+    <ClCompile Include="src\graphics\Material.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\model.cpp" />
     <ClCompile Include="src\graphics\shaders.cpp" />
     <ClCompile Include="src\graphics\ShaderSet.cpp" />
+    <ClCompile Include="src\graphics\ShadowMapFBO.cpp" />
     <ClCompile Include="src\graphics\Texture2D.cpp" />
     <ClCompile Include="src\graphics\TextureCube.cpp" />
     <ClCompile Include="src\graphics\TextureDepth.cpp" />
     <ClCompile Include="src\graphics\UniformBuffer.cpp" />
     <ClCompile Include="src\graphics\VertexArray.cpp" />
     <ClCompile Include="src\graphics\VertexBuffer.cpp" />
-    <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\platform\opengl\GLError.cpp" />
+    <ClCompile Include="src\platform\opengl\ModelGL.cpp" />
+    <ClCompile Include="src\platform\Window\Controller.cpp" />
+    <ClCompile Include="src\platform\Window\ControllerGL.cpp" />
+    <ClCompile Include="src\platform\Window\Procedure.cpp" />
+    <ClCompile Include="src\platform\Window\ViewGL.cpp" />
+    <ClCompile Include="src\platform\Window\Window.cpp" />
     <ClCompile Include="src\utils\imageloader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +176,7 @@
     <ClInclude Include="src\graphics\GBuffer.h" />
     <ClInclude Include="src\graphics\IndexBuffer.h" />
     <ClInclude Include="src\graphics\Light.h" />
+    <ClInclude Include="src\graphics\Material.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\camera.h" />
     <ClInclude Include="src\graphics\model.h" />
@@ -176,6 +184,7 @@
     <ClInclude Include="src\graphics\Renderer3D.h" />
     <ClInclude Include="src\graphics\shaders.h" />
     <ClInclude Include="src\graphics\ShaderSet.h" />
+    <ClInclude Include="src\graphics\ShadowMapFBO.h" />
     <ClInclude Include="src\graphics\texture.h" />
     <ClInclude Include="src\graphics\Texture2D.h" />
     <ClInclude Include="src\graphics\TextureCube.h" />
@@ -184,7 +193,14 @@
     <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\graphics\VertexBuffer.h" />
     <ClInclude Include="src\graphics\window.h" />
+    <ClInclude Include="src\maths\maths.h" />
     <ClInclude Include="src\platform\opengl\GLCommon.h" />
+    <ClInclude Include="src\platform\opengl\ModelGL.h" />
+    <ClInclude Include="src\platform\Window\Controller.h" />
+    <ClInclude Include="src\platform\Window\ControllerGL.h" />
+    <ClInclude Include="src\platform\Window\Procedure.h" />
+    <ClInclude Include="src\platform\Window\ViewGL.h" />
+    <ClInclude Include="src\platform\Window\Window.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\utils\imageloader.h" />
     <ClInclude Include="src\utils\stb_image.h" />

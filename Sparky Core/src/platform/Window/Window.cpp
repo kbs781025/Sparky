@@ -18,7 +18,7 @@ sparky::win::Window::Window(HINSTANCE hInst, const wchar_t * name, HWND hParent,
 
 	m_WinClass.cbSize = sizeof(WNDCLASSEX);
 	m_WinClass.style = 0;
-	m_WinClass.lpfnWndProc = win::_WindowProcedure; 
+	m_WinClass.lpfnWndProc = win::WindowProcedure; 
 	m_WinClass.cbClsExtra = 0;
 	m_WinClass.cbWndExtra = 0;
 	m_WinClass.hInstance = m_Instance;
@@ -58,11 +58,6 @@ void sparky::win::Window::Show(int cmdShow)
 {
 	::ShowWindow(m_Handle, cmdShow);
 	::UpdateWindow(m_Handle);
-}
-
-HWND sparky::win::Window::GetHandle()
-{
-	return HWND();
 }
 
 HICON sparky::win::Window::_LoadIcon(int id)

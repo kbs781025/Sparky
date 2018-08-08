@@ -17,7 +17,7 @@ bool sparky::win::ViewGL::CreateContext(HWND handle, int colorBits, int depthBit
 
 	if (!SetPixelFormat(hdc, colorBits, depthBits, stencilBits))
 	{
-		::MessageBox(0, L"Cannot set a suitable pixel format.", L"Error", MB_ICONEXCLAMATION | MB_OK);
+		::MessageBox(0, (LPCWSTR)L"Cannot set a suitable pixel format.", (LPCWSTR)L"Error", MB_ICONEXCLAMATION | MB_OK);
 		::ReleaseDC(handle, hdc);
 		return false;
 	}

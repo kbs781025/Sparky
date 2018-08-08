@@ -6,10 +6,9 @@ namespace sparky { namespace graphics
 	class Camera
 	{
 	public:
-		Camera(const glm::vec3& position, const glm::vec3& up, const glm::mat4& projection);
+		Camera(const glm::vec3& position, const glm::vec3& up);
 
 		// Getter
-		inline const glm::mat4& getProjectionMatrix() const { return m_ProjectionMatrix; }
 		inline const glm::mat4& getViewMatrix() const { return m_ViewMatrix; }
 		inline const glm::vec3& getCameraPosition() const { return m_Position; }
 		inline const glm::vec3& getForward() const { return m_Forward; }
@@ -32,7 +31,6 @@ namespace sparky { namespace graphics
 		void lookAt(const glm::vec3& position, const glm::vec3& target);
 
 	private:
-		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix;
 		glm::vec3 m_Position;
 		glm::vec3 m_Forward;

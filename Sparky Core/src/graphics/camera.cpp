@@ -7,9 +7,8 @@ namespace sparky { namespace graphics
 	const float Camera::m_MoveSpeed = 5.0f;
 	const float Camera::m_RotationSpeed = 0.05f;
 
-	Camera::Camera(const glm::vec3 & position, const glm::vec3 & up, const glm::mat4 & projection)
+	Camera::Camera(const glm::vec3 & position, const glm::vec3 & up)
 		:
-		m_ProjectionMatrix(projection),
 		m_Position(position),
 		m_Forward(glm::vec3(0.0f, 0.0f, -1.0f)),
 		m_Roll(0.0f), m_Pitch(0.0f), m_Yaw(0.0f)

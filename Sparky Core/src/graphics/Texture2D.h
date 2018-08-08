@@ -15,7 +15,6 @@ namespace sparky { namespace graphics {
 		GLuint m_Width, m_Height;
 		TextureParameters m_Parameters;
 	public:
-		Texture2D(const std::string& fileName, const std::string& typeName, const TextureParameters& parameters = TextureParameters());
 		Texture2D(const std::string& fileName, const TextureParameters& parameters = TextureParameters());
 		Texture2D(GLuint width, GLuint height, const TextureParameters& parameters = TextureParameters());
 		~Texture2D();

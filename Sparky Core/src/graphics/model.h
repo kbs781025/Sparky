@@ -11,16 +11,15 @@ namespace sparky { namespace graphics {
 	class Shader;
 	class Texture2D;
 	class ForwardRenderer;
+	class Material;
 
 	class Model
 	{
 	public:
-		Model(char* path)
-		{
-			loadModel(path);
-		}
-		void Draw(Shader& shader, bool textureOn = true);
-		void DrawInstances(Shader& shader, unsigned int instanceCount);
+		Model(char* path);
+		
+		void Draw();
+		void DrawInstances(unsigned int instanceCount);
 
 		// TODO : temporary method rendering by renderer
 		void SubmitMesh(ForwardRenderer* renderer, const Shader* shader);
@@ -31,12 +30,11 @@ namespace sparky { namespace graphics {
 	private:
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;
-		std::vector<Texture2D> m_LoadedTextures;
 
 		void loadModel(const std::string& path);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture2D> loadMaterialTextuers(aiMaterial* mat, aiTextureType type, std::string typeName);
+		Material* loadMaterialTextuers(aiMaterial* mat);
 	};
 
 

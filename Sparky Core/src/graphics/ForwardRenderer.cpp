@@ -84,7 +84,7 @@ namespace sparky { namespace graphics {
 
 	void ForwardRenderer::beginScene(const Camera * camera)
 	{
-		m_MatrixData[VSUniformIndex_ProjectionMatrix] = camera->getProjectionMatrix();
+		//m_MatrixData[VSUniformIndex_ProjectionMatrix] = camera->getProjectionMatrix();
 		m_MatrixData[VSUniformIndex_ViewMatrix] = camera->getViewMatrix();
 
 		m_VecData[VSUniformIndex_CameraPosition] = glm::vec4(camera->getCameraPosition(), 0.0f);
@@ -140,7 +140,7 @@ namespace sparky { namespace graphics {
 			setSystemUniforms(command.shader);
 			//command.mesh->Render(*this);
 			// TODO : temporary method
-			command.mesh->Draw(*command.shader);
+			command.mesh->Draw();
 		}
 	}
 

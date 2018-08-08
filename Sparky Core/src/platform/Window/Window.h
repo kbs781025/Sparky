@@ -13,7 +13,22 @@ namespace sparky { namespace win {
 
 		HWND Create();
 		void Show(int cmdShow = SW_SHOWDEFAULT);
-		HWND GetHandle();
+		HWND GetHandle() { return m_Handle; };
+
+		void SetClassStyle(UINT style) { m_WinClass.style = style; };
+		void SetIcon(int id) { m_WinClass.hIcon = _LoadIcon(id); };
+		void SetIconSmall(int id) { m_WinClass.hIconSm = _LoadIcon(id); };
+		void SetCursor(int id) { m_WinClass.hCursor = _LoadCursor(id); };
+		void SetBackground(int color) { m_WinClass.hbrBackground = (HBRUSH)::GetStockObject(color); };
+		void SetMenuName(LPCTSTR name) { m_WinClass.lpszMenuName = name; };
+
+		void SetWindowStyle(DWORD style) { m_WinStyle = style; };
+		void SetWindowStyleEx(DWORD style) { m_WinStyleEx = style; };
+		void SetPosition(int x, int y) { this->x = x; this->y = y; };
+		void SetWidth(int w) { m_Width = w; };
+		void SetHeight(int h) { m_Height = h; };
+		void SetParent(HWND handle) { m_ParentHandle = handle; };
+		void SetMenu(HMENU handle) { m_MenuHandle = handle; };
 
 	private:
 		enum { MAX_STRING = 256 };

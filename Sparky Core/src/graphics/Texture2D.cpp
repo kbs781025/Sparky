@@ -1,15 +1,9 @@
 #include "Texture2D.h"
 #include "../platform/opengl/GLCommon.h"
 
-sparky::graphics::Texture2D::Texture2D(const std::string & fileName, const std::string & typeName, const TextureParameters & parameters)
+sparky::graphics::Texture2D::Texture2D(const std::string & fileName, const TextureParameters & parameters)
 	:
-	m_FileName(fileName), m_TypeName(typeName), m_Parameters(parameters)
-{
-	m_Handle = loadTexture();
-}
-
-sparky::graphics::Texture2D::Texture2D(const std::string& fileName, const TextureParameters& parameters)
-	: m_FileName(fileName), m_Parameters(parameters)
+	m_FileName(fileName), m_Parameters(parameters)
 {
 	m_Handle = loadTexture();
 }
@@ -52,6 +46,7 @@ GLuint sparky::graphics::Texture2D::loadTexture()
 	GLubyte* pixels = nullptr;
 	if (m_FileName != "NULL")
 	{
+		m_FileName = "res/Texture/Images/brickwall.jpg";
 		int bytes;
 		pixels = ImageLoader::load_Image(m_FileName.c_str(), &m_Width, &m_Height, &bytes);
 		if (bytes != 3 && bytes != 4)
