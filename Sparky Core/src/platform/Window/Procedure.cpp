@@ -1,10 +1,11 @@
 #include "Procedure.h"
 #include "Controller.h"
+#include <cwchar>
 
 LRESULT CALLBACK sparky::win::WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT ReturnValue = 0;
-
+	
 	static win::Controller* pController;
 	pController = (Controller*)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
 

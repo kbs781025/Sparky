@@ -3,7 +3,7 @@
 sparky::win::ControllerGL::ControllerGL(opengl::ModelGL * model, ViewGL * view)
 	:
 	m_ModelGL(model),
-	m_ViewGL(view),
+	m_ViewGL(view), 
 	m_LoopFlag(false),
 	m_ResizeFlag(false),
 	m_ClientWidth(0), m_ClientHeight(0)
@@ -31,9 +31,10 @@ int sparky::win::ControllerGL::Create()
 		return -1;
 	}
 
-	m_GLthread = std::thread(&ControllerGL::RunThread, this);
+	wglMakeCurrent(NULL, NULL);
 	m_LoopFlag = true;
-
+	m_GLthread = std::thread(&ControllerGL::RunThread, this);
+	
 	return 0;
 }
 
@@ -122,6 +123,13 @@ int sparky::win::ControllerGL::Size(int width, int height, WPARAM type)
 	return 0;
 }
 
+int sparky::win::ControllerGL::CreateDummyContext(HWND hwnd)
+{
+	m_ViewGL->CreateDummyContext(hwnd);
+
+	return 0;
+}
+
 void sparky::win::ControllerGL::RunThread()
 {
 	::wglMakeCurrent(m_ViewGL->GetDC(), m_ViewGL->GetRC());
@@ -146,5 +154,5 @@ void sparky::win::ControllerGL::RunThread()
 	}
 
 	m_ViewGL->CloseContext(Controller::handle);
-	::wglMakeCurrent(0, 0);
+	::wglMakeCurrent(NULL, NULL);
 }

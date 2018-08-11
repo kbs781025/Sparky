@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "Procedure.h"
 #include <cwchar>
+#include <iostream>
 
 sparky::win::Window::Window(HINSTANCE hInst, const wchar_t * name, HWND hParent, Controller * controller)
 	:
@@ -25,7 +26,7 @@ sparky::win::Window::Window(HINSTANCE hInst, const wchar_t * name, HWND hParent,
 	m_WinClass.hIcon = LoadIcon(m_Instance, IDI_APPLICATION);
 	m_WinClass.hIconSm = 0;
 	m_WinClass.hCursor = LoadCursor(0, IDC_ARROW);
-	m_WinClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	m_WinClass.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 	m_WinClass.lpszMenuName = 0;
 	m_WinClass.lpszClassName = m_ClassName;
 	m_WinClass.hIconSm = LoadIcon(m_Instance, IDI_APPLICATION);
@@ -38,6 +39,8 @@ sparky::win::Window::~Window()
 
 HWND sparky::win::Window::Create()
 {
+	InitializeOpenGL();
+
 	if (!::RegisterClassEx(&m_WinClass)) return 0;
 
 	m_Handle = ::CreateWindowEx(m_WinStyleEx,
@@ -63,41 +66,29 @@ void sparky::win::Window::Show(int cmdShow)
 void sparky::win::Window::InitializeOpenGL()
 {
 	WNDCLASSEX DummyClass;
+	::ZeroMemory(&DummyClass, sizeof(DummyClass)); // or WNDCLASSEX class = {};
+	DummyClass.cbSize = sizeof(WNDCLASSEX);
 	DummyClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	DummyClass.lpfnWndProc = ::DefWindowProc;
-	DummyClass.hInstance = ::GetModuleHandle(0);
-	DummyClass.lpszClassName = "Dummy_WGL";
+	DummyClass.hInstance = ::GetModuleHandle(NULL);
+	DummyClass.lpszClassName = L"Dummy_WGL";
+	DummyClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 
-	if (!::RegisterClassEx(&DummyClass)) return;
+	if (!::RegisterClassEx(&DummyClass))
+	{
+		std::cout << ::GetLastError() << std::endl;
+		return;
+	}
 
-	HWND DummyWnd = ::CreateWindowEx(0, DummyClass.lpszClassName, "Dummy OpenGL Window", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, DummyClass.hInstance, 0);
+	HWND DummyWnd = ::CreateWindowEx(0, DummyClass.lpszClassName, L"Dummy OpenGL Window", DummyClass.style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, DummyClass.hInstance, 0);
 
-	if (!DummyWnd) return;
+	m_Controller->CreateDummyContext(DummyWnd);
 
-	HDC DummyDc = ::GetDC(DummyWnd);
-
-	PIXELFORMATDESCRIPTOR pfd;
-	pfd.nSize = sizeof(pfd);
-	pfd.nVersion = 1;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.cColorBits = 32;
-	pfd.cAlphaBits = 8;
-	pfd.iLayerType = PFD_MAIN_PLANE;
-	pfd.cDepthBits = 24;
-	pfd.cStencilBits = 8;
-
-	int PixelFormat = ::ChoosePixelFormat(DummyDc, &pfd);
-	if (!PixelFormat) return;
-	if (!::SetPixelFormat(DummyDc, PixelFormat, &pfd)) return;
-
-	HGLR DummyContext = ::wglCreateContext(DummyDc);
-	if (!DummyContext) return;
-
-	if (!::wglMakeCurrent(DummyDc, DummyContext)) return;
-
-	::wglCreateContextAttribsARB
-
+	if (!DummyWnd)
+	{
+		std::cout << ::GetLastError() << std::endl;
+		std::cout << "Dummy Window Creation Failed." << std::endl;
+	}
 }
 
 HICON sparky::win::Window::_LoadIcon(int id)

@@ -15,7 +15,8 @@ namespace sparky { namespace win {
 		virtual int Close();                                    // for WM_CLOSE
 		virtual int Command(int id, int cmd, LPARAM msg);       // for WM_COMMAND: id, cmd, msg
 		virtual int ContextMenu(HWND handle, int x, int y);     // for WM_CONTEXTMENU: handle, x, y
-		virtual int Create();                                   // for WM_CREATE
+		virtual int Create();									// for WM_CREATE
+		virtual int CreateDummyContext(HWND hwnd);						// for dummy glcontext(not for win msg)
 		virtual int Destroy();                                  // for WM_DESTROY
 		virtual int Enable(bool flag);                          // for WM_ENABLE: flag(true/false)
 		virtual int EraseBkgnd(HDC hdc);                        // for WM_ERASEBKGND: HDC
@@ -40,9 +41,6 @@ namespace sparky { namespace win {
 	
 	protected:
 		HWND handle;
-	
-	private:
-
 	};
 
 	inline void Controller::SetHandle(HWND hwnd) { handle = hwnd; }
@@ -50,6 +48,7 @@ namespace sparky { namespace win {
 	inline int Controller::Command(int id, int cmd, LPARAM msg) { return 0; }
 	inline int Controller::ContextMenu(HWND handle, int x, int y) { return 0; }
 	inline int Controller::Create() { return 0; }
+	inline int Controller::CreateDummyContext(HWND hwnd) { return 0; }
 	inline int Controller::Destroy() { return 0; }
 	inline int Controller::Enable(bool flag) { return 0; }
 	inline int Controller::EraseBkgnd(HDC hdc) { return 0; }

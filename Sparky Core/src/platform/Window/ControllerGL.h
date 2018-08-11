@@ -28,6 +28,8 @@ namespace sparky { namespace win {
 		int KeyDown(int key, LPARAM lParam);
 		int Size(int width, int height, WPARAM type);
 
+		int CreateDummyContext(HWND hwnd);
+
 	private:
 		void RunThread();
 
