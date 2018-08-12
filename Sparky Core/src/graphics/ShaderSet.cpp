@@ -72,7 +72,7 @@ namespace sparky { namespace graphics {
 		m_Preamble = SHADER_DIRECTORY + preambleFileName;
 	}
 
-	GLuint* ShaderSet::AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders)
+	GLuint ShaderSet::AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders)
 	{
 		std::vector<const ShaderNameTypePair*> shaderNameTypes;
 
@@ -116,7 +116,7 @@ namespace sparky { namespace graphics {
 			}
 		}
 
-		return &foundProgram->second.PublicHandle;
+		return foundProgram->second.PublicHandle;
 	}
 
 	void ShaderSet::UpdatePrograms()
@@ -330,7 +330,7 @@ namespace sparky { namespace graphics {
 			typedShaders.emplace_back(shader, shaderType);
 		}
 
-		GLuint* shaderID = AddProgram(typedShaders);
+		GLuint shaderID = AddProgram(typedShaders);
 
 		return new Shader(shaderID);
 	}
@@ -341,7 +341,7 @@ namespace sparky { namespace graphics {
 		for (const auto type : shaderTypes)
 			typedShaders.emplace_back(fileName, type);
 
-		GLuint* shaderID = AddProgram(typedShaders);
+		GLuint shaderID = AddProgram(typedShaders);
 
 		return new Shader(shaderID);
 	}

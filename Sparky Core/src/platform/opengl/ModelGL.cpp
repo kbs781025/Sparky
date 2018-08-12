@@ -6,7 +6,7 @@ sparky::opengl::ModelGL::ModelGL()
 	:
 	m_MouseLeftDown(false), m_MouseRightDown(false),
 	m_MouseX(0), m_MouseY(0), 
-	m_Camera(nullptr), m_ProjectionMat(glm::mat4())
+	m_ShaderSet(), m_Camera(nullptr), m_ProjectionMat(glm::mat4())
 {
 }
 

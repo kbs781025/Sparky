@@ -44,8 +44,9 @@ namespace sparky { namespace graphics {
 		std::string m_Preamble;
 		std::map<ShaderNameTypePair, ShaderData> m_Shaders;
 		std::map<std::vector<const ShaderNameTypePair*>, Program> m_Programs;
+		GLuint m_CurrentShader;
 	private:
-		GLuint* AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders);
+		GLuint AddProgram(const std::vector<std::pair<std::string, GLenum>>& typedShaders);
 	public:
 		ShaderSet() = default;
 		~ShaderSet();

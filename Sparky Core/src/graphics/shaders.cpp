@@ -9,7 +9,7 @@
 
 namespace sparky { namespace graphics {
 
-	Shader::Shader(GLuint* shaderID)
+	Shader::Shader(GLuint shaderID)
 		:
 		m_pShaderID(shaderID)
 	{
@@ -17,7 +17,7 @@ namespace sparky { namespace graphics {
 
 	Shader::~Shader()
 	{
-		GLCall(glDeleteProgram(*m_pShaderID));
+		GLCall(glDeleteProgram(m_pShaderID));
 	}
 
 	void Shader::setUniform1f(const GLchar * name, float value) const
@@ -148,7 +148,7 @@ namespace sparky { namespace graphics {
 
 	void Shader::bindUniformBlock(const GLchar * name, GLuint bindingPoint) const
 	{
-		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(*m_pShaderID, name));
+		GLCall(unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_pShaderID, name));
 
 		#ifdef _DEBUG
 		if (uniformBlockIndex < 0)
@@ -159,17 +159,17 @@ namespace sparky { namespace graphics {
 		}
 		#endif
 
-		GLCall(glUniformBlockBinding(*m_pShaderID, uniformBlockIndex, bindingPoint));
+		GLCall(glUniformBlockBinding(m_pShaderID, uniformBlockIndex, bindingPoint));
 	}
 
 	GLuint Shader::getBlockBindingPoint(const GLchar * name) const
 	{
-		GLCall(return glGetUniformBlockIndex(*m_pShaderID, name));
+		GLCall(return glGetUniformBlockIndex(m_pShaderID, name));
 	}
 
 	void Shader::enable() const
 	{
-		GLCall(glUseProgram(*m_pShaderID));
+		GLCall(glUseProgram(m_pShaderID));
 	}
 
 	void Shader::disable() const
@@ -179,7 +179,7 @@ namespace sparky { namespace graphics {
 
 	GLint Shader::getUniformLocation(const GLchar * name) const
 	{
-		GLCall(return glGetUniformLocation(*m_pShaderID, name));
+		GLCall(return glGetUniformLocation(m_pShaderID, name));
 	}
 
 }

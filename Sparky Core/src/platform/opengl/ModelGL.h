@@ -3,6 +3,8 @@
 #include "../../graphics/camera.h"
 #include "../../graphics/model.h"
 #include "../../maths/maths.h"
+#include "../../graphics/ShaderSet.h"
+#include "../../graphics/shader.h"
 #include <map>
 
 namespace sparky { namespace opengl {
@@ -31,6 +33,8 @@ namespace sparky { namespace opengl {
 		int m_MouseX;
 		int m_MouseY;
 
+		graphics::ShaderSet m_ShaderSet;
+		graphics::Shader* m_CurrentShader;
 		graphics::Camera* m_Camera;
 		glm::mat4 m_ProjectionMat;
 		std::map<std::string, graphics::Model*> m_Models;

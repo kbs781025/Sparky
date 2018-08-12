@@ -15,9 +15,9 @@ namespace sparky { namespace graphics {
 	class Shader
 	{
 	private:
-		GLuint* m_pShaderID;
+		GLuint m_pShaderID;
 	public:
-		Shader(GLuint* shaderID);
+		Shader(GLuint shaderID);
 		~Shader();
 
 		// need to find uniform location
@@ -38,7 +38,7 @@ namespace sparky { namespace graphics {
 
 		void bindUniformBlock(const GLchar* name, GLuint bindingPoint) const;
 
-		GLuint getShaderID() const { return *m_pShaderID; }
+		GLuint getShaderID() const { return m_pShaderID; }
 		GLuint getBlockBindingPoint(const GLchar* name) const;
 
 		void enable() const;

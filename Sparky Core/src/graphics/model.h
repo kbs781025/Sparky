@@ -16,7 +16,7 @@ namespace sparky { namespace graphics {
 	class Model
 	{
 	public:
-		Model(char* path);
+		Model(const char* path);
 		
 		void Draw();
 		void DrawInstances(unsigned int instanceCount);
